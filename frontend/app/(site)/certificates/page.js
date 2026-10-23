@@ -11,17 +11,15 @@ import {
   FiSearch,
   FiCheckCircle,
   FiShield,
-  FiCalendar,
   FiCopy,
   FiCheck,
-  FiExternalLink,
   FiSettings,
   FiRefreshCw
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
 
 export default function PublicOrganizationCertificatesPage() {
-  const { currentUser } = useNGO();
+  const { currentUser, settings } = useNGO();
   const isAdmin = currentUser?.role === 'Admin' || currentUser?.role === 'admin';
 
   const [documents, setDocuments] = useState([]);
@@ -77,11 +75,11 @@ export default function PublicOrganizationCertificatesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50/70 py-10 sm:py-14 text-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Top Hero Section */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 shadow-2xs">
-            <FiAward className="w-3.5 h-3.5 text-emerald-700" />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold border border-amber-300 shadow-2xs">
+            <FiAward className="w-3.5 h-3.5 text-amber-700" />
             <span>Government Accreditations &amp; Legal Compliance</span>
           </div>
 
@@ -90,32 +88,32 @@ export default function PublicOrganizationCertificatesPage() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-            Transparent and verifiable legal documents establishing Yuva Kranti Dal (युवा क्रांति दल) as a registered, 100% compliant, and tax-exempt national youth welfare movement.
+            Transparent and verifiable legal documents establishing {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} as a registered, 100% compliant, and 80G tax-exempt charitable trust for senior citizens.
           </p>
 
           {/* Accreditations Trust Badges Strip */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-bold text-slate-700">
-            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs">
-              <FiCheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Section 12A Perpetual Tax Exemption</span>
+            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-amber-200 shadow-2xs">
+              <FiCheckCircle className="w-3.5 h-3.5 text-amber-600" />
+              <span>Section 12A Perpetual Registration</span>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs">
-              <FiShield className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Section 80G (50% Donor Tax Relief)</span>
+            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-amber-200 shadow-2xs">
+              <FiShield className="w-3.5 h-3.5 text-amber-700" />
+              <span>Section 80G (50% Donor Tax Exemption)</span>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-slate-200 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <div className="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-amber-200 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
               <span>NITI Aayog Darpan Verified</span>
             </div>
 
             {isAdmin && (
               <Link
                 href="/dashboard/certificates"
-                className="flex items-center gap-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 px-3.5 py-1.5 rounded-full border border-emerald-200 font-bold transition shadow-2xs"
+                className="flex items-center gap-1.5 bg-amber-50 text-amber-900 hover:bg-amber-100 px-3.5 py-1.5 rounded-full border border-amber-300 font-bold transition shadow-2xs"
               >
-                <FiSettings className="w-3.5 h-3.5 text-emerald-700" />
+                <FiSettings className="w-3.5 h-3.5 text-amber-700" />
                 <span>Upload &amp; Manage Documents (Admin) →</span>
               </Link>
             )}
@@ -123,16 +121,16 @@ export default function PublicOrganizationCertificatesPage() {
         </div>
 
         {/* Filter and Search Bar */}
-        <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-white p-4 rounded-3xl border border-amber-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Search Box */}
           <div className="relative w-full md:max-w-md">
             <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search by certificate title, order number, or issuing ministry..."
+              placeholder="Search by certificate title, order number, or issuing authority..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-slate-900"
+              className="w-full text-xs pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900"
             />
           </div>
 
@@ -152,7 +150,7 @@ export default function PublicOrganizationCertificatesPage() {
                 onClick={() => setActiveCategory(tab.key)}
                 className={`px-3.5 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${
                   activeCategory === tab.key
-                    ? 'bg-emerald-700 text-white shadow-xs'
+                    ? 'bg-amber-500 text-stone-950 shadow-xs'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
@@ -160,15 +158,17 @@ export default function PublicOrganizationCertificatesPage() {
               </button>
             ))}
           </div>
-        </div>        {/* Documents Showcase Grid */}
+        </div>
+
+        {/* Documents Showcase Grid */}
         {loading ? (
           <div className="bg-white p-16 rounded-3xl border border-slate-200 text-center space-y-2 shadow-sm">
-            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-emerald-700" />
+            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-amber-600" />
             <p className="text-xs text-slate-500">Retrieving official organization certificates...</p>
           </div>
         ) : filteredDocuments.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-2 shadow-sm">
-            <FiShield className="w-8 h-8 mx-auto text-slate-400" />
+          <div className="bg-white p-12 rounded-3xl border border-amber-200/80 text-center space-y-2 shadow-sm">
+            <FiShield className="w-8 h-8 mx-auto text-amber-500" />
             <h3 className="font-extrabold text-sm text-slate-800">No Certificates Found</h3>
             <p className="text-xs text-slate-500">Try clearing your search query or selecting a different category tab.</p>
           </div>
@@ -183,22 +183,22 @@ export default function PublicOrganizationCertificatesPage() {
               return (
                 <div
                   key={doc._id || doc.id}
-                  className="bg-white rounded-3xl p-6 border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-3xl p-6 border border-amber-200 hover:border-amber-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div className="space-y-4">
                     {/* Header with Icon and Category badge */}
                     <div className="flex items-start justify-between gap-3">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${
-                        isPdf ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-teal-50 text-teal-700 border border-teal-200'
+                        isPdf ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-yellow-50 text-amber-900 border border-yellow-200'
                       }`}>
                         {isPdf ? <FiFileText className="w-6 h-6" /> : <FiImage className="w-6 h-6" />}
                       </div>
 
                       <div className="flex flex-col items-end gap-1">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-700">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-900 border border-amber-200">
                           {doc.category}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700">
                           <FiCheckCircle className="w-3 h-3" />
                           <span>Govt. Verified</span>
                         </span>
@@ -207,7 +207,7 @@ export default function PublicOrganizationCertificatesPage() {
 
                     {/* Title & Description */}
                     <div>
-                      <h3 className="text-base font-black text-slate-900 group-hover:text-emerald-700 transition">
+                      <h3 className="text-base font-black text-slate-900 group-hover:text-amber-800 transition">
                         {doc.title}
                       </h3>
                       {doc.description && (
@@ -218,11 +218,11 @@ export default function PublicOrganizationCertificatesPage() {
                     </div>
 
                     {/* Order / Registration Number Box with Copy */}
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <div className="bg-amber-50/50 p-3 rounded-2xl border border-amber-200 space-y-1">
+                      <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">
                         Official Order / Registration No.
                       </span>
-                      <div className="flex items-center justify-between font-mono font-bold text-emerald-800 text-xs">
+                      <div className="flex items-center justify-between font-mono font-bold text-amber-900 text-xs">
                         <span className="truncate max-w-[220px]" title={doc.documentNumber}>
                           {doc.documentNumber || 'REG/2021/DEL/492'}
                         </span>
@@ -230,11 +230,11 @@ export default function PublicOrganizationCertificatesPage() {
                           <button
                             type="button"
                             onClick={() => handleCopy(doc.documentNumber)}
-                            className="p-1 text-slate-400 hover:text-slate-800 transition cursor-pointer"
+                            className="p-1 text-slate-400 hover:text-amber-900 transition cursor-pointer"
                             title="Copy Number"
                           >
                             {copiedId === doc.documentNumber ? (
-                              <FiCheck className="w-3.5 h-3.5 text-emerald-600" />
+                              <FiCheck className="w-3.5 h-3.5 text-amber-600" />
                             ) : (
                               <FiCopy className="w-3.5 h-3.5" />
                             )}
@@ -257,7 +257,7 @@ export default function PublicOrganizationCertificatesPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Legal Validity:</span>
-                        <strong className="text-emerald-700">{doc.validity || 'Perpetual'}</strong>
+                        <strong className="text-amber-700">{doc.validity || 'Perpetual'}</strong>
                       </div>
                     </div>
                   </div>
@@ -267,7 +267,7 @@ export default function PublicOrganizationCertificatesPage() {
                     <button
                       type="button"
                       onClick={() => setPreviewDoc(doc)}
-                      className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                      className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-amber-50 hover:text-amber-900 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
                     >
                       <FiEye className="w-3.5 h-3.5 text-slate-600" />
                       <span>Inspect PDF</span>
@@ -278,9 +278,9 @@ export default function PublicOrganizationCertificatesPage() {
                       target="_blank"
                       rel="noreferrer"
                       download
-                      className="w-full py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-700/20 transition cursor-pointer"
+                      className="w-full py-2.5 px-3 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 transition cursor-pointer"
                     >
-                      <FiDownload className="w-3.5 h-3.5" />
+                      <FiDownload className="w-3.5 h-3.5 text-stone-950" />
                       <span>Download</span>
                     </a>
                   </div>
@@ -294,10 +294,10 @@ export default function PublicOrganizationCertificatesPage() {
         {previewDoc && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl space-y-4 max-h-[92vh] flex flex-col animate-fadeIn">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center justify-between pb-3 border-b border-amber-200">
                 <div>
                   <h3 className="font-black text-slate-900 text-base">{previewDoc.title}</h3>
-                  <span className="text-xs text-emerald-700 font-mono font-bold">
+                  <span className="text-xs text-amber-800 font-mono font-bold">
                     Order No: {previewDoc.documentNumber} • {previewDoc.category}
                   </span>
                 </div>
@@ -307,9 +307,9 @@ export default function PublicOrganizationCertificatesPage() {
                     target="_blank"
                     rel="noreferrer"
                     download
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-700/20 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black flex items-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
                   >
-                    <FiDownload className="w-3.5 h-3.5" />
+                    <FiDownload className="w-3.5 h-3.5 text-stone-950" />
                     <span>Download Original Document</span>
                   </a>
                   <button

@@ -80,6 +80,9 @@ export default function Navbar() {
   };
 
   const activeUser = isMounted ? currentUser : null;
+  const userAvatarUrl = activeUser
+    ? getContentImageUrl(activeUser?.photoUrl || activeUser?.image || activeUser?.profilePicture)
+    : null;
 
   const isMember = Boolean(
     activeUser?.role === 'Member' ||
@@ -152,7 +155,6 @@ export default function Navbar() {
         { label: 'Photo Gallery', href: '/gallery', icon: FiImage, desc: 'Moments of joy, festivals & care activities' },
         { label: 'Annual Reports & Transparency', href: '/#reports-section', icon: FiFileText, desc: 'Financial audits & social impact stats' },
         { label: 'News & Bulletins', href: '/blogs', icon: FiBookOpen, desc: 'Recent press releases & updates' },
-        { label: 'Video Showcase', href: '/#youtube-videos', icon: FaYoutube, desc: 'Watch real experiences of our elders' },
       ],
     },
     {
@@ -173,7 +175,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 transition-all duration-300">
 
       {/* ================= 1. TOP UTILITY & ANNOUNCEMENT BAR ================= */}
-      <div className="bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 border-b border-amber-600/30 text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:px-6 shadow-xs">
+      <div className="relative z-50 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 border-b border-amber-600/30 text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:px-6 shadow-xs">
         <div className="max-w-[1700px] mx-auto flex items-center justify-between gap-3">
 
           {/* Left: 24x7 Helpline + WhatsApp + Tax Status */}
@@ -215,7 +217,7 @@ export default function Navbar() {
               <span>Adhartal, Jabalpur (M.P.)</span>
             </div>
 
-            <div className="scale-90 origin-right">
+            <div className="relative z-50">
               <GoogleTranslate />
             </div>
           </div>
@@ -224,17 +226,17 @@ export default function Navbar() {
       </div>
 
       {/* ================= 2. MAIN HEADER ROW ================= */}
-      <div className="bg-white/98 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
+      <div className="relative z-30 bg-white/98 backdrop-blur-md border-b border-amber-200/80 shadow-xs">
         <div className="max-w-[1700px] mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+          <div className="flex items-center justify-between h-16 sm:h-18 gap-2 sm:gap-4">
 
             {/* Logo & Foundation Identity */}
             <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 py-1">
-              <div className="relative w-11 h-11 sm:w-13 sm:h-13 rounded-full p-0.5 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0 ring-2 ring-amber-300/60">
+              <div className="relative w-11 h-11 sm:w-13 sm:h-13 rounded-full p-0.5 bg-linear-to-tr from-amber-500 via-yellow-400 to-amber-600 shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0 ring-2 ring-amber-300/60">
                 <div className="w-full h-full rounded-full bg-white p-0.5 overflow-hidden flex items-center justify-center">
                   <img
                     src={getContentImageUrl(settings?.logoUrl) || '/logo.jpg'}
-                    alt={settings?.ngoName || 'अपना परिवार वृद्ध आश्रम'}
+                    alt={settings?.ngoName || 'Apna Parivar Vriddh Aashram'}
                     className="w-full h-full object-contain"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -244,23 +246,21 @@ export default function Navbar() {
                 </div>
               </div>
 
-              <div className="flex flex-col">
-                <div className="flex items-baseline gap-1.5 flex-nowrap">
-                  <span className="text-amber-950 font-black text-base sm:text-lg xl:text-xl tracking-tight leading-tight">
-                    अपना परिवार
-                  </span>
-                  <span className="text-amber-600 font-black text-base sm:text-lg xl:text-xl tracking-tight leading-tight">
-                    वृद्ध आश्रम
-                  </span>
-                </div>
-                <div className="hidden 2xl:flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-stone-500 tracking-wide mt-0.5">
-                  <span className="text-emerald-700">सेवा</span>
+              <div className="flex flex-col justify-center">
+                <span className="text-amber-950 font-black text-sm sm:text-base lg:text-lg tracking-tight leading-tight block">
+                  Apna Parivar
+                </span>
+                <span className="text-amber-600 font-black text-xs sm:text-sm lg:text-base tracking-tight leading-tight block">
+                  Vriddh Aashram
+                </span>
+                <div className="hidden 2xl:flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-stone-500 tracking-wide mt-0.5">
+                  <span className="text-amber-700">Service</span>
                   <span>•</span>
-                  <span className="text-amber-600">सम्मान</span>
+                  <span className="text-stone-600">Dignity</span>
                   <span>•</span>
-                  <span className="text-amber-800">परिवार</span>
+                  <span className="text-amber-800">Family</span>
                   <span className="text-stone-300">|</span>
-                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-900 border border-amber-200 text-[9px] font-extrabold">
+                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-900 border border-amber-200 text-[8px] font-extrabold">
                     80G Approved
                   </span>
                 </div>
@@ -371,93 +371,158 @@ export default function Navbar() {
                 </Link>
               )}
 
+              {/* Radiant Yellow / Golden Amber Donate Now CTA Button */}
+              <Link
+                href="/donation"
+                className="relative inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/30 hover:shadow-lg hover:shadow-amber-500/40 transform hover:scale-104 active:scale-97 transition-all duration-300 shrink-0 whitespace-nowrap"
+              >
+                <FiHeart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-stone-950 animate-pulse text-stone-950" />
+                <span className="tracking-wide">Donate</span>
+              </Link>
+
               {/* User Profile / Login Dropdown */}
               {activeUser ? (
                 <div className="relative" ref={dropdownRef}>
                   <button
                     type="button"
                     onClick={() => toggleDropdown('user_profile_box')}
-                    className="flex items-center  rounded-full border border-amber-300 hover:border-amber-500 bg-amber-50/80 hover:bg-amber-100 transition cursor-pointer text-xs font-bold text-stone-800"
+                    className="flex items-center rounded-full border-2 border-amber-400 hover:border-amber-500 bg-amber-50/90 hover:bg-amber-100 transition cursor-pointer p-0.5 shadow-2xs"
+                    aria-label="User Profile"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center text-[10px] font-black">
-                      {activeUser.name ? activeUser.name.charAt(0).toUpperCase() : 'U'}
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-linear-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center text-[10px] font-black shrink-0 relative">
+                      {userAvatarUrl ? (
+                        <img
+                          src={userAvatarUrl}
+                          alt={activeUser.name || 'User'}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.parentElement?.querySelector('.nav-avatar-initial');
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      ) : null}
+                      <span
+                        className="nav-avatar-initial text-[11px] font-black text-stone-950 items-center justify-center"
+                        style={{ display: userAvatarUrl ? 'none' : 'flex' }}
+                      >
+                        {activeUser.name ? activeUser.name.charAt(0).toUpperCase() : 'U'}
+                      </span>
                     </div>
                   </button>
 
                   {activeDropdown === 'user_profile_box' && (
-                    <div className="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-amber-200 p-2 z-50 ring-1 ring-amber-500/10 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <div className="px-3 py-2 border-b border-amber-100">
-                        <p className="text-xs font-black text-amber-950 truncate">{activeUser.name}</p>
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-200 mt-1">
-                          {activeUser.role || 'Member'}
-                        </span>
-                      </div>
+                    <>
+                      {/* Mobile Backdrop Overlay */}
+                      <div
+                        className="sm:hidden fixed inset-0 bg-stone-950/30 backdrop-blur-2xs z-90"
+                        onClick={() => setActiveDropdown(null)}
+                      />
 
-                      <div className="py-1 space-y-0.5 text-xs font-medium text-stone-700">
-                        <Link
-                          href="/profile"
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiUser className="w-4 h-4 text-stone-400" />
-                          <span>Profile Overview</span>
-                        </Link>
-                        <Link
-                          href={isMember ? '/profile/member' : '/apply-member'}
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiCreditCard className="w-4 h-4 text-stone-400" />
-                          <span>{isMember ? 'Member Portal' : 'Apply for Member'}</span>
-                        </Link>
-                        <Link
-                          href={isVolunteer ? '/profile/volunteer' : '/apply-volunteer'}
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiUsers className="w-4 h-4 text-stone-400" />
-                          <span>{isVolunteer ? 'Volunteer Portal' : 'Apply as Volunteer'}</span>
-                        </Link>
-                        <Link
-                          href="/profile/id-card"
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiShield className="w-4 h-4 text-stone-400" />
-                          <span>Official ID Card</span>
-                        </Link>
-                        <Link
-                          href="/profile/certificates"
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiAward className="w-4 h-4 text-stone-400" />
-                          <span>My Certificates</span>
-                        </Link>
-                        <Link
-                          href="/profile/settings"
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900"
-                        >
-                          <FiSettings className="w-4 h-4 text-stone-400" />
-                          <span>Account Settings</span>
-                        </Link>
-                      </div>
+                      <div className="max-sm:fixed max-sm:top-18 max-sm:right-3 max-sm:w-68 max-sm:max-w-[calc(100vw-24px)] sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-64 bg-white rounded-2xl shadow-2xl border border-amber-200 p-2 z-100 ring-1 ring-amber-500/10 animate-in fade-in slide-in-from-top-1 duration-150">
+                        {/* Profile Header with Avatar & Status */}
+                        <div className="p-2.5 border-b border-amber-100 flex items-center gap-2.5 bg-linear-to-r from-amber-50/80 to-yellow-50/50 rounded-xl mb-1">
+                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400 ring-2 ring-amber-300/40 shrink-0 bg-amber-100 flex items-center justify-center relative">
+                            {userAvatarUrl ? (
+                              <img
+                                src={userAvatarUrl}
+                                alt={activeUser.name || 'User'}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const fallback = e.currentTarget.parentElement?.querySelector('.drop-avatar-initial');
+                                  if (fallback) fallback.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <span
+                              className="drop-avatar-initial text-sm font-black text-amber-950 items-center justify-center"
+                              style={{ display: userAvatarUrl ? 'none' : 'flex' }}
+                            >
+                              {activeUser.name ? activeUser.name.charAt(0).toUpperCase() : 'U'}
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-base font-black text-amber-950 truncate leading-tight">
+                              {activeUser.name}
+                              <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-200 mt-1">
+                                {activeUser.role || 'Unknown'}
+                              </span>
+                            </p>
+                            {activeUser.email && (
+                              <p className="text-[10px] text-stone-500 font-medium truncate mt-0.5">
+                                {activeUser.email}
+                              </p>
+                            )}
+                          </div>
+                        </div>
 
-                      <div className="pt-1 mt-1 border-t border-stone-100">
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            setActiveDropdown(null);
-                            await logout();
-                          }}
-                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer transition"
-                        >
-                          <FiLogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
-                        </button>
+                        <div className="py-1 space-y-0.5 text-xs font-medium text-stone-700">
+                          <Link
+                            href="/profile"
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiUser className="w-4 h-4 text-amber-700" />
+                            <span>Profile Overview</span>
+                          </Link>
+                          <Link
+                            href={isMember ? '/profile/member' : '/apply-member'}
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiCreditCard className="w-4 h-4 text-amber-700" />
+                            <span>{isMember ? 'Member Portal' : 'Apply for Member'}</span>
+                          </Link>
+                          <Link
+                            href={isVolunteer ? '/profile/volunteer' : '/apply-volunteer'}
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiUsers className="w-4 h-4 text-amber-700" />
+                            <span>{isVolunteer ? 'Volunteer Portal' : 'Apply as Volunteer'}</span>
+                          </Link>
+                          <Link
+                            href="/profile/id-card"
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiShield className="w-4 h-4 text-amber-700" />
+                            <span>Official ID Card</span>
+                          </Link>
+                          <Link
+                            href="/profile/certificates"
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiAward className="w-4 h-4 text-amber-700" />
+                            <span>My Certificates</span>
+                          </Link>
+                          <Link
+                            href="/profile/settings"
+                            onClick={() => setActiveDropdown(null)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                          >
+                            <FiSettings className="w-4 h-4 text-amber-700" />
+                            <span>Account Settings</span>
+                          </Link>
+                        </div>
+
+                        <div className="pt-1 mt-1 border-t border-amber-100">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              setActiveDropdown(null);
+                              await logout();
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer transition"
+                          >
+                            <FiLogOut className="w-4 h-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
               ) : (
@@ -513,15 +578,6 @@ export default function Navbar() {
                 </div>
               )}
 
-              {/* Radiant Yellow / Golden Amber Donate Now CTA Button */}
-              <Link
-                href="/donation"
-                className="relative inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/30 hover:shadow-lg hover:shadow-amber-500/40 transform hover:scale-104 active:scale-97 transition-all duration-300 shrink-0 whitespace-nowrap"
-              >
-                <FiHeart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-stone-950 animate-pulse text-stone-950" />
-                {/* <span className="tracking-wide">Donate</span> */}
-              </Link>
-
               {/* Mobile Menu Toggle Button */}
               <button
                 type="button"
@@ -538,103 +594,145 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ================= 3. MOBILE RESPONSIVE DRAWER ================= */}
+      {/* ================= 3. MOBILE RESPONSIVE DRAWER (OFF-CANVAS) ================= */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-white border-b-2 border-amber-500 shadow-2xl max-h-[85vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+        <>
+          {/* Backdrop Overlay */}
+          <div
+            className="xl:hidden fixed inset-0 bg-stone-950/50 backdrop-blur-2xs z-50 transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
 
-          {/* Quick Helpline & Action Bar inside Mobile Drawer */}
-          <div className="p-3 bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 flex items-center justify-between text-xs font-bold">
-            <a
-              href={`tel:${helplineNumber}`}
-              className="flex items-center gap-1.5 text-stone-950 hover:underline"
-            >
-              <FiPhoneCall className="w-3.5 h-3.5" />
-              <span>{helplineNumber}</span>
-            </a>
-            <div className="flex items-center gap-2">
-              <a
-                href={`https://wa.me/${whatsappNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 bg-emerald-800 text-white px-2.5 py-1 rounded-full text-[11px]"
-              >
-                <FaWhatsapp className="w-3.5 h-3.5" />
-                <span>WhatsApp</span>
-              </a>
-            </div>
-          </div>
-
-          <div className="p-4 space-y-1">
-            {/* Home link */}
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-bold text-xs transition ${pathname === '/'
-                ? 'bg-amber-100 text-amber-950 font-black'
-                : 'text-stone-800 hover:bg-amber-50'
-                }`}
-            >
-              <FiHome className="w-4 h-4 text-amber-600" />
-              <span>Home</span>
-            </Link>
-
-            {/* Accordion groups */}
-            {navigationGroups.map((group) => {
-              const isExpanded = mobileExpanded[group.id];
-
-              return (
-                <div key={group.id} className="border-b border-amber-100 last:border-none pb-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleMobileSubmenu(group.id)}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-stone-800 hover:bg-amber-50 transition cursor-pointer"
-                  >
-                    <span>{group.label}</span>
-                    <FiChevronDown
-                      className={`w-4 h-4 text-stone-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-amber-600' : ''
-                        }`}
+          <div className="xl:hidden fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-50 flex flex-col justify-between border-l border-amber-200 animate-in slide-in-from-right duration-200">
+            <div className="flex-1 overflow-y-auto">
+              {/* Header inside mobile drawer */}
+              <div className="p-3.5 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 flex items-center justify-between shadow-xs sticky top-0 z-10">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white p-0.5 overflow-hidden shrink-0">
+                    <img
+                      src={getContentImageUrl(settings?.logoUrl) || '/logo.jpg'}
+                      alt="Logo"
+                      className="w-full h-full object-contain"
                     />
-                  </button>
-
-                  {isExpanded && (
-                    <div className="pl-3 pr-2 py-1 space-y-1 bg-amber-50/50 rounded-xl my-1">
-                      {group.links.map((link) => {
-                        const IconComp = link.icon;
-                        const clean = link.href.split('#')[0];
-                        const isSubActive = clean && clean !== '/' ? pathname === clean : false;
-
-                        return (
-                          <Link
-                            key={link.href + link.label}
-                            href={link.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition ${isSubActive
-                              ? 'bg-amber-200/80 text-amber-950 font-black'
-                              : 'text-stone-700 hover:text-amber-900'
-                              }`}
-                          >
-                            {IconComp ? (
-                              <IconComp className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                            ) : (
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                            )}
-                            <span>{link.label}</span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-black text-xs leading-tight">Apna Parivar</span>
+                    <span className="text-[10px] font-bold text-amber-950/80 leading-tight">Vriddh Aashram</span>
+                  </div>
                 </div>
-              );
-            })}
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-8 h-8 rounded-lg bg-amber-600/30 hover:bg-amber-700/40 text-stone-950 flex items-center justify-center cursor-pointer transition"
+                  aria-label="Close menu"
+                >
+                  <FiX className="w-5 h-5" />
+                </button>
+              </div>
 
-            {/* Mobile Auth / Profile section */}
-            <div className="pt-3 border-t border-amber-100 space-y-2">
+              {/* Quick Helpline Strip */}
+              <div className="px-3 py-2 bg-amber-50 border-b border-amber-200/60 flex items-center justify-between text-xs font-bold">
+                <a
+                  href={`tel:${helplineNumber}`}
+                  className="flex items-center gap-1.5 text-amber-950 hover:underline"
+                >
+                  <FiPhoneCall className="w-3.5 h-3.5 text-amber-700" />
+                  <span>{helplineNumber}</span>
+                </a>
+                <a
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 bg-emerald-700 text-white px-2 py-0.5 rounded-full text-[10px] font-bold"
+                >
+                  <FaWhatsapp className="w-3 h-3" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="p-3 space-y-1">
+                {/* Home link */}
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-xs transition ${pathname === '/'
+                    ? 'bg-amber-100 text-amber-950 font-black'
+                    : 'text-stone-800 hover:bg-amber-50'
+                    }`}
+                >
+                  <FiHome className="w-4 h-4 text-amber-600" />
+                  <span>Home</span>
+                </Link>
+
+                {/* Groups */}
+                {navigationGroups.map((group) => {
+                  const isExpanded = mobileExpanded[group.id];
+
+                  return (
+                    <div key={group.id} className="border-b border-amber-100 last:border-none pb-1">
+                      <button
+                        type="button"
+                        onClick={() => toggleMobileSubmenu(group.id)}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-stone-800 hover:bg-amber-50 transition cursor-pointer"
+                      >
+                        <span>{group.label}</span>
+                        <FiChevronDown
+                          className={`w-3.5 h-3.5 text-stone-400 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-amber-600' : ''
+                            }`}
+                        />
+                      </button>
+
+                      {isExpanded && (
+                        <div className="pl-3 pr-2 py-1 space-y-0.5 bg-amber-50/50 rounded-xl my-1">
+                          {group.links.map((link) => {
+                            const IconComp = link.icon;
+                            const clean = link.href.split('#')[0];
+                            const isSubActive = clean && clean !== '/' ? pathname === clean : false;
+
+                            return (
+                              <Link
+                                key={link.href + link.label}
+                                href={link.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs transition ${isSubActive
+                                  ? 'bg-amber-200/80 text-amber-950 font-black'
+                                  : 'text-stone-700 hover:text-amber-900'
+                                  }`}
+                              >
+                                {IconComp ? (
+                                  <IconComp className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                ) : (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                                )}
+                                <span>{link.label}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bottom Auth & Translate inside Drawer */}
+            <div className="p-3 border-t border-amber-200 bg-amber-50/40 space-y-2 shrink-0">
               {activeUser ? (
                 <div className="space-y-1">
-                  <div className="px-3 py-1.5 bg-amber-50 rounded-xl flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-black text-amber-950">{activeUser.name}</p>
+                  <div className="px-3 py-2 bg-white border border-amber-200 rounded-xl flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full overflow-hidden border border-amber-300 shrink-0 bg-amber-100 flex items-center justify-center">
+                      {userAvatarUrl ? (
+                        <img src={userAvatarUrl} alt={activeUser.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[11px] font-black text-amber-950">
+                          {activeUser.name ? activeUser.name.charAt(0).toUpperCase() : 'U'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-black text-amber-950 truncate">{activeUser.name}</p>
                       <span className="text-[10px] text-stone-500 font-bold">{activeUser.role}</span>
                     </div>
                     {isAdmin && (
@@ -651,7 +749,7 @@ export default function Navbar() {
                   <Link
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 rounded-lg text-xs font-bold text-stone-700 hover:bg-amber-50"
+                    className="block px-3 py-2 rounded-lg text-xs font-bold text-stone-700 hover:bg-amber-100/70"
                   >
                     View Full Profile &amp; ID Card
                   </Link>
@@ -669,11 +767,11 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-2 gap-2">
                   <Link
                     href="/login?role=member"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-amber-300 text-stone-800 text-xs font-bold hover:bg-amber-50"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-amber-300 text-stone-800 text-xs font-bold hover:bg-amber-100"
                   >
                     <FiLogIn className="w-3.5 h-3.5 text-amber-700" />
                     <span>Member Login</span>
@@ -688,16 +786,15 @@ export default function Navbar() {
                   </Link>
                 </div>
               )}
-            </div>
 
-            {/* Mobile Google Translate */}
-            <div className="pt-3 border-t border-amber-100 flex items-center justify-between">
-              <span className="text-xs font-bold text-stone-500">Translate:</span>
-              <GoogleTranslate />
+              {/* Mobile Google Translate */}
+              <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-500">Language:</span>
+                <GoogleTranslate />
+              </div>
             </div>
-
           </div>
-        </div>
+        </>
       )}
     </header>
   );

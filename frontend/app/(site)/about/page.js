@@ -125,7 +125,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
 
       {/* ---------------- 1. HERO HEADER ---------------- */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-amber-50/80 via-white to-slate-50 py-16 sm:py-24 border-b border-amber-200">
+      <section className="relative overflow-hidden bg-linear-to-b from-amber-50/80 via-white to-slate-50 py-16 sm:py-24 border-b border-amber-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-xs font-black shadow-xs">
@@ -134,7 +134,7 @@ export default function AboutPage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
-              About <span className="bg-gradient-to-r from-amber-600 via-amber-700 to-yellow-700 bg-clip-text text-transparent">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</span>
+              About <span className="bg-linear-to-r from-amber-600 via-amber-700 to-yellow-700 bg-clip-text text-transparent">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</span>
             </h1>
 
             <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
@@ -144,7 +144,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link
                 href="/donation"
-                className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-amber-950 font-black text-xs shadow-lg shadow-amber-500/25 hover:scale-102 transition cursor-pointer"
+                className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-amber-950 font-black text-xs shadow-lg shadow-amber-500/25 hover:scale-102 transition cursor-pointer"
               >
                 <FiHeart className="w-4 h-4 fill-amber-950" />
                 <span>Support Our Mission (80G Tax Exemption)</span>
@@ -235,7 +235,7 @@ export default function AboutPage() {
                   alt="Apna Parivar Vriddh Aashram Elders"
                   className="w-full h-[420px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-6">
+                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/20 to-transparent flex items-end p-6">
                   <div className="text-white space-y-1">
                     <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 bg-black/50 px-2.5 py-1 rounded-md border border-amber-400/30">
                       Venerable Elders In Our Care
@@ -282,7 +282,7 @@ export default function AboutPage() {
                   key={pillar.id}
                   onClick={() => setActivePillar(pillar.id)}
                   className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-black transition cursor-pointer ${isActive
-                    ? 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 shadow-lg shadow-amber-500/25 scale-102 border border-amber-400'
+                    ? 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 shadow-lg shadow-amber-500/25 scale-102 border border-amber-400'
                     : 'bg-white text-slate-700 hover:bg-amber-50 hover:text-amber-900 border border-slate-200'
                     }`}
                 >
@@ -333,7 +333,7 @@ export default function AboutPage() {
                 <div className="pt-4 flex gap-3">
                   <Link
                     href="/donation"
-                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+                    className="px-5 py-3 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
                   >
                     Contribute to this Pillar →
                   </Link>
@@ -438,7 +438,7 @@ export default function AboutPage() {
           <div className="text-center mt-10">
             <Link
               href="/certificates"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
             >
               <FiDownload className="w-4 h-4 text-amber-950" />
               <span>Inspect &amp; Download Verified NGO Certificates →</span>
@@ -464,7 +464,7 @@ export default function AboutPage() {
             {timelineMilestones.map((item, index) => (
               <div key={index} className="relative pl-6 sm:pl-8 group">
                 {/* Year Marker Badge */}
-                <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 border-4 border-white flex items-center justify-center text-amber-950 text-[10px] font-black shadow-md">
+                <div className="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-linear-to-r from-amber-500 to-yellow-500 border-4 border-white flex items-center justify-center text-amber-950 text-[10px] font-black shadow-md">
                   ✓
                 </div>
 
@@ -549,7 +549,7 @@ export default function AboutPage() {
       </section>
 
       {/* ---------------- 7. CALL TO ACTION ---------------- */}
-      <section className="py-20 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 shadow-xl border-t border-amber-300">
+      <section className="py-20 bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 text-amber-950 shadow-xl border-t border-amber-300">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-900/15 text-amber-950 text-xs font-bold border border-amber-900/20 backdrop-blur-sm">
             <FiHeart className="w-3.5 h-3.5 fill-amber-950" />

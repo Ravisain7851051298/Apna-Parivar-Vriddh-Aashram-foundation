@@ -87,7 +87,7 @@ function VolunteerContent() {
           <div className="bg-white border-2 border-amber-300 rounded-3xl p-6 sm:p-10 shadow-md">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center shrink-0 shadow-md">
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center shrink-0 shadow-md">
                   <FiCheckCircle className="w-8 h-8" />
                 </div>
                 <div className="space-y-1">
@@ -109,7 +109,7 @@ function VolunteerContent() {
               <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
                 <Link
                   href="/profile/id-card"
-                  className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-2"
+                  className="px-5 py-3 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-2"
                 >
                   <FiShield className="w-4 h-4" />
                   <span>Open Digital ID Card</span>
@@ -241,7 +241,7 @@ function VolunteerContent() {
                 <div className="mt-6 pt-4 border-t border-slate-100">
                   <Link
                     href="/apply-volunteer"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-2"
                   >
                     <span>Apply for Volunteer Service</span>
                     <FiArrowRight className="w-4 h-4" />

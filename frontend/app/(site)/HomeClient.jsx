@@ -30,77 +30,90 @@ import {
   FiSmile,
   FiFileText
 } from 'react-icons/fi';
-import { FaWhatsapp, FaYoutube } from 'react-icons/fa6';
+import {
+  FaWhatsapp,
+  FaHouseChimney,
+  FaBowlFood,
+  FaHeartPulse,
+  FaSpa,
+  FaHandHoldingHeart,
+  FaMugSaucer,
+  FaPills
+} from 'react-icons/fa6';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
-import { getYoutubeEmbedUrl } from '@/lib/youtube';
 
-// 5 Pillars directly matching elder care priorities
+// 5 Pillars directly matching elder care priorities with distinct icons & luxury amber styling
 const BANNER_FIVE_PILLARS = [
   {
     id: 'shelter',
-    iconColor: '#059669',
-    bgColor: 'bg-emerald-50/70',
-    borderColor: 'border-emerald-200',
-    hoverBorder: 'hover:border-emerald-500',
-    iconBg: 'bg-emerald-600',
+    icon: FaHouseChimney,
+    gradient: 'from-amber-500 to-yellow-500',
+    iconBg: 'bg-gradient-to-br from-amber-500 to-yellow-500 text-stone-950',
+    glowColor: 'shadow-amber-500/25',
+    title: 'Safe Residential Living',
     titleHi: 'Safe Residential Living',
     titleEn: 'Safe Residential Living',
     desc: 'Senior-tailored rooms, clean bedding, wheelchair campus, and 24/7 dedicated caretaking.',
     link: '/services',
     tag: 'Shelter',
+    tagBg: 'bg-amber-100 text-amber-950 border-amber-300',
   },
   {
     id: 'food',
-    iconColor: '#d97706',
-    bgColor: 'bg-amber-50/70',
-    borderColor: 'border-amber-200',
-    hoverBorder: 'hover:border-amber-500',
-    iconBg: 'bg-amber-600',
+    icon: FaBowlFood,
+    gradient: 'from-amber-500 to-yellow-400',
+    iconBg: 'bg-gradient-to-br from-amber-500 to-yellow-400 text-stone-950',
+    glowColor: 'shadow-amber-500/25',
+    title: 'Nutritious Satvik Diet',
     titleHi: 'Nutritious Satvik Diet',
     titleEn: 'Nutritious Satvik Diet',
-    desc: '3-times freshly prepared digestible satvik meals tailored for elderly health.',
+    desc: '3-times freshly prepared digestible satvik meals tailored for elderly health and digestion.',
     link: '/services',
     tag: 'Nutrition',
+    tagBg: 'bg-amber-100 text-amber-950 border-amber-300',
   },
   {
     id: 'health',
-    iconColor: '#0284c7',
-    bgColor: 'bg-sky-50/70',
-    borderColor: 'border-sky-200',
-    hoverBorder: 'hover:border-sky-500',
-    iconBg: 'bg-sky-600',
+    icon: FaHeartPulse,
+    gradient: 'from-amber-600 to-yellow-500',
+    iconBg: 'bg-gradient-to-br from-amber-600 to-yellow-500 text-stone-950',
+    glowColor: 'shadow-amber-600/25',
+    title: '24/7 Healthcare & Nursing',
     titleHi: '24/7 Healthcare & Nursing',
     titleEn: '24/7 Healthcare & Nursing',
     desc: 'Daily vitals monitoring, regular physician visits, free medicines & ambulance on standby.',
     link: '/services',
     tag: 'Healthcare',
+    tagBg: 'bg-amber-100 text-amber-950 border-amber-300',
   },
   {
     id: 'mental',
-    iconColor: '#7c3aed',
-    bgColor: 'bg-purple-50/70',
-    borderColor: 'border-purple-200',
-    hoverBorder: 'hover:border-purple-500',
-    iconBg: 'bg-purple-600',
+    icon: FaSpa,
+    gradient: 'from-yellow-500 to-amber-500',
+    iconBg: 'bg-gradient-to-br from-yellow-500 to-amber-500 text-stone-950',
+    glowColor: 'shadow-yellow-500/25',
+    title: 'Yoga, Satsang & Wellbeing',
     titleHi: 'Yoga, Satsang & Wellbeing',
     titleEn: 'Yoga, Satsang & Wellbeing',
     desc: 'Morning light yoga, devotional kirtan, spiritual satsang & library for peace of mind.',
     link: '/who-we-are',
     tag: 'Wellness',
+    tagBg: 'bg-amber-100 text-amber-950 border-amber-300',
   },
   {
     id: 'dignity',
-    iconColor: '#059669',
-    bgColor: 'bg-teal-50/70',
-    borderColor: 'border-teal-200',
-    hoverBorder: 'hover:border-teal-500',
-    iconBg: 'bg-gradient-to-r from-emerald-600 to-teal-500',
+    icon: FaHandHoldingHeart,
+    gradient: 'from-amber-500 to-yellow-500',
+    iconBg: 'bg-gradient-to-br from-amber-500 to-yellow-500 text-stone-950',
+    glowColor: 'shadow-amber-500/25',
+    title: 'Dignity & Family Warmth',
     titleHi: 'Dignity & Family Warmth',
     titleEn: 'Dignity & Family Warmth',
     desc: 'Embracing every elder as a revered family member with loving celebration of festivals.',
     link: '/donation',
     tag: 'Family Love',
+    tagBg: 'bg-amber-100 text-amber-950 border-amber-300',
   },
 ];
 
@@ -296,22 +309,9 @@ export default function HomeClient() {
         { name: 'Shri Amit Patel', role: 'Coordinator & Volunteer Head', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300' }
       ];
 
-  // YouTube Videos list
-  const ytVideos = settings?.youtubeVideos && settings.youtubeVideos.length > 0
-    ? settings.youtubeVideos
-    : [
-      {
-        title: 'Apna Parivar Vriddh Aashram - Overview & Resident Experiences',
-        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-      },
-      {
-        title: 'Free Health Camp & Community Bhoj Seva at Jabalpur Aashram',
-        url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-      }
-    ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50/50 text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#fffdfa] text-slate-800 font-sans selection:bg-amber-500 selection:text-white">
 
       {/* ================= 1. BANNERS (HERO CAROUSEL) ================= */}
       <section className="relative">
@@ -320,83 +320,108 @@ export default function HomeClient() {
 
       {/* ================= 1.5 FIVE PILLARS FEATURE BAR (MATCHING BANNER.JPG) ================= */}
       <section className="relative -mt-6 sm:-mt-10 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-card-subtle border border-slate-200/80 p-4 sm:p-5 lg:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-            {BANNER_FIVE_PILLARS.map((pillar) => (
-              <Link
-                key={pillar.id}
-                href={pillar.link}
-                className={`p-3.5 sm:p-4 rounded-xl border transition-all duration-300 ${pillar.bgColor} ${pillar.borderColor} ${pillar.hoverBorder} hover:shadow-card-hover group flex flex-col justify-between`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span
-                      className="w-9 h-9 rounded-lg text-white flex items-center justify-center font-bold shadow-xs group-hover:scale-105 transition-transform duration-300"
-                      style={{ backgroundColor: pillar.iconColor }}
-                    >
-                      <FiHeart className="w-4 h-4 fill-white" />
-                    </span>
-                    <span
-                      className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full text-white"
-                      style={{ backgroundColor: pillar.iconColor }}
-                    >
-                      {pillar.tag}
-                    </span>
+        <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-xl shadow-amber-950/8 border-2 border-amber-300/80 p-4 sm:p-5 lg:p-6 overflow-hidden ring-1 ring-amber-400/20">
+          {/* Top glowing ambient accent */}
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+
+          {/* Five Pillars Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+            {BANNER_FIVE_PILLARS.map((pillar) => {
+              const IconComponent = pillar.icon;
+              return (
+                <Link
+                  key={pillar.id}
+                  href={pillar.link}
+                  className="group relative bg-white hover:bg-gradient-to-b hover:from-white hover:to-amber-50/40 rounded-2xl p-4 sm:p-4.5 border border-amber-200/90 hover:border-amber-400 shadow-xs hover:shadow-xl hover:shadow-amber-500/15 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden"
+                >
+                  {/* Decorative corner glow */}
+                  <div className="pointer-events-none absolute -right-8 -top-8 w-24 h-24 bg-gradient-to-br from-amber-400/10 via-yellow-300/10 to-transparent rounded-full blur-xl group-hover:scale-150 transition-transform duration-500" />
+
+                  <div className="relative z-10">
+                    {/* Top Bar with Unique Icon and Tag */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span
+                        className={`w-11 h-11 rounded-2xl ${pillar.iconBg} flex items-center justify-center shadow-md shadow-amber-950/10 ring-2 ring-white/90 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0`}
+                      >
+                        <IconComponent className="w-5 h-5 text-stone-950" />
+                      </span>
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border shadow-2xs ${pillar.tagBg}`}
+                      >
+                        {pillar.tag}
+                      </span>
+                    </div>
+
+                    <h3 className="font-black text-stone-900 group-hover:text-amber-800 text-xs sm:text-sm leading-snug tracking-tight transition-colors">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-[11px] text-stone-600 mt-1.5 leading-relaxed line-clamp-2 font-medium">
+                      {pillar.desc}
+                    </p>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug group-hover:text-emerald-700">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-[11px] text-slate-600 mt-1 line-clamp-2 leading-relaxed">
-                    {pillar.desc}
-                  </p>
-                </div>
-
-                <div className="pt-2.5 mt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px] font-semibold">
-                  <span className="text-emerald-700 group-hover:underline">Learn More</span>
-                  <FiArrowRight className="w-3.5 h-3.5 text-emerald-600 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
-            ))}
+                  {/* Action link with animated pill button */}
+                  <div className="relative z-10 pt-3 mt-3 border-t border-amber-100 group-hover:border-amber-200/80 flex items-center justify-between text-[11px] font-bold transition-colors">
+                    <span className="text-amber-900 group-hover:text-amber-950 group-hover:underline">Learn More</span>
+                    <span className="w-5 h-5 rounded-full bg-amber-100/80 group-hover:bg-amber-500 group-hover:text-stone-950 text-amber-800 flex items-center justify-center transition-all duration-300 shadow-2xs group-hover:translate-x-0.5">
+                      <FiArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
 
           {/* Quick Seva Instant Contribution Bar */}
-          <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col lg:flex-row items-center justify-between gap-3.5">
-            <div className="flex items-center gap-3 text-left">
-              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black shadow-xs shrink-0">
-                <FiHeart className="w-4 h-4 fill-white" />
+          <div className="mt-5 pt-4 border-t border-amber-200/80 flex flex-col xl:flex-row items-center justify-between gap-4 bg-gradient-to-r from-amber-500/10 via-yellow-500/15 to-amber-500/10 rounded-2xl p-4 sm:p-4.5 border border-amber-300/70 shadow-inner">
+            <div className="flex items-center gap-3.5 text-left w-full xl:w-auto">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-stone-950 flex items-center justify-center shadow-md shadow-amber-500/30 ring-2 ring-white shrink-0">
+                <FaHandHoldingHeart className="w-5 h-5 text-stone-950" />
               </div>
               <div>
-                <span className="text-xs sm:text-sm font-bold text-slate-900 block">
-                  Quick Seva Support • 1-Click Contribution (80G Tax Exemption)
-                </span>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs sm:text-sm font-black text-stone-950 tracking-tight">
+                    Quick Seva Support • 1-Click Contribution
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">
+                    <FiShield className="w-3 h-3 text-emerald-700" />
+                    <span>80G Tax Exempt</span>
+                  </span>
+                </div>
+                <p className="text-[11px] text-stone-600 font-medium mt-0.5">
                   Support 1 day meals, essential medicines, or shelter for our resident elders
-                </span>
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="flex flex-wrap items-center justify-start xl:justify-end gap-2 w-full xl:w-auto">
               {[
-                { amt: 500, label: '₹500 Breakfast' },
-                { amt: 1100, label: '₹1,100 Medicines' },
-                { amt: 2100, label: '₹2,100 Nutritious Meals' },
-                { amt: 5100, label: '₹5,100 Tithi Bhoj' },
-                { amt: 11000, label: '₹11,000 Complete Shelter' },
-              ].map((item) => (
-                <Link
-                  key={item.amt}
-                  href={`/donation?amount=${item.amt}`}
-                  className="px-3 py-1.5 rounded-full border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 text-xs font-semibold transition hover:scale-105 active:scale-95"
-                >
-                  {item.label}
-                </Link>
-              ))}
+                { amt: 500, label: 'Breakfast', icon: FaMugSaucer },
+                { amt: 1100, label: 'Medicines', icon: FaPills },
+                { amt: 2100, label: 'Nutritious Meals', icon: FaBowlFood },
+                { amt: 5100, label: 'Tithi Bhoj', icon: FaSpa },
+                { amt: 11000, label: 'Complete Shelter', icon: FaHouseChimney },
+              ].map((item) => {
+                const ItemIcon = item.icon;
+                return (
+                  <Link
+                    key={item.amt}
+                    href={`/donation?amount=${item.amt}`}
+                    className="px-3.5 py-2 rounded-xl border border-amber-300 hover:border-amber-500 bg-white hover:bg-amber-100/80 text-stone-900 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 shadow-2xs hover:shadow-md flex items-center gap-1.5 group cursor-pointer"
+                  >
+                    <ItemIcon className="w-3.5 h-3.5 text-amber-700 group-hover:text-stone-950 transition-colors" />
+                    <span className="font-black text-stone-950">₹{item.amt.toLocaleString('en-IN')}</span>
+                    <span className="text-stone-600 text-[11px] font-medium hidden sm:inline">{item.label}</span>
+                  </Link>
+                );
+              })}
+
               <Link
                 href="/donation"
-                className="px-4 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition hover:scale-105"
+                className="px-4.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-yellow-500 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-1.5 shrink-0 cursor-pointer"
               >
-                Custom Amount →
+                <span>Custom Amount</span>
+                <FiArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
@@ -404,28 +429,28 @@ export default function HomeClient() {
       </section>
 
       {/* ================= 2. ABOUT US SECTION ================= */}
-      <section id="about-section" className="py-12 sm:py-16 bg-white border-b border-slate-200/80">
+      <section id="about-section" className="py-12 sm:py-16 bg-white border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
             {/* Left Column: Visual Story Card & Seal */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="relative rounded-2xl overflow-hidden shadow-card-subtle border border-slate-200 bg-slate-100 group">
+              <div className="relative rounded-2xl overflow-hidden shadow-card-subtle border border-amber-200 bg-slate-100 group">
                 <img
                   src="/banner.jpg"
                   alt="Apna Parivar Vriddh Aashram Foundation"
                   className="w-full h-72 sm:h-88 object-cover group-hover:scale-103 transition-transform duration-700"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent flex flex-col justify-end p-5 text-white">
-                  <span className="inline-block px-3 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold uppercase tracking-wider w-max mb-2 shadow-xs">
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/30 to-transparent flex flex-col justify-end p-5 text-white">
+                  <span className="inline-block px-3 py-1 rounded-full bg-amber-600 text-white text-[11px] font-bold uppercase tracking-wider w-max mb-2 shadow-xs">
                     Elder Service is Divine Service
                   </span>
                   <h3 className="text-xl sm:text-2xl font-bold leading-tight text-white">
                     Apna Parivar Vriddh Aashram
                   </h3>
-                  <p className="text-xs text-slate-200 font-medium mt-1">
+                  <p className="text-xs text-amber-200 font-medium mt-1">
                     Where Every Senior is Family • Adhartal, Jabalpur (M.P.)
                   </p>
                 </div>
@@ -433,17 +458,17 @@ export default function HomeClient() {
 
               {/* Impact Metric Cards under photo */}
               <div className="grid grid-cols-3 gap-2.5 text-center">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                  <div className="text-xl sm:text-2xl font-black text-slate-900">200+</div>
-                  <div className="text-[10px] font-bold text-slate-600 mt-0.5">Elders Supported</div>
+                <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-300">
+                  <div className="text-xl sm:text-2xl font-black text-amber-950">200+</div>
+                  <div className="text-[10px] font-bold text-stone-600 mt-0.5">Elders Supported</div>
                 </div>
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                  <div className="text-xl sm:text-2xl font-black text-emerald-700">100%</div>
-                  <div className="text-[10px] font-bold text-slate-600 mt-0.5">80G Tax Exemption</div>
+                <div className="p-3 rounded-xl bg-amber-100/70 border border-amber-300">
+                  <div className="text-xl sm:text-2xl font-black text-amber-800">100%</div>
+                  <div className="text-[10px] font-bold text-stone-600 mt-0.5">80G Tax Exemption</div>
                 </div>
-                <div className="p-3 rounded-xl bg-teal-50 border border-teal-200">
-                  <div className="text-xl sm:text-2xl font-black text-teal-700">24x7</div>
-                  <div className="text-[10px] font-bold text-slate-600 mt-0.5">Healthcare Care</div>
+                <div className="p-3 rounded-xl bg-yellow-50/80 border border-yellow-300">
+                  <div className="text-xl sm:text-2xl font-black text-amber-900">24x7</div>
+                  <div className="text-[10px] font-bold text-stone-600 mt-0.5">Healthcare Care</div>
                 </div>
               </div>
             </div>
@@ -452,13 +477,13 @@ export default function HomeClient() {
             <div className="lg:col-span-7 space-y-5">
 
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-2.5">
-                  <FiShield className="w-3.5 h-3.5 text-emerald-600" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold mb-2.5 shadow-2xs">
+                  <FiShield className="w-3.5 h-3.5 text-amber-700" />
                   <span>12A & 80G Certified Charitable Trust (Jabalpur, M.P.)</span>
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                  Providing <span className="text-emerald-700">Dignity, Care & Family</span> to Every Senior Citizen
+                  Providing <span className="text-amber-700">Dignity, Care & Family</span> to Every Senior Citizen
                 </h2>
 
                 <p className="text-xs sm:text-sm text-slate-600 mt-2.5 font-normal leading-relaxed">
@@ -469,27 +494,27 @@ export default function HomeClient() {
 
               {/* Mission & Vision Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-300 transition">
+                <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200 hover:border-amber-400 transition shadow-2xs">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center font-bold shadow-xs">
                       <FiHeart className="w-3.5 h-3.5" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900">Our Mission</h4>
+                    <h4 className="text-xs sm:text-sm font-bold text-amber-950">Our Mission</h4>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
                     {settings?.aboutMissionSummary ||
                       'Providing destitute senior citizens with safe shelter, nutritious satvik meals, 24/7 healthcare access, and the warmth and respect of a caring family.'}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-300 transition">
+                <div className="p-4 rounded-xl bg-amber-50/40 border border-amber-200 hover:border-amber-400 transition shadow-2xs">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-7 h-7 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-700 to-amber-600 text-white flex items-center justify-center font-bold shadow-xs">
                       <FiShield className="w-3.5 h-3.5" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900">Our Vision</h4>
+                    <h4 className="text-xs sm:text-sm font-bold text-amber-950">Our Vision</h4>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  <p className="text-xs text-stone-600 leading-relaxed font-normal">
                     {settings?.aboutVisionSummary ||
                       'A society where no elderly individual faces helplessness or isolation in their twilight years, living instead with dignity, joy, and peace.'}
                   </p>
@@ -497,27 +522,27 @@ export default function HomeClient() {
               </div>
 
               {/* Statutory Compliance Bar */}
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                <div className="text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <FiAward className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200 text-xs">
+                <div className="text-[11px] font-bold text-amber-950 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <FiAward className="w-3.5 h-3.5 text-amber-700" />
                   <span>Statutory Accreditations & Tax Exemption</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
-                    <span className="text-[10px] text-slate-500 font-medium block">80G Approval:</span>
-                    <strong className="text-slate-900 font-mono text-[11px]">{settings?.exemption80G || 'CIT(EXEMP)/80G'}</strong>
+                    <span className="text-[10px] text-stone-500 font-medium block">80G Approval:</span>
+                    <strong className="text-stone-900 font-mono text-[11px]">{settings?.exemption80G || 'CIT(EXEMP)/80G'}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-medium block">12A Reg No:</span>
-                    <strong className="text-slate-900 font-mono text-[11px]">{settings?.exemption12A || 'CIT(EXEMP)/12A'}</strong>
+                    <span className="text-[10px] text-stone-500 font-medium block">12A Reg No:</span>
+                    <strong className="text-stone-900 font-mono text-[11px]">{settings?.exemption12A || 'CIT(EXEMP)/12A'}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-medium block">NITI Aayog:</span>
-                    <strong className="text-slate-900 font-mono text-[11px]">{settings?.nitiAayogDarpanId || 'MP/2022/0319482'}</strong>
+                    <span className="text-[10px] text-stone-500 font-medium block">NITI Aayog:</span>
+                    <strong className="text-stone-900 font-mono text-[11px]">{settings?.nitiAayogDarpanId || 'MP/2022/0319482'}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-500 font-medium block">CSR-1 Reg:</span>
-                    <strong className="text-slate-900 font-mono text-[11px]">{settings?.csr1No || 'CSR00049281'}</strong>
+                    <span className="text-[10px] text-stone-500 font-medium block">CSR-1 Reg:</span>
+                    <strong className="text-stone-900 font-mono text-[11px]">{settings?.csr1No || 'CSR00049281'}</strong>
                   </div>
                 </div>
               </div>
@@ -526,22 +551,22 @@ export default function HomeClient() {
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition transform hover:scale-102"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition transform hover:scale-102"
                 >
                   <span>Read Full Story</span>
-                  <FiArrowRight className="w-3.5 h-3.5" />
+                  <FiArrowRight className="w-3.5 h-3.5 text-stone-950" />
                 </Link>
 
                 <Link
                   href="/who-we-are"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs transition"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-amber-50/60 text-stone-800 border border-amber-300 font-bold text-xs transition"
                 >
                   <span>How We Work</span>
                 </Link>
 
                 <Link
                   href="/certificates"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:underline px-2 py-2 ml-auto"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline px-2 py-2 ml-auto"
                 >
                   <FiFileText className="w-3.5 h-3.5" />
                   <span>View Certificates</span>
@@ -632,7 +657,7 @@ export default function HomeClient() {
                       <div className="space-y-1">
                         <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-yellow-400 via-amber-500 to-amber-600 transition-all duration-500"
+                            className="h-full rounded-full bg-linear-to-r from-yellow-400 via-amber-500 to-amber-600 transition-all duration-500"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -647,7 +672,7 @@ export default function HomeClient() {
                   <div className="p-4 pt-0">
                     <Link
                       href={`/donation?campaign=${encodeURIComponent(title)}`}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition group-hover:scale-102"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition group-hover:scale-102"
                     >
                       <FiHeart className="w-3.5 h-3.5 fill-stone-950" />
                       <span>दान करें (80G कर छूट)</span>
@@ -715,7 +740,7 @@ export default function HomeClient() {
                       <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
 
                       <div className="absolute top-3 left-3">
-                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-stone-950 bg-gradient-to-tr from-amber-500 to-yellow-400 shadow-sm">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-stone-950 bg-linear-to-tr from-amber-500 to-yellow-400 shadow-sm">
                           {evt.category || 'स्वास्थ्य शिविर'}
                         </span>
                       </div>
@@ -767,26 +792,24 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ================= 6. SERVICES SECTION (360° समग्र वृद्धजन सेवाएं) ================= */}
-      <section id="services-section" className="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
+      {/* ================= 6. SERVICES SECTION ================= */}
+      <section id="services-section" className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#15803d] text-xs font-bold mb-2">
-              <FiAward className="w-3.5 h-3.5" />
-              <span>आश्रम की 360° समग्र सेवाएं</span>
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-2">
+              <FiAward className="w-3.5 h-3.5 text-emerald-600" />
+              <span>360° Comprehensive Elder Care</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              हर बुजुर्ग को मिले <span className="text-amber-950">सम्मान</span>,{' '}
-              <span className="text-amber-700">स्वास्थ्य</span> एवं{' '}
-              <span className="text-amber-600">अपनापन</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Ensuring Every Elder Enjoys <span className="text-emerald-700">Dignity, Health &amp; Belonging</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
-              हम केवल आश्रय नहीं देते, बल्कि जीवन के उत्तरार्ध को गरिमा, आनंद और शांति से परिपूर्ण बनाते हैं।
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 font-normal">
+              We provide more than shelter—we enrich the golden years with comprehensive care, nutritious meals, and family love.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {(services && services.length > 0 ? services.slice(0, 6) : BANNER_FIVE_PILLARS).map((srv, idx) => {
               const sId = srv._id || srv.id || idx;
               const title = srv.title || srv.titleHi || 'Elder Care Service';
@@ -797,10 +820,10 @@ export default function HomeClient() {
               return (
                 <div
                   key={sId}
-                  className="bg-white rounded-3xl border border-slate-200 hover:border-amber-400 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                  className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-400 overflow-hidden shadow-xs hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="relative h-48 overflow-hidden bg-slate-100">
+                    <div className="relative h-44 overflow-hidden bg-slate-100">
                       <img
                         src={imgUrl}
                         alt={title}
@@ -810,36 +833,36 @@ export default function HomeClient() {
                           e.currentTarget.src = 'https://images.unsplash.com/photo-1516307365426-bea591f05011?w=800';
                         }}
                       />
-                      <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
                       <div className="absolute bottom-3 left-3 right-3 text-white">
-                        <h4 className="font-black text-sm text-white line-clamp-1">
+                        <h4 className="font-bold text-sm text-white line-clamp-1">
                           {title}
                         </h4>
                       </div>
                     </div>
 
-                    <div className="p-5 space-y-2">
+                    <div className="p-4 space-y-2">
                       <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
                         {desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-5 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
+                  <div className="p-4 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
                     <Link
                       href={`/services/${sId}`}
-                      className="text-xs font-bold text-amber-800 hover:text-amber-600 flex items-center gap-1 group-hover:underline"
+                      className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group-hover:underline"
                     >
-                      <span>सुविधाएं जानें</span>
-                      <FiChevronRight className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Explore Facilities</span>
+                      <FiChevronRight className="w-3.5 h-3.5 text-emerald-600" />
                     </Link>
 
                     <Link
                       href="/donation"
-                      className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-[11px] shadow-sm transition"
+                      className="px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-[11px] shadow-xs transition"
                     >
-                      सेवा स्पॉन्सर करें
+                      Sponsor Care
                     </Link>
                   </div>
                 </div>
@@ -847,51 +870,51 @@ export default function HomeClient() {
             })}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-8">
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-lg shadow-amber-500/25 transition transform hover:scale-105"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition transform hover:scale-105"
             >
-              <span>सभी 5 मुख्य स्तंभ एवं सुविधाएं देखें</span>
-              <FiArrowRight className="w-4 h-4 text-stone-950" />
+              <span>Explore All 5 Core Pillars &amp; Facilities</span>
+              <FiArrowRight className="w-4 h-4 text-white" />
             </Link>
           </div>
 
         </div>
       </section>
 
-      {/* ================= 7. PHOTO GALLERY (छायाचित्र दीर्घा - मुस्कुराते चेहरे) ================= */}
-      <section id="gallery-section" className="py-16 sm:py-20 bg-white border-b border-slate-200">
+      {/* ================= 7. PHOTO GALLERY ================= */}
+      <section id="gallery-section" className="py-12 sm:py-16 bg-white border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="text-center max-w-3xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
               <FiEye className="w-3.5 h-3.5 text-amber-700" />
-              <span>छायाचित्र दीर्घा • आश्रम की झलकियां</span>
+              <span>Photo Gallery • Aashram Moments</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              मुस्कुराते चेहरे... <span className="text-amber-700">यही है हमारी पहचान</span>
+              Smiling Faces... <span className="text-amber-700">Our Greatest Identity</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
-              हमारे आश्रम में वृद्ध माता-पिता के खिलखिलाते चेहरे, स्वास्थ्य शिविर एवं सात्विक भोजन सेवा के कुछ पावन क्षण।
+              Heartwarming glimpses of everyday aashram life, complimentary medical checkups, and satvik meal service.
             </p>
 
             {/* Filter Pills */}
             <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
               {[
-                { id: 'all', label: 'सभी तस्वीरें' },
-                { id: 'campus', label: 'आश्रम जीवन' },
-                { id: 'food', label: 'सात्विक भोजन' },
-                { id: 'health', label: 'स्वास्थ्य शिविर' },
-                { id: 'satsang', label: 'सत्संग व उत्सव' }
+                { id: 'all', label: 'All Photos' },
+                { id: 'campus', label: 'Aashram Life' },
+                { id: 'food', label: 'Satvik Meals' },
+                { id: 'health', label: 'Health Camps' },
+                { id: 'satsang', label: 'Satsang & Festivals' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
                   onClick={() => setGalleryFilter(tab.id)}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${galleryFilter === tab.id
-                      ? 'bg-amber-600 text-stone-950 font-black shadow-md'
-                      : 'bg-amber-50 hover:bg-amber-100/80 text-stone-800'
+                    ? 'bg-amber-600 text-stone-950 font-black shadow-md'
+                    : 'bg-amber-50 hover:bg-amber-100/80 text-stone-800'
                     }`}
                 >
                   {tab.label}
@@ -911,7 +934,7 @@ export default function HomeClient() {
                 <div
                   key={idx}
                   onClick={() => setSelectedPhoto(pUrl)}
-                  className="group relative aspect-4/3 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 bg-slate-100 cursor-pointer"
+                  className="group relative aspect-4/3 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-amber-200 bg-slate-100 cursor-pointer"
                 >
                   <img
                     src={pUrl}
@@ -941,9 +964,9 @@ export default function HomeClient() {
           <div className="text-center mt-8">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition"
             >
-              <span>संपूर्ण फोटो गैलरी देखें</span>
+              <span>View Full Photo Gallery</span>
               <FiArrowRight className="w-4 h-4 text-stone-950" />
             </Link>
           </div>
@@ -974,36 +997,36 @@ export default function HomeClient() {
         </div>
       )}
 
-      {/* ================= 8. OUR MEMBERS & DEDICATED TEAM (हमारे सम्मानित सदस्य) ================= */}
-      <section id="members-section" className="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
+      {/* ================= 8. OUR MEMBERS & DEDICATED TEAM ================= */}
+      <section id="members-section" className="py-12 sm:py-16 bg-slate-50 border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
                 <FiUsers className="w-3.5 h-3.5 text-amber-700" />
-                <span>समर्पित सेवा परिवार</span>
+                <span>Dedicated Care Family</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                हमारे सम्मानित सदस्य • <span className="text-amber-700">न्यासी एवं सेवा दल</span>
+                Our Honored Members • <span className="text-amber-700">Trustees &amp; Service Team</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
-                निःस्वार्थ सेवा में समर्पित न्यासी, मानद चिकित्सक एवं पंजीकृत आजीवन सदस्य।
+                Selfless trustees, honorary doctors, and registered lifetime members dedicated to elder care.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               <Link
                 href="/apply-member"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition"
               >
-                <span>सदस्य बनें (ID कार्ड)</span>
+                <span>Become a Member (ID Card)</span>
               </Link>
               <Link
                 href="/team-members"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-amber-50/60 text-stone-800 border border-amber-300 text-xs font-bold transition"
               >
-                <span>पूरी टीम देखें</span>
+                <span>View Full Team</span>
               </Link>
             </div>
           </div>
@@ -1011,13 +1034,13 @@ export default function HomeClient() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {activeMembersList.map((mem, idx) => {
               const mName = mem.name || 'Member Official';
-              const mRole = mem.role || mem.designation || 'पंजीकृत सदस्य';
+              const mRole = mem.role || mem.designation || 'Registered Member';
               const mImg = getContentImageUrl(mem.image || mem.photoUrl || mem.profilePicture) || '/logo.jpg';
 
               return (
                 <div
                   key={idx}
-                  className="bg-white rounded-3xl border border-slate-200 hover:border-amber-400 p-5 text-center shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-between group"
+                  className="bg-white rounded-3xl border border-amber-200 hover:border-amber-400 p-5 text-center shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-between group"
                 >
                   <div className="flex flex-col items-center">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-3 border-amber-400/80 p-1 bg-white shadow-md mb-4 overflow-hidden group-hover:scale-105 transition-transform">
@@ -1052,20 +1075,20 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ================= 9. REPORTS & TRANSPARENCY (वार्षिक प्रतिवेदन एवं पारदर्शिता) ================= */}
-      <section id="reports-section" className="py-16 sm:py-20 bg-white border-b border-slate-200 scroll-mt-24">
+      {/* ================= 9. REPORTS & TRANSPARENCY ================= */}
+      <section id="reports-section" className="py-12 sm:py-16 bg-white border-b border-amber-100 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#15803d] text-xs font-bold mb-2">
               <FiShield className="w-3.5 h-3.5 text-emerald-600" />
-              <span>100% वित्तीय शुचिता एवं जवाबदेही</span>
+              <span>100% Financial Integrity &amp; Accountability</span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
-              पारदर्शिता एवं <span className="text-amber-700">वार्षिक प्रतिवेदन</span> (Reports)
+              Transparency &amp; <span className="text-amber-700">Annual Reports</span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
-              आपके द्वारा दिए गए दान का प्रत्येक रुपया केवल और केवल वृद्धजनों के भोजन, दवाइयों और आवास पर व्यय होता है।
+              Every single rupee contributed goes directly to the healthcare, meals, and dignity of our senior residents.
             </p>
           </div>
 
@@ -1076,81 +1099,81 @@ export default function HomeClient() {
               <div className="p-6 rounded-3xl bg-amber-50/40 border border-amber-200 space-y-4">
                 <h4 className="text-base font-black text-slate-900 flex items-center gap-2">
                   <FiAward className="w-5 h-5 text-amber-700" />
-                  <span>वैधानिक ऑडिट एवं शासन मान्यता</span>
+                  <span>Statutory Audits &amp; Government Recognition</span>
                 </h4>
                 <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                  फाउंडेशन का प्रत्येक वित्तीय वर्ष का आय-व्यय विवरण चार्टर्ड एकाउंटेंट द्वारा विधिवत ऑडिट किया जाता है और आयकर विभाग में फॉर्म 10BD और ITR दाखिल किया जाता है।
+                  The foundation&apos;s finances for every fiscal year are meticulously audited by Chartered Accountants and filed with the Income Tax Department via Form 10BD and ITR.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
                   <div className="p-3 bg-white rounded-xl border border-amber-200">
-                    <span className="text-[10px] text-stone-500 font-bold block">आयकर छूट धारा 80G:</span>
+                    <span className="text-[10px] text-stone-500 font-bold block">Section 80G Tax Exemption:</span>
                     <strong className="text-stone-900 font-mono">{settings?.exemption80G || 'CIT(EXEMP)/80G/2022-23/G-912'}</strong>
-                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ दानदाताओं को 50% कर छूट</span>
+                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ 50% Tax Deduction for Donors</span>
                   </div>
 
                   <div className="p-3 bg-white rounded-xl border border-amber-200">
-                    <span className="text-[10px] text-stone-500 font-bold block">ट्रस्ट पंजीयन धारा 12A:</span>
+                    <span className="text-[10px] text-stone-500 font-bold block">Trust Registration Section 12A:</span>
                     <strong className="text-stone-900 font-mono">{settings?.exemption12A || 'CIT(EXEMP)/12A/2022-23/A-884'}</strong>
-                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ स्थायी धर्मार्थ संस्था मान्यता</span>
+                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ Permanent Charitable Status</span>
                   </div>
 
                   <div className="p-3 bg-white rounded-xl border border-amber-200">
-                    <span className="text-[10px] text-stone-500 font-bold block">नीति आयोग दर्पण पोर्टल:</span>
+                    <span className="text-[10px] text-stone-500 font-bold block">NITI Aayog Darpan Portal:</span>
                     <strong className="text-stone-900 font-mono">{settings?.nitiAayogDarpanId || 'MP/2022/0319482'}</strong>
-                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ भारत सरकार द्वारा सत्यापित NGO</span>
+                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ Verified by Government of India</span>
                   </div>
 
                   <div className="p-3 bg-white rounded-xl border border-amber-200">
-                    <span className="text-[10px] text-stone-500 font-bold block">कॉर्पोरेट CSR-1 संख्या:</span>
+                    <span className="text-[10px] text-stone-500 font-bold block">Corporate CSR-1 Registration:</span>
                     <strong className="text-stone-900 font-mono">{settings?.csr1No || 'CSR00049281'}</strong>
-                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ कंपनियों हेतु CSR अनुदान योग्य</span>
+                    <span className="text-[10px] text-emerald-600 block mt-0.5">✓ Eligible for Corporate CSR Grants</span>
                   </div>
                 </div>
 
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <Link
                     href="/certificates"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black shadow-md shadow-amber-500/25 transition"
                   >
                     <FiDownload className="w-3.5 h-3.5 text-stone-950" />
-                    <span>सभी वैधानिक प्रमाण पत्र डाउनलोड करें</span>
+                    <span>Download All Statutory Certificates</span>
                   </Link>
                 </div>
               </div>
             </div>
 
             {/* Direct Bank & UPI Support Box (Col 5) */}
-            <div className="lg:col-span-5 bg-gradient-to-b from-amber-50/80 via-white to-amber-50/30 border-2 border-amber-300 rounded-3xl p-6 shadow-sm space-y-4">
+            <div className="lg:col-span-5 bg-linear-to-b from-amber-50/80 via-white to-amber-50/30 border-2 border-amber-300 rounded-3xl p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-amber-200 pb-3">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-amber-700 tracking-wider">पारदर्शी दान</span>
-                  <h4 className="text-sm font-black text-slate-900">अधिकृत बैंक खाता विवरण</h4>
+                  <span className="text-[10px] font-black uppercase text-amber-700 tracking-wider">Transparent Giving</span>
+                  <h4 className="text-sm font-black text-slate-900">Official Bank Account Details</h4>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                  80G कर मुक्त
+                  80G Tax Exempt
                 </span>
               </div>
 
               <div className="space-y-2 text-xs font-medium text-stone-700">
                 <div className="flex justify-between py-1 border-b border-amber-100">
-                  <span className="text-stone-500">खाता धारक:</span>
+                  <span className="text-stone-500">Account Holder:</span>
                   <strong className="text-stone-900 text-right">{settings?.bankDetails?.accountName || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION'}</strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-100">
-                  <span className="text-stone-500">बैंक नाम:</span>
+                  <span className="text-stone-500">Bank Name:</span>
                   <strong className="text-stone-900">{settings?.bankDetails?.bankName || 'HDFC Bank Ltd.'}</strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-100">
-                  <span className="text-stone-500">खाता संख्या:</span>
+                  <span className="text-stone-500">Account Number:</span>
                   <strong className="text-amber-950 font-mono font-black">{settings?.bankDetails?.accountNumber || '50200088995678'}</strong>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-100">
-                  <span className="text-stone-500">IFSC कोड:</span>
+                  <span className="text-stone-500">IFSC Code:</span>
                   <strong className="text-stone-900 font-mono font-bold">{settings?.bankDetails?.ifscCode || 'HDFC0001842'}</strong>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-stone-500">UPI आईडी:</span>
+                  <span className="text-stone-500">UPI ID:</span>
                   <strong className="text-amber-800 font-mono font-bold">{settings?.upiId || 'apnaparivar@okhdfcbank'}</strong>
                 </div>
               </div>
@@ -1158,10 +1181,10 @@ export default function HomeClient() {
               <div className="pt-2">
                 <Link
                   href="/donation"
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/30 transition"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/30 transition"
                 >
                   <FiHeart className="w-4 h-4 fill-stone-950" />
-                  <span>ऑनलाइन दान करें एवं 80G रसीद पाएं</span>
+                  <span>Donate Online &amp; Get 80G Receipt</span>
                 </Link>
               </div>
             </div>
@@ -1171,20 +1194,20 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ================= 10. TESTIMONIALS (अनुभव एवं आशीर्वचन) ================= */}
-      <section id="feedback-section" className="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
+      {/* ================= 10. TESTIMONIALS (Reviews & Blessings) ================= */}
+      <section id="feedback-section" className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
               <FiStar className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-              <span>अनुभव एवं आशीर्वचन</span>
+              <span>Testimonials & Blessings</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              दानदाताओं एवं समाजसेवियों के विचार
+              Voices of Our Donors & Supporters
             </h2>
             <p className="text-xs text-slate-500 mt-1 font-medium">
-              वृद्धजनों की सेवा में सहभागी बंधुओं के वास्तविक विचार एवं आधिकारिक प्रबंधन प्रतिक्रिया
+              Real experiences and reviews from compassionate partners serving our elders
             </p>
           </div>
 
@@ -1203,7 +1226,7 @@ export default function HomeClient() {
                     }}
                   />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-gradient-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-xl">
+                  <div className="w-full h-full rounded-full bg-linear-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-xl">
                     {approvedReviews[reviewIdx]?.name?.charAt(0) || 'U'}
                   </div>
                 )}
@@ -1244,7 +1267,7 @@ export default function HomeClient() {
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-700 italic leading-relaxed px-2">
-                  “{approvedReviews[reviewIdx]?.comment || 'आश्रम में वृद्धजनों की सेवा देखकर मन अत्यंत प्रसन्न हो गया। ईश्वर इस कार्य को निरंतर आगे बढ़ाए।'}”
+                  “{approvedReviews[reviewIdx]?.comment || 'Witnessing the loving care and dignity provided to the elders here fills the heart with pure peace. May this noble mission continue to touch many lives.'}”
                 </p>
 
                 <div>
@@ -1252,16 +1275,16 @@ export default function HomeClient() {
                     {approvedReviews[reviewIdx]?.name || 'Anonymous Donor'}
                   </h4>
                   <span className="inline-block px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold mt-0.5">
-                    {approvedReviews[reviewIdx]?.role || 'संबल दानदाता'}
+                    {approvedReviews[reviewIdx]?.role || 'Dedicated Supporter'}
                   </span>
                 </div>
 
                 {/* Admin Official Reply */}
                 {approvedReviews[reviewIdx]?.adminReply && (
-                  <div className="mt-4 bg-gradient-to-br from-amber-50/80 to-yellow-50/40 p-3.5 rounded-2xl border border-amber-200 text-left space-y-1.5">
+                  <div className="mt-4 bg-linear-to-br from-amber-50/80 to-yellow-50/40 p-3.5 rounded-2xl border border-amber-200 text-left space-y-1.5">
                     <div className="flex items-center gap-1.5 text-xs font-black text-amber-950">
                       <FiShield className="w-3.5 h-3.5 text-amber-700" />
-                      <span>आधिकारिक प्रत्युत्तर: {approvedReviews[reviewIdx]?.repliedBy || 'प्रबंधन डेस्क'}</span>
+                      <span>Official Response: {approvedReviews[reviewIdx]?.repliedBy || 'Management Desk'}</span>
                     </div>
                     <div className="flex items-start gap-2 pl-1">
                       <FiCornerDownRight className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
@@ -1278,7 +1301,7 @@ export default function HomeClient() {
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline"
                   >
                     <FiMessageSquare className="w-3.5 h-3.5" />
-                    <span>अपना अनुभव साझा करें / सभी समीक्षाएं देखें</span>
+                    <span>Share Your Experience / View All Reviews</span>
                   </Link>
                 </div>
 
@@ -1289,49 +1312,8 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ================= 11. YOUTUBE VIDEO SHOWCASE ================= */}
-      {/* <section id="youtube-videos" className="py-16 sm:py-20 bg-white border-b border-slate-200 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
-              <FaYoutube className="w-4 h-4 text-red-600" />
-              <span>वीडियो दीर्घा</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              आश्रम की वास्तविक झलकियां एवं वृद्धजनों के अनुभव
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {ytVideos.map((vid, idx) => (
-              <div
-                key={idx}
-                className="bg-slate-950 rounded-2xl overflow-hidden shadow-lg border border-amber-300/40 flex flex-col"
-              >
-                <div className="relative aspect-video w-full bg-black">
-                  <iframe
-                    src={getYoutubeEmbedUrl(vid.url || vid.videoUrl)}
-                    title={vid.title || `Video ${idx + 1}`}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-                {vid.title && (
-                  <div className="p-3 bg-white border-t border-amber-100">
-                    <p className="text-xs font-bold text-slate-800 line-clamp-1">{vid.title}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section> */}
-
-      {/* ================= 12. LOCATION & MAP (आश्रम का पता एवं संपर्क) ================= */}
-      <section id="locate-us" className="py-16 sm:py-20 bg-slate-50 scroll-mt-24">
+      {/* ================= 12. LOCATION & MAP (Aashram Location & Contact) ================= */}
+      <section id="locate-us" className="py-12 sm:py-16 bg-slate-50 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -1340,11 +1322,11 @@ export default function HomeClient() {
             <div className="lg:col-span-5 space-y-5 bg-white p-6 sm:p-8 rounded-3xl border border-amber-200 shadow-sm">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-amber-950 text-xs font-bold shadow-2xs">
                 <FiMapPin className="w-3.5 h-3.5 text-amber-700" />
-                <span>आश्रम भ्रमण एवं संपर्क</span>
+                <span>Visit & Connect With Us</span>
               </div>
 
               <h3 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
-                आइए, वृद्धजनों से मिलें और उनका आशीर्वाद लें
+                Visit Our Elders & Receive Their Blessings
               </h3>
 
               <div className="space-y-3.5 text-xs text-slate-700">
@@ -1353,7 +1335,7 @@ export default function HomeClient() {
                     <FiMapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="block text-slate-900 text-xs">आश्रम का मुख्य पता:</strong>
+                    <strong className="block text-slate-900 text-xs">Main Aashram Address:</strong>
                     <span className="text-slate-600 leading-relaxed">
                       {settings?.address || 'Behind Adhartal Railway Station, Adhartal, Jabalpur, Madhya Pradesh - 482001'}
                     </span>
@@ -1365,7 +1347,7 @@ export default function HomeClient() {
                     <FiPhone className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="block text-slate-900 text-xs">24x7 वृद्धजन सेवा हेल्पलाइन:</strong>
+                    <strong className="block text-slate-900 text-xs">24x7 Elder Helpline:</strong>
                     <a
                       href={`tel:${settings?.phone || '+918959055269'}`}
                       className="text-amber-950 font-black hover:underline"
@@ -1376,12 +1358,12 @@ export default function HomeClient() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0 mt-0.5">
                     <FiClock className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="block text-slate-900 text-xs">भ्रमण समय (Visiting Hours):</strong>
-                    <span className="text-slate-600">प्रातः 9:00 बजे से सायं 6:00 बजे तक (सप्ताह के सातों दिन)</span>
+                    <strong className="block text-slate-900 text-xs">Visiting Hours:</strong>
+                    <span className="text-slate-600">9:00 AM to 6:00 PM (All 7 Days Open)</span>
                   </div>
                 </div>
 
@@ -1390,7 +1372,7 @@ export default function HomeClient() {
                     <FiMail className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="block text-slate-900 text-xs">आधिकारिक ईमेल:</strong>
+                    <strong className="block text-slate-900 text-xs">Official Email:</strong>
                     <a
                       href={`mailto:${settings?.email || 'info@apnaparivarvriddhaashram.org'}`}
                       className="text-slate-600 hover:text-amber-800 hover:underline"
@@ -1404,10 +1386,10 @@ export default function HomeClient() {
               <div className="pt-2 flex flex-wrap gap-2.5">
                 <a
                   href={`tel:${settings?.phone || '+918959055269'}`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black transition shadow-xs"
+                  className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 text-xs font-black transition shadow-xs"
                 >
                   <FiPhone className="w-3.5 h-3.5" />
-                  <span>सीधे कॉल करें</span>
+                  <span>Call Directly</span>
                 </a>
 
                 <a
@@ -1417,7 +1399,7 @@ export default function HomeClient() {
                   className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs"
                 >
                   <FaWhatsapp className="w-4 h-4" />
-                  <span>व्हाट्सएप</span>
+                  <span>WhatsApp</span>
                 </a>
               </div>
             </div>
@@ -1445,20 +1427,20 @@ export default function HomeClient() {
       </section>
 
       {/* ================= 13. INSPIRING VOLUNTEER & CTA BANNER ================= */}
-      <section className="py-14 bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent pointer-events-none" />
+      <section className="py-12 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-5">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
           <span className="inline-block px-4 py-1 rounded-full bg-stone-950/15 backdrop-blur-md border border-stone-950/20 text-stone-950 text-xs font-black uppercase tracking-wider">
-            आइए, मिलकर बनाएं स्नेह और सम्मान से भरा एक बेहतर कल...
+            Building a Dignified & Loving Tomorrow for Every Elder...
           </span>
 
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight text-stone-950 drop-shadow-xs">
-            आपके सहयोग से महकेगा किसी बुजुर्ग का आशियाना
+            Your Compassion Brings Light to an Elder’s Life
           </h2>
 
           <p className="text-xs sm:text-base text-stone-900 max-w-2xl mx-auto font-medium leading-relaxed">
-            चाहे आप एक माह का राशन दान करें, तिथि भोजन सेवा स्पॉन्सर करें या स्वयंसेवक के रूप में अपना समय दें—आपका हर प्रयास किसी बेसहारा बुजुर्ग के चेहरे पर मुस्कान लाएगा।
+            Whether you sponsor monthly nutrition, celebrate special occasions with a Tithi Bhoj meal, or volunteer your time—every small act of kindness brings warmth and joy to senior lives.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
@@ -1467,7 +1449,7 @@ export default function HomeClient() {
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-stone-950 hover:bg-stone-900 text-amber-300 font-black text-xs sm:text-sm shadow-xl shadow-stone-950/30 transform hover:scale-105 transition-all"
             >
               <FiHeart className="w-4 h-4 fill-amber-300" />
-              <span>दान करें (80G कर छूट रसीद सहित)</span>
+              <span>Donate Now (80G Tax Exemption Included)</span>
             </Link>
 
             <Link
@@ -1475,7 +1457,7 @@ export default function HomeClient() {
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white/80 hover:bg-white text-stone-950 border border-amber-300 font-bold text-xs sm:text-sm backdrop-blur-md transition shadow-md"
             >
               <FiUsers className="w-4 h-4 text-amber-700" />
-              <span>स्वयंसेवक (Volunteer) बनें</span>
+              <span>Become a Volunteer</span>
             </Link>
           </div>
         </div>

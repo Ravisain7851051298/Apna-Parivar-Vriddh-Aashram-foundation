@@ -90,16 +90,16 @@ export default function IdCardPage() {
   return (
     <div className="space-y-6">
       {/* Page Title & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200/60">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-2 border border-red-200">
-            <FiShield className="w-3.5 h-3.5 text-red-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-bold mb-2 border border-amber-300 shadow-xs">
+            <FiShield className="w-3.5 h-3.5 text-amber-700" />
             <span>Digital ID Card Verification Desk</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">
+          <h1 className="text-2xl font-black text-stone-900 tracking-tight">
             Official Verifiable Identity Badges
           </h1>
-          <p className="text-xs text-black font-medium mt-1">
+          <p className="text-xs text-stone-600 font-medium mt-1">
             Official dual-sided identification cards with statutory anti-tamper QR code and National Trustee seals.
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function IdCardPage() {
         {isCurrentCardVerified && (
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition self-start sm:self-auto cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition self-start sm:self-auto cursor-pointer"
           >
             <FiPrinter className="w-4 h-4" />
             <span>Print {activeTab === 'member' ? 'Member ID Card' : 'Volunteer ID Card'}</span>
@@ -115,37 +115,39 @@ export default function IdCardPage() {
         )}
       </div>
 
-      {/* ----------------- DUAL ID CARD SWITCHER TABS ----------------- */}
-      <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200 max-w-xl">
-        <button
-          onClick={() => setActiveTab('member')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
-            activeTab === 'member'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'text-black hover:text-red-700 hover:bg-white/60'
-          }`}
-        >
-          <FiCreditCard className="w-4 h-4" />
-          <span>Official Member ID Card</span>
-          {isMemberVerified && (
-            <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-white' : 'bg-emerald-500'}`}></span>
-          )}
-        </button>
+      {/* ----------------- DUAL ID CARD SWITCHER TABS (CENTERED) ----------------- */}
+      <div className="flex justify-center w-full">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-xl mx-auto">
+          <button
+            onClick={() => setActiveTab('member')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'member'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiCreditCard className="w-4 h-4" />
+            <span>Official Member ID Card</span>
+            {isMemberVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
 
-        <button
-          onClick={() => setActiveTab('volunteer')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
-            activeTab === 'volunteer'
-              ? 'bg-indigo-600 text-white shadow-md'
-              : 'text-black hover:text-indigo-700 hover:bg-white/60'
-          }`}
-        >
-          <FiUserCheck className="w-4 h-4" />
-          <span>Grassroots Volunteer ID Card</span>
-          {isVolunteerVerified && (
-            <span className={`w-2 h-2 rounded-full ${activeTab === 'volunteer' ? 'bg-white' : 'bg-emerald-500'}`}></span>
-          )}
-        </button>
+          <button
+            onClick={() => setActiveTab('volunteer')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'volunteer'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiUserCheck className="w-4 h-4" />
+            <span>Grassroots Volunteer ID Card</span>
+            {isVolunteerVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'volunteer' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ==================== TAB 1: MEMBER ID CARD ==================== */}
@@ -154,18 +156,18 @@ export default function IdCardPage() {
           {!isMemberVerified ? (
             /* Locked State for Member ID Card */
             <div className="space-y-6">
-              <div className="bg-red-50/50 border-2 border-red-300 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-2xs">
-                <div className="w-16 h-16 rounded-3xl bg-red-600 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl mx-auto shadow-md shadow-amber-500/20">
                   <FiLock className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-200 text-red-900 inline-block mb-1">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 inline-block mb-1">
                     Membership Desk Notice
                   </span>
-                  <h3 className="text-lg font-black text-black">
+                  <h3 className="text-lg font-black text-stone-900">
                     Official Member ID Card Not Unlocked
                   </h3>
-                  <p className="text-xs text-black mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
                     In strict adherence to statutory Trust bylaws and charitable anti-fraud regulations, official Member ID cards with verifiable QR codes are issued upon trustee approval of your constitutional membership enrolment.
                   </p>
                 </div>
@@ -173,14 +175,14 @@ export default function IdCardPage() {
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/profile/apply-member"
-                    className="px-6 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition flex items-center gap-1.5"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Official Membership</span>
                     <FiArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
                     href="/profile/member"
-                    className="px-6 py-2.5 rounded-2xl bg-white text-black border border-slate-300 font-bold text-xs hover:bg-red-50 hover:border-red-300 transition"
+                    className="px-6 py-2.5 rounded-2xl bg-white text-stone-800 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                   >
                     View Membership Requirements
                   </Link>
@@ -213,12 +215,12 @@ export default function IdCardPage() {
                           e.currentTarget.src = 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120';
                         }}
                       />
-                      <span className="text-[11px] font-black tracking-wider uppercase text-red-100">
-                        {settings?.ngoName || 'Yuva Kranti Dal'}
+                      <span className="text-[11px] font-black tracking-wider uppercase text-amber-100">
+                        {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}
                       </span>
                     </div>
                     <h3 className="text-base font-black tracking-wide leading-tight">
-                      {settings?.ngoNameHi || 'युवा क्रांति दल'}
+                      {settings?.ngoNameHi || 'अपना परिवार वृद्ध आश्रम'}
                     </h3>
                     <p className="text-[10px] text-red-100 font-medium">
                       Reg. No: {settings?.registrationNo || '421/2019'} • 12A &amp; 80G Certified NGO
@@ -364,33 +366,33 @@ export default function IdCardPage() {
           {!isVolunteerVerified ? (
             /* Locked State for Volunteer ID Card */
             <div className="space-y-6">
-              <div className="bg-indigo-50/50 border-2 border-indigo-300 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-2xs">
-                <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl mx-auto shadow-md shadow-amber-500/20">
                   <FiLock className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-200 text-indigo-900 inline-block mb-1">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 inline-block mb-1">
                     Volunteer Desk Notice
                   </span>
-                  <h3 className="text-lg font-black text-black">
+                  <h3 className="text-lg font-black text-stone-900">
                     Official Volunteer ID Card Not Unlocked
                   </h3>
-                  <p className="text-xs text-black mt-2 leading-relaxed max-w-lg mx-auto font-medium">
-                    Volunteer identification badges are issued to active field volunteers participating in our blood banks, child education drives, and disaster relief programs.
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                    Volunteer identification badges are issued to active field volunteers participating in our elderly residential support, medical camps, nutrition distribution, and humanitarian relief.
                   </p>
                 </div>
 
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/profile/apply-volunteer"
-                    className="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Join as Active Volunteer</span>
                     <FiArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
                     href="/profile/volunteer"
-                    className="px-6 py-2.5 rounded-2xl bg-white text-black border border-slate-300 font-bold text-xs hover:bg-indigo-50 hover:border-indigo-300 transition"
+                    className="px-6 py-2.5 rounded-2xl bg-white text-stone-800 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                   >
                     View Volunteer Program Info
                   </Link>
@@ -423,12 +425,12 @@ export default function IdCardPage() {
                           e.currentTarget.src = 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120';
                         }}
                       />
-                      <span className="text-[11px] font-black tracking-wider uppercase text-indigo-100">
-                        {settings?.ngoName || 'Yuva Kranti Dal'}
+                      <span className="text-[11px] font-black tracking-wider uppercase text-amber-100">
+                        {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}
                       </span>
                     </div>
                     <h3 className="text-base font-black tracking-wide leading-tight">
-                      राष्ट्रीय युवा स्वयंसेवक कोर
+                      {settings?.ngoNameHi || 'अपना परिवार वृद्ध आश्रम'}
                     </h3>
                     <p className="text-[10px] text-indigo-200 font-medium">
                       Grassroots Volunteer Service • Anti-Tamper Badge

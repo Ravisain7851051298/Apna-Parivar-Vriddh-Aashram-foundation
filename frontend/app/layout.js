@@ -18,11 +18,11 @@ const baseUrl = new URL(SITE_CONFIG.url);
 export const metadata = {
   metadataBase: baseUrl,
   title: {
-    default: 'Apna Parivar Vriddh Aashram Foundation | अपना परिवार वृद्ध आश्रम फाउंडेशन',
+    default: 'Apna Parivar Vriddh Aashram Foundation | 12A & 80G Certified Old Age Home',
     template: '%s | Apna Parivar Vriddh Aashram Foundation',
   },
   description:
-    'सेवा • सम्मान • परिवार (जहाँ हर बुजुर्ग है, हमारा अपना) - Apna Parivar Vriddh Aashram Foundation in Jabalpur, MP provides residential elder shelter, doctor-advised satvik meals, geriatric medical care, and emotional family warmth. 12A & 80G Tax Exemption Certified NGO.',
+    'Service • Dignity • Family (Where Every Elder is Cherished as Family) - Apna Parivar Vriddh Aashram Foundation in Jabalpur, MP provides residential elder shelter, doctor-advised satvik meals, geriatric medical care, and emotional family warmth. 12A & 80G Tax Exemption Certified NGO.',
   applicationName: 'Apna Parivar Vriddh Aashram Foundation',
   authors: [{ name: 'Apna Parivar Vriddh Aashram Foundation', url: SITE_CONFIG.url }],
   creator: 'Apna Parivar Vriddh Aashram Foundation',
@@ -30,7 +30,6 @@ export const metadata = {
   category: 'Non-Governmental Organization',
   keywords: [
     'Apna Parivar Vriddh Aashram Foundation',
-    'अपना परिवार वृद्ध आश्रम',
     'Vriddh Aashram Jabalpur',
     'Old Age Home in Jabalpur',
     'Senior Citizen Care NGO',
@@ -40,7 +39,6 @@ export const metadata = {
     'Sponsor an elder food and medicine',
     'Volunteer for senior citizens',
     'Elderly shelter Madhya Pradesh',
-    'ZDC Welfare Foundation affiliated',
   ],
   alternates: {
     canonical: '/',
@@ -50,9 +48,9 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'Apna Parivar Vriddh Aashram Foundation | अपना परिवार वृद्ध आश्रम',
+    title: 'Apna Parivar Vriddh Aashram Foundation | 12A & 80G Certified Old Age Home',
     description:
-      'सेवा • सम्मान • परिवार — Dedicated to Dignity, Care, Health & Love for Senior Citizens in Jabalpur, MP.',
+      'Service • Dignity • Family — Dedicated to Dignity, Care, Health & Love for Senior Citizens in Jabalpur, MP.',
     url: SITE_CONFIG.url,
     siteName: 'Apna Parivar Vriddh Aashram Foundation',
     locale: 'en_IN',

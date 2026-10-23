@@ -423,11 +423,10 @@ export default function FeedbackPage() {
                             {[...Array(5)].map((_, i) => (
                               <FiStar
                                 key={i}
-                                className={`w-3.5 h-3.5 ${
-                                  i < (fb.rating || 5)
+                                className={`w-3.5 h-3.5 ${i < (fb.rating || 5)
                                     ? 'fill-amber-400 text-amber-500'
                                     : 'text-slate-300'
-                                }`}
+                                  }`}
                               />
                             ))}
                           </div>
@@ -444,7 +443,7 @@ export default function FeedbackPage() {
 
                         {/* Official Admin Reply Banner with Admin/President Photo */}
                         {fb.adminReply && (
-                          <div className="mt-3 bg-gradient-to-br from-emerald-50/90 to-slate-50 p-3.5 rounded-2xl border border-emerald-200/90 space-y-2 shadow-2xs">
+                          <div className="mt-3 bg-linear-to-br from-emerald-50/90 to-slate-50 p-3.5 rounded-2xl border border-emerald-200/90 space-y-2 shadow-2xs">
                             <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-900 border-b border-emerald-100 pb-1.5">
                               <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full overflow-hidden border border-emerald-300 bg-white shrink-0">
@@ -609,9 +608,8 @@ export default function FeedbackPage() {
                     setIsAutoPlaying(false);
                     setCurrentIndex(i);
                   }}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    currentIndex === i ? 'w-6 bg-emerald-700' : 'w-2 bg-slate-200 hover:bg-slate-300'
-                  }`}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${currentIndex === i ? 'w-6 bg-emerald-700' : 'w-2 bg-slate-200 hover:bg-slate-300'
+                    }`}
                   aria-label={`Slide ${i + 1}`}
                 />
               ))}
@@ -666,11 +664,10 @@ export default function FeedbackPage() {
                   <button
                     key={tab.key}
                     onClick={() => setSelectedFilter(tab.key)}
-                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-bold ${
-                      selectedFilter === tab.key
+                    className={`px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-bold ${selectedFilter === tab.key
                         ? 'bg-emerald-700 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -695,11 +692,10 @@ export default function FeedbackPage() {
                           {[...Array(5)].map((_, i) => (
                             <FiStar
                               key={i}
-                              className={`w-3.5 h-3.5 ${
-                                i < (fb.rating || 5)
+                              className={`w-3.5 h-3.5 ${i < (fb.rating || 5)
                                   ? 'fill-amber-400 text-amber-500'
                                   : 'text-slate-300'
-                              }`}
+                                }`}
                             />
                           ))}
                         </div>
@@ -714,7 +710,7 @@ export default function FeedbackPage() {
 
                       {/* Official Admin Reply in Grid with Admin/President Photo */}
                       {fb.adminReply && (
-                        <div className="mt-3 bg-gradient-to-br from-emerald-50/90 to-slate-50 p-3.5 rounded-2xl border border-emerald-200/90 space-y-2 shadow-2xs">
+                        <div className="mt-3 bg-linear-to-br from-emerald-50/90 to-slate-50 p-3.5 rounded-2xl border border-emerald-200/90 space-y-2 shadow-2xs">
                           <div className="flex items-center justify-between text-[11px] font-extrabold text-slate-900 border-b border-emerald-100 pb-1.5">
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 rounded-full overflow-hidden border border-emerald-300 bg-white shrink-0">
@@ -900,7 +896,7 @@ export default function FeedbackPage() {
               </p>
               <button
                 onClick={() => setSubmitted(false)}
-                className="mt-3 px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 rounded-xl font-black transition cursor-pointer shadow-sm hover:from-amber-600 hover:to-yellow-600"
+                className="mt-3 px-4 py-2 bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 rounded-xl font-black transition cursor-pointer shadow-sm hover:from-amber-600 hover:to-yellow-600"
               >
                 Submit Another Review
               </button>
@@ -975,16 +971,14 @@ export default function FeedbackPage() {
                       key={star}
                       type="button"
                       onClick={() => setRating(star)}
-                      className={`py-2 px-2 rounded-xl border font-bold flex items-center justify-center gap-1 cursor-pointer transition text-xs ${
-                        rating === star
+                      className={`py-2 px-2 rounded-xl border font-bold flex items-center justify-center gap-1 cursor-pointer transition text-xs ${rating === star
                           ? 'bg-amber-50 border-amber-400 text-amber-800 shadow-xs ring-1 ring-amber-300'
                           : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
-                      }`}
+                        }`}
                     >
                       <FiStar
-                        className={`w-3.5 h-3.5 ${
-                          rating >= star ? 'fill-amber-400 text-amber-500' : 'text-slate-300'
-                        }`}
+                        className={`w-3.5 h-3.5 ${rating >= star ? 'fill-amber-400 text-amber-500' : 'text-slate-300'
+                          }`}
                       />
                       <span>{star} ★</span>
                     </button>
@@ -1011,7 +1005,7 @@ export default function FeedbackPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs rounded-xl shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 <FiSend className="w-3.5 h-3.5" />
                 <span>{isSubmitting ? 'Posting Review...' : 'Publish Testimonial (Live Stream)'}</span>

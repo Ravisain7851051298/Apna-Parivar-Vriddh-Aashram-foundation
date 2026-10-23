@@ -79,16 +79,16 @@ export default function AppointmentLetterPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200/60">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-2 border border-red-200">
-            <FiFileText className="w-3.5 h-3.5 text-red-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/90 text-amber-950 text-xs font-bold mb-2 border border-amber-300 shadow-xs">
+            <FiFileText className="w-3.5 h-3.5 text-amber-700" />
             <span>Formal Credentials Desk</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">
+          <h1 className="text-2xl font-black text-stone-900 tracking-tight">
             Official Appointment &amp; Offer Letters
           </h1>
-          <p className="text-xs text-black font-medium mt-1">
+          <p className="text-xs text-stone-600 font-medium mt-1">
             Formal statutory appointment letters bearing the seal and signature of the National President &amp; Board of Trustees.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function AppointmentLetterPage() {
         {isCurrentLetterVerified && (
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition self-start sm:self-auto cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition self-start sm:self-auto cursor-pointer"
           >
             <FiPrinter className="w-4 h-4" />
             <span>Print {activeTab === 'member' ? 'Member Appointment Letter' : 'Volunteer Offer Letter'}</span>
@@ -104,37 +104,39 @@ export default function AppointmentLetterPage() {
         )}
       </div>
 
-      {/* ----------------- DUAL APPOINTMENT LETTER SWITCHER TABS ----------------- */}
-      <div className="flex flex-wrap items-center gap-3 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200 max-w-xl">
-        <button
-          onClick={() => setActiveTab('member')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
-            activeTab === 'member'
-              ? 'bg-red-600 text-white shadow-md'
-              : 'text-black hover:text-red-700 hover:bg-white/60'
-          }`}
-        >
-          <FiCreditCard className="w-4 h-4" />
-          <span>Member Appointment Letter</span>
-          {isMemberVerified && (
-            <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-white' : 'bg-emerald-500'}`}></span>
-          )}
-        </button>
+      {/* ----------------- DUAL APPOINTMENT LETTER SWITCHER TABS (CENTERED) ----------------- */}
+      <div className="flex justify-center w-full">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-xl mx-auto">
+          <button
+            onClick={() => setActiveTab('member')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'member'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiCreditCard className="w-4 h-4" />
+            <span>Member Appointment Letter</span>
+            {isMemberVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
 
-        <button
-          onClick={() => setActiveTab('volunteer')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
-            activeTab === 'volunteer'
-              ? 'bg-indigo-600 text-white shadow-md'
-              : 'text-black hover:text-indigo-700 hover:bg-white/60'
-          }`}
-        >
-          <FiUserCheck className="w-4 h-4" />
-          <span>Volunteer Offer Letter</span>
-          {isVolunteerVerified && (
-            <span className={`w-2 h-2 rounded-full ${activeTab === 'volunteer' ? 'bg-white' : 'bg-emerald-500'}`}></span>
-          )}
-        </button>
+          <button
+            onClick={() => setActiveTab('volunteer')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'volunteer'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiUserCheck className="w-4 h-4" />
+            <span>Volunteer Offer Letter</span>
+            {isVolunteerVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'volunteer' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ==================== TAB 1: MEMBER APPOINTMENT LETTER ==================== */}
@@ -142,18 +144,18 @@ export default function AppointmentLetterPage() {
         <>
           {!isMemberVerified ? (
             <div className="space-y-6">
-              <div className="bg-red-50/50 border-2 border-red-300 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4">
-                <div className="w-16 h-16 rounded-3xl bg-red-600 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-2xl mx-auto shadow-md shadow-amber-500/20">
                   <FiLock className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-200 text-red-900 inline-block mb-1">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 inline-block mb-1">
                     Executive Desk Notice
                   </span>
-                  <h3 className="text-lg font-black text-black">
+                  <h3 className="text-lg font-black text-stone-900">
                     Official Member Appointment Letter Not Unlocked
                   </h3>
-                  <p className="text-xs text-black mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
                     Formal Member Appointment Letters carrying the official seal of the National President are legally binding documents issued upon trustee approval of your constitutional membership application.
                   </p>
                 </div>
@@ -161,14 +163,14 @@ export default function AppointmentLetterPage() {
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/profile/apply-member"
-                    className="px-6 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition flex items-center gap-1.5"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Official Membership</span>
                     <FiArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
                     href="/profile/member"
-                    className="px-6 py-2.5 rounded-2xl bg-white text-black border border-slate-300 font-bold text-xs hover:bg-red-50 hover:border-red-300 transition"
+                    className="px-6 py-2.5 rounded-2xl bg-white text-stone-800 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                   >
                     View Membership Requirements
                   </Link>
@@ -177,8 +179,8 @@ export default function AppointmentLetterPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 rounded-2xl flex items-center gap-3 text-xs font-semibold max-w-3xl mx-auto">
-                <FiCheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div className="bg-amber-50/90 border border-amber-300 text-amber-950 p-4 rounded-2xl flex items-center gap-3 text-xs font-semibold max-w-3xl mx-auto shadow-xs">
+                <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0" />
                 <span>
                   Official Foundation Member Appointment Letter is verified, digitally stamped by the National President, and recorded in the Trust Register.
                 </span>
@@ -186,81 +188,81 @@ export default function AppointmentLetterPage() {
 
               <div
                 ref={letterRef}
-                className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-300 shadow-xl max-w-3xl mx-auto text-black print:shadow-none print:border-none print:p-4 space-y-6"
+                className="bg-white rounded-3xl p-8 sm:p-12 border border-amber-200 shadow-xl max-w-3xl mx-auto text-stone-900 print:shadow-none print:border-none print:p-4 space-y-6"
               >
                 {/* Letterhead Header */}
-                <div className="border-b-2 border-red-600 pb-4 text-center space-y-1">
+                <div className="border-b-2 border-amber-500 pb-4 text-center space-y-1">
                   <div className="flex items-center justify-center gap-3 mb-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getContentImageUrl(settings?.logoUrl) || 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120'}
                       alt="Trust Logo"
-                      className="w-12 h-12 rounded-full object-cover border border-red-500"
+                      className="w-12 h-12 rounded-full object-cover border border-amber-500 shadow-xs"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120';
                       }}
                     />
                     <div className="text-left">
-                      <h1 className="text-xl sm:text-2xl font-black text-red-600 tracking-wide leading-tight">
-                        YUVA KRANTI DAL
+                      <h1 className="text-xl sm:text-2xl font-black text-amber-700 tracking-wide leading-tight uppercase">
+                        {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}
                       </h1>
-                      <h2 className="text-sm font-black text-black">
-                        युवा क्रांति दल (राष्ट्रीय सामाजिक न्यास)
+                      <h2 className="text-xs sm:text-sm font-bold text-stone-700">
+                        {settings?.tagline || 'Apna Parivar Vriddh Aashram (National Charitable Trust)'}
                       </h2>
                     </div>
                   </div>
 
-                  <div className="text-[11px] text-black font-semibold">
+                  <div className="text-[11px] text-stone-700 font-semibold">
                     Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br/>
                     Certified under Section <strong>12A &amp; 80G</strong> of Income Tax Act 1961 • PAN: <strong>{settings?.panNo || 'AAATB4321Q'}</strong>
                   </div>
 
-                  <div className="text-[10px] text-black font-medium pt-1">
+                  <div className="text-[10px] text-stone-600 font-medium pt-1">
                     Head Office - {settings?.address || 'Krishna Vihar Pala Road Aligarh, Uttar Pradesh - 202001'} • Helpline: {settings?.phone || '+91 93196 98759'}
                   </div>
                 </div>
 
                 {/* Reference & Date */}
-                <div className="flex items-center justify-between text-xs font-bold text-black">
+                <div className="flex items-center justify-between text-xs font-bold text-stone-800">
                   <div>
-                    Ref. No: <span className="font-mono text-red-700 font-bold">BYK/MEM-APPT/2026/{memberId.replace('BYK-', '')}</span>
+                    Ref. No: <span className="font-mono text-amber-800 font-bold">APVAF/MEM-APPT/2026/{memberId.replace('BYK-', '').replace('APVAF-', '')}</span>
                   </div>
                   <div>
-                    Date: <span className="text-black">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    Date: <span className="text-stone-800">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                   </div>
                 </div>
 
                 {/* Recipient */}
-                <div className="text-xs space-y-1 font-medium">
-                  <p className="font-bold text-black">To,</p>
-                  <h3 className="text-sm font-black text-black">{effectiveUser?.name}</h3>
-                  <p className="text-black font-mono font-bold">Member ID: {memberId}</p>
-                  <p className="text-black">{effectiveUser?.address || 'Krishna Vihar, Pala Road, Aligarh'}</p>
-                  <p className="text-black">{effectiveUser?.district || 'Aligarh'}, {effectiveUser?.state || 'Uttar Pradesh'}</p>
+                <div className="text-xs space-y-1 font-medium text-stone-700">
+                  <p className="font-bold text-stone-900">To,</p>
+                  <h3 className="text-sm font-black text-stone-900">{effectiveUser?.name}</h3>
+                  <p className="text-amber-800 font-mono font-bold">Member ID: {memberId}</p>
+                  <p className="text-stone-700">{effectiveUser?.address || 'Krishna Vihar, Pala Road, Aligarh'}</p>
+                  <p className="text-stone-700">{effectiveUser?.district || 'Aligarh'}, {effectiveUser?.state || 'Uttar Pradesh'}</p>
                 </div>
 
                 {/* Subject */}
-                <div className="bg-red-50 border-l-4 border-red-600 p-3 rounded-r-xl">
-                  <p className="text-xs font-black text-black">
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl">
+                  <p className="text-xs font-black text-amber-950">
                     SUBJECT: FORMAL LETTER OF APPOINTMENT AS &ldquo;{effectiveUser?.designation?.toUpperCase() || 'ACTIVE SOCIAL WORKER'}&rdquo; (MEMBERSHIP TIER: {effectiveUser?.membershipPlan?.toUpperCase() || 'OFFICIAL TRUST MEMBER'})
                   </p>
                 </div>
 
                 {/* Letter Body */}
-                <div className="text-xs text-black space-y-3 leading-relaxed font-medium">
+                <div className="text-xs text-stone-700 space-y-3 leading-relaxed font-medium">
                   <p>
                     Dear <strong>{effectiveUser?.name}</strong>,
                   </p>
                   <p>
-                    We are pleased to inform you that upon careful review and verification of your application and statutory contribution receipt, the Board of Trustees and the National Executive Committee of <strong>Yuva Kranti Dal (युवा क्रांति दल)</strong> have formally approved your appointment as an active member in our nationwide youth movement.
+                    We are pleased to inform you that upon careful review and verification of your application and statutory contribution receipt, the Board of Trustees and the National Executive Committee of <strong>{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</strong> have formally approved your appointment as an active member in our nationwide mission.
                   </p>
                   <p>
-                    In this esteemed role, you are entrusted with representing the core mission of our organization—uplifting underprivileged children through education, organizing voluntary blood donation helplines, promoting environmental sustainability, and extending humanitarian relief to vulnerable families across India.
+                    In this esteemed role, you are entrusted with representing the core mission of our organization—providing shelter, compassionate healthcare, and dignity to vulnerable senior citizens, organizing voluntary relief helplines, promoting community welfare, and extending humanitarian support across India.
                   </p>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-1.5 font-medium text-black">
-                    <p className="font-black text-black text-[11px] uppercase tracking-wider mb-1">Terms of Appointment:</p>
+                  <div className="bg-amber-50/40 border border-amber-200/80 rounded-2xl p-4 space-y-1.5 font-medium text-stone-800">
+                    <p className="font-black text-amber-950 text-[11px] uppercase tracking-wider mb-1">Terms of Appointment:</p>
                     <p>1. <strong>Tenure &amp; Validity:</strong> Your appointment is active under the charter of the Foundation and subject to renewal in accordance with your chosen plan.</p>
                     <p>2. <strong>Code of Ethics:</strong> You agree to uphold absolute transparency, humanitarian dignity, and non-partisan social service at all times.</p>
                     <p>3. <strong>Identity Badge:</strong> Your digital ID Card bears a unique statutory anti-tamper QR code linking to our national verification registry.</p>
@@ -272,7 +274,7 @@ export default function AppointmentLetterPage() {
                 </div>
 
                 {/* Signatures & Seal */}
-                <div className="pt-8 border-t border-slate-200 flex items-end justify-between">
+                <div className="pt-8 border-t border-amber-200 flex items-end justify-between">
                   {/* Trust Seal */}
                   <div className="text-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -285,7 +287,7 @@ export default function AppointmentLetterPage() {
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200';
                       }}
                     />
-                    <span className="text-[10px] font-bold text-black uppercase tracking-wider mt-1 block">
+                    <span className="text-[10px] font-bold text-stone-700 uppercase tracking-wider mt-1 block">
                       Official Seal of the Trust
                     </span>
                   </div>
@@ -303,11 +305,11 @@ export default function AppointmentLetterPage() {
                       }}
                     />
                     <div className="mt-1">
-                      <h4 className="text-xs font-black text-black">
+                      <h4 className="text-xs font-black text-stone-900">
                         {settings?.presidentName || 'Ravi Saini (National President & Trustee)'}
                       </h4>
-                      <p className="text-[10px] text-black font-bold">National President &amp; Trustee</p>
-                      <p className="text-[9px] text-black font-medium">{settings?.ngoName || 'Yuva Kranti Dal'}</p>
+                      <p className="text-[10px] text-amber-800 font-bold">National President &amp; Trustee</p>
+                      <p className="text-[9px] text-stone-600 font-medium">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</p>
                     </div>
                   </div>
                 </div>
@@ -322,18 +324,18 @@ export default function AppointmentLetterPage() {
         <>
           {!isVolunteerVerified ? (
             <div className="space-y-6">
-              <div className="bg-indigo-50/50 border-2 border-indigo-300 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4">
-                <div className="w-16 h-16 rounded-3xl bg-indigo-600 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-2xl mx-auto shadow-md shadow-amber-500/20">
                   <FiLock className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-200 text-indigo-900 inline-block mb-1">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 inline-block mb-1">
                     Volunteer Desk Notice
                   </span>
-                  <h3 className="text-lg font-black text-black">
+                  <h3 className="text-lg font-black text-stone-900">
                     Volunteer Offer Letter Not Unlocked
                   </h3>
-                  <p className="text-xs text-black mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
                     Formal Volunteer Offer Letters carrying official trust credentials are issued to active field volunteers after review of volunteer applications and identity documents.
                   </p>
                 </div>
@@ -341,14 +343,14 @@ export default function AppointmentLetterPage() {
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/profile/apply-volunteer"
-                    className="px-6 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition flex items-center gap-1.5"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Volunteer Enrolment</span>
                     <FiArrowRight className="w-3.5 h-3.5" />
                   </Link>
                   <Link
                     href="/profile/volunteer"
-                    className="px-6 py-2.5 rounded-2xl bg-white text-black border border-slate-300 font-bold text-xs hover:bg-indigo-50 hover:border-indigo-300 transition"
+                    className="px-6 py-2.5 rounded-2xl bg-white text-stone-800 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                   >
                     View Volunteer Program Info
                   </Link>
@@ -357,8 +359,8 @@ export default function AppointmentLetterPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="bg-indigo-50 border border-indigo-300 text-indigo-900 p-4 rounded-2xl flex items-center gap-3 text-xs font-semibold max-w-3xl mx-auto">
-                <FiCheckCircle className="w-5 h-5 text-indigo-600 shrink-0" />
+              <div className="bg-amber-50/90 border border-amber-300 text-amber-950 p-4 rounded-2xl flex items-center gap-3 text-xs font-semibold max-w-3xl mx-auto shadow-xs">
+                <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0" />
                 <span>
                   Official Grassroots Volunteer Offer &amp; Appointment Letter is active, authorized by the National President, and recorded in the Volunteer Wing Register.
                 </span>
@@ -366,84 +368,84 @@ export default function AppointmentLetterPage() {
 
               <div
                 ref={letterRef}
-                className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-300 shadow-xl max-w-3xl mx-auto text-black print:shadow-none print:border-none print:p-4 space-y-6"
+                className="bg-white rounded-3xl p-8 sm:p-12 border border-amber-200 shadow-xl max-w-3xl mx-auto text-stone-900 print:shadow-none print:border-none print:p-4 space-y-6"
               >
                 {/* Letterhead Header */}
-                <div className="border-b-2 border-indigo-600 pb-4 text-center space-y-1">
+                <div className="border-b-2 border-amber-500 pb-4 text-center space-y-1">
                   <div className="flex items-center justify-center gap-3 mb-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getContentImageUrl(settings?.logoUrl) || 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120'}
                       alt="Trust Logo"
-                      className="w-12 h-12 rounded-full object-cover border border-indigo-500"
+                      className="w-12 h-12 rounded-full object-cover border border-amber-500 shadow-xs"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=120';
                       }}
                     />
                     <div className="text-left">
-                      <h1 className="text-xl sm:text-2xl font-black text-indigo-700 tracking-wide leading-tight">
-                        YUVA KRANTI DAL
+                      <h1 className="text-xl sm:text-2xl font-black text-amber-700 tracking-wide leading-tight uppercase">
+                        {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}
                       </h1>
-                      <h2 className="text-sm font-black text-black">
-                        राष्ट्रीय युवा स्वयंसेवक कोर (Grassroots Volunteer Wing)
+                      <h2 className="text-xs sm:text-sm font-bold text-stone-700">
+                        {settings?.tagline || 'Apna Parivar Vriddh Aashram (Grassroots Volunteer Wing)'}
                       </h2>
                     </div>
                   </div>
 
-                  <div className="text-[11px] text-black font-semibold">
+                  <div className="text-[11px] text-stone-700 font-semibold">
                     Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br/>
                     Certified under Section <strong>12A &amp; 80G</strong> of Income Tax Act 1961 • PAN: <strong>{settings?.panNo || 'AAATB4321Q'}</strong>
                   </div>
 
-                  <div className="text-[10px] text-black font-medium pt-1">
+                  <div className="text-[10px] text-stone-600 font-medium pt-1">
                     Head Office - {settings?.address || 'Krishna Vihar Pala Road Aligarh, Uttar Pradesh - 202001'} • Helpline: {settings?.phone || '+91 93196 98759'}
                   </div>
                 </div>
 
                 {/* Reference & Date */}
-                <div className="flex items-center justify-between text-xs font-bold text-black">
+                <div className="flex items-center justify-between text-xs font-bold text-stone-800">
                   <div>
-                    Ref. No: <span className="font-mono text-indigo-700 font-bold">BYK/VOL-APPT/2026/{volunteerId.replace('BYK-', '')}</span>
+                    Ref. No: <span className="font-mono text-amber-800 font-bold">APVAF/VOL-APPT/2026/{volunteerId.replace('BYK-', '').replace('APVAF-', '')}</span>
                   </div>
                   <div>
-                    Date: <span className="text-black">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    Date: <span className="text-stone-800">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                   </div>
                 </div>
 
                 {/* Recipient */}
-                <div className="text-xs space-y-1 font-medium">
-                  <p className="font-bold text-black">To,</p>
-                  <h3 className="text-sm font-black text-black">{effectiveUser?.name}</h3>
-                  <p className="text-indigo-700 font-mono font-bold">Volunteer ID: {volunteerId}</p>
-                  <p className="text-black">{effectiveUser?.address || 'Krishna Vihar, Pala Road, Aligarh'}</p>
-                  <p className="text-black">{effectiveUser?.district || 'Aligarh'}, {effectiveUser?.state || 'Uttar Pradesh'}</p>
+                <div className="text-xs space-y-1 font-medium text-stone-700">
+                  <p className="font-bold text-stone-900">To,</p>
+                  <h3 className="text-sm font-black text-stone-900">{effectiveUser?.name}</h3>
+                  <p className="text-amber-800 font-mono font-bold">Volunteer ID: {volunteerId}</p>
+                  <p className="text-stone-700">{effectiveUser?.address || 'Krishna Vihar, Pala Road, Aligarh'}</p>
+                  <p className="text-stone-700">{effectiveUser?.district || 'Aligarh'}, {effectiveUser?.state || 'Uttar Pradesh'}</p>
                 </div>
 
                 {/* Subject */}
-                <div className="bg-indigo-50 border-l-4 border-indigo-600 p-3 rounded-r-xl">
-                  <p className="text-xs font-black text-black">
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl">
+                  <p className="text-xs font-black text-amber-950">
                     SUBJECT: APPOINTMENT &amp; OFFER LETTER AS &ldquo;ACTIVE YOUTH VOLUNTEER&rdquo; (DIVISION: {effectiveUser?.district?.toUpperCase() || 'ALIGARH'} CHAPTER)
                   </p>
                 </div>
 
                 {/* Letter Body */}
-                <div className="text-xs text-black space-y-3 leading-relaxed font-medium">
+                <div className="text-xs text-stone-700 space-y-3 leading-relaxed font-medium">
                   <p>
                     Dear <strong>{effectiveUser?.name}</strong>,
                   </p>
                   <p>
-                    On behalf of the Board of Trustees and the National Executive Committee of <strong>Yuva Kranti Dal (युवा क्रांति दल)</strong>, we are pleased to appoint you as an <strong>Active Grassroots Volunteer</strong> in our National Youth Social Wing.
+                    On behalf of the Board of Trustees and the National Executive Committee of <strong>{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</strong>, we are pleased to appoint you as an <strong>Active Grassroots Volunteer</strong> in our National Social Wing.
                   </p>
                   <p>
-                    We acknowledge with gratitude your willingness to offer your voluntary services, expertise, and leadership for community empowerment. You are authorized to coordinate field outreach programs, assist in 24x7 emergency blood donor mobilization, teach underprivileged children, and support disaster relief campaigns.
+                    We acknowledge with gratitude your willingness to offer your voluntary services, expertise, and leadership for community empowerment. You are authorized to coordinate field outreach programs, assist in care and shelter coordination, support senior welfare drives, and extend humanitarian services.
                   </p>
 
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-1.5 font-medium text-black">
-                    <p className="font-black text-black text-[11px] uppercase tracking-wider mb-1">Volunteer Terms &amp; Scope of Service:</p>
+                  <div className="bg-amber-50/40 border border-amber-200/80 rounded-2xl p-4 space-y-1.5 font-medium text-stone-800">
+                    <p className="font-black text-amber-950 text-[11px] uppercase tracking-wider mb-1">Volunteer Terms &amp; Scope of Service:</p>
                     <p>1. <strong>Field Authorization:</strong> You are officially assigned Volunteer ID: <strong>{volunteerId}</strong>. You may carry your digital volunteer badge for ground authentication during relief drives and hospital coordination.</p>
                     <p>2. <strong>Social Citations:</strong> Active hours and exceptional contributions will be honored with official National Certificates of Appreciation and volunteer citations.</p>
-                    <p>3. <strong>Honorary Commitment:</strong> This volunteer position is an honorary public service dedication driven by youth patriotism and humanitarian ideals.</p>
+                    <p>3. <strong>Honorary Commitment:</strong> This volunteer position is an honorary public service dedication driven by compassionate humanitarian ideals.</p>
                   </div>
 
                   <p>
@@ -452,7 +454,7 @@ export default function AppointmentLetterPage() {
                 </div>
 
                 {/* Signatures & Seal */}
-                <div className="pt-8 border-t border-slate-200 flex items-end justify-between">
+                <div className="pt-8 border-t border-amber-200 flex items-end justify-between">
                   {/* Trust Seal */}
                   <div className="text-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -465,7 +467,7 @@ export default function AppointmentLetterPage() {
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200';
                       }}
                     />
-                    <span className="text-[10px] font-bold text-black uppercase tracking-wider mt-1 block">
+                    <span className="text-[10px] font-bold text-stone-700 uppercase tracking-wider mt-1 block">
                       Official Seal of the Trust
                     </span>
                   </div>
@@ -483,11 +485,11 @@ export default function AppointmentLetterPage() {
                       }}
                     />
                     <div className="mt-1">
-                      <h4 className="text-xs font-black text-black">
+                      <h4 className="text-xs font-black text-stone-900">
                         {settings?.presidentName || 'Ravi Saini (National President & Trustee)'}
                       </h4>
-                      <p className="text-[10px] text-black font-bold">National President &amp; Trustee</p>
-                      <p className="text-[9px] text-black font-medium">{settings?.ngoName || 'Yuva Kranti Dal'}</p>
+                      <p className="text-[10px] text-amber-800 font-bold">National President &amp; Trustee</p>
+                      <p className="text-[9px] text-stone-600 font-medium">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</p>
                     </div>
                   </div>
                 </div>

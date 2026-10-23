@@ -301,7 +301,7 @@ function DonationContent() {
             <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/"
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs transition shadow-md shadow-amber-500/20"
+                className="px-6 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 font-black text-xs transition shadow-md shadow-amber-500/20"
               >
                 Back to Home
               </Link>
@@ -348,7 +348,7 @@ function DonationContent() {
             {currentUser && (
               <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center font-black text-sm shadow-xs shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center font-black text-sm shadow-xs shrink-0">
                     {currentUser.name ? currentUser.name.charAt(0) : 'U'}
                   </div>
                   <div>
@@ -420,8 +420,8 @@ function DonationContent() {
                       type="button"
                       onClick={() => setAmount(amt)}
                       className={`py-2.5 rounded-xl font-black text-xs transition cursor-pointer border ${Number(amount) === amt
-                          ? 'bg-gradient-to-r from-amber-500 to-yellow-500 border-amber-500 text-amber-950 shadow-md ring-2 ring-amber-400/40'
-                          : 'bg-amber-50/40 border-amber-200/80 text-amber-950 hover:border-amber-400 hover:bg-amber-100/50'
+                        ? 'bg-linear-to-r from-amber-500 to-yellow-500 border-amber-500 text-amber-950 shadow-md ring-2 ring-amber-400/40'
+                        : 'bg-amber-50/40 border-amber-200/80 text-amber-950 hover:border-amber-400 hover:bg-amber-100/50'
                         }`}
                     >
                       ₹{amt.toLocaleString('en-IN')}
@@ -460,8 +460,8 @@ function DonationContent() {
                 <label
                   onClick={() => setDisplayMode('qr')}
                   className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition ${displayMode === 'qr'
-                      ? 'border-amber-500 bg-amber-50/70 ring-2 ring-amber-500/20 shadow-xs'
-                      : 'border-slate-200 bg-white hover:border-amber-300'
+                    ? 'border-amber-500 bg-amber-50/70 ring-2 ring-amber-500/20 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-amber-300'
                     }`}
                 >
                   <input
@@ -485,8 +485,8 @@ function DonationContent() {
                 <label
                   onClick={() => setDisplayMode('bank')}
                   className={`flex items-start gap-3.5 p-4 rounded-2xl border-2 cursor-pointer transition ${displayMode === 'bank'
-                      ? 'border-amber-500 bg-amber-50/70 ring-2 ring-amber-500/20 shadow-xs'
-                      : 'border-slate-200 bg-white hover:border-amber-300'
+                    ? 'border-amber-500 bg-amber-50/70 ring-2 ring-amber-500/20 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-amber-300'
                     }`}
                 >
                   <input
@@ -510,7 +510,7 @@ function DonationContent() {
 
               {/* Mode 1 Display: Official Trust UPI QR Code */}
               {displayMode === 'qr' && (
-                <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-yellow-50/50 border-2 border-amber-400/60 text-center space-y-4">
+                <div className="p-5 sm:p-6 rounded-2xl bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 border-2 border-amber-400/60 text-center space-y-4">
                   <div className="inline-block p-3 bg-white rounded-2xl border border-amber-200 shadow-md">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -547,7 +547,7 @@ function DonationContent() {
 
               {/* Mode 2 Display: Direct Bank Details */}
               {displayMode === 'bank' && (
-                <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-amber-50/70 via-white to-yellow-50/50 border-2 border-amber-400/60 space-y-4">
+                <div className="p-5 sm:p-6 rounded-2xl bg-linear-to-br from-amber-50/70 via-white to-yellow-50/50 border-2 border-amber-400/60 space-y-4">
                   <div className="flex items-center justify-between pb-2 border-b border-amber-200">
                     <span className="text-xs font-black uppercase tracking-wider text-amber-800">
                       Official Trust Bank Account Details
@@ -705,7 +705,7 @@ function DonationContent() {
             {/* Step 4 Card: Screenshot & Transaction ID */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-amber-400/50 shadow-md space-y-5">
               <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
                   4
                 </div>
                 <div>
@@ -740,7 +740,7 @@ function DonationContent() {
                   Upload Payment Transfer Screenshot (PNG / JPG) *
                 </label>
 
-                <div className="border-2 border-dashed border-amber-400 hover:border-amber-600 rounded-2xl p-5 text-center transition bg-gradient-to-b from-amber-50/30 via-white to-yellow-50/30">
+                <div className="border-2 border-dashed border-amber-400 hover:border-amber-600 rounded-2xl p-5 text-center transition bg-linear-to-b from-amber-50/30 via-white to-yellow-50/30">
                   <input
                     type="file"
                     accept="image/*"
@@ -751,7 +751,7 @@ function DonationContent() {
 
                   {!previewUrl ? (
                     <label htmlFor="donationScreenshotInput" className="cursor-pointer space-y-2 block py-2">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-200 text-amber-700 flex items-center justify-center mx-auto text-2xl shadow-2xs border border-amber-300">
+                      <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-amber-100 to-yellow-200 text-amber-700 flex items-center justify-center mx-auto text-2xl shadow-2xs border border-amber-300">
                         <FiUploadCloud className="w-6 h-6 text-amber-700" />
                       </div>
                       <span className="text-xs font-black text-amber-900 hover:text-amber-700 transition block">
@@ -798,7 +798,7 @@ function DonationContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-amber-950 font-black text-sm sm:text-base shadow-lg shadow-amber-500/25 transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-amber-950 font-black text-sm sm:text-base shadow-lg shadow-amber-500/25 transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <span>Submitting Contribution for Verification...</span>

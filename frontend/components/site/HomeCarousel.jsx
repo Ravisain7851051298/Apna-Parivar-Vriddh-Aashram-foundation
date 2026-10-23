@@ -8,32 +8,32 @@ import { FiChevronLeft, FiChevronRight, FiHeart, FiShield, FiArrowRight } from '
 const DEFAULT_SLIDES = [
   {
     imageUrl: '/banner.jpg',
-    tag: 'सेवा • सम्मान • परिवार',
-    title: 'जहाँ हर बुजुर्ग है, हमारा अपना',
-    subtitle: 'अपना परिवार वृद्ध आश्रम जबलपुर में असहाय, निराश्रित एवं वरिष्ठ नागरिकों को सुरक्षित आवास, 24/7 चिकित्सा, सात्विक भोजन और परिवार जैसा स्नेह प्रदान करता है।',
-    ctaPrimaryText: 'सहयोग करें (80G कर छूट)',
+    tag: 'Service • Dignity • Family',
+    title: 'Where Every Elder is Cherished as Family',
+    subtitle: 'Apna Parivar Vriddh Aashram in Jabalpur provides safe shelter, 24/7 medical care, nutritious satvik meals, and genuine familial warmth to destitute and elderly citizens.',
+    ctaPrimaryText: 'Support Our Mission (80G Tax Exemption)',
     ctaPrimaryLink: '/donation',
-    ctaSecondaryText: 'आश्रम के बारे में जानें',
+    ctaSecondaryText: 'About Our Aashram',
     ctaSecondaryLink: '/about',
   },
   {
     imageUrl: 'https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1920&auto=format&fit=crop&q=80',
-    tag: '100% पारदर्शी दान • 80G Tax Exemption',
-    title: 'मुस्कुराते चेहरे... यही है हमारी पहचान',
-    subtitle: 'जीवन के इस पड़ाव पर किसी भी वृद्ध माता-पिता को अकेलापन न सताए। आपका एक छोटा सा दान किसी बुजुर्ग के एक माह के भोजन व दवाइयों का संबल बन सकता है।',
-    ctaPrimaryText: 'तिथि भोजन सेवा स्पॉन्सर करें',
+    tag: '100% Transparent Donations • 80G Certified',
+    title: 'Smiling Faces... Our True Identity & Purpose',
+    subtitle: 'At this stage in life, no elder should ever feel lonely or neglected. Your compassionate donation provides wholesome meals and vital healthcare.',
+    ctaPrimaryText: 'Sponsor a Meal (Tithi Bhoj)',
     ctaPrimaryLink: '/donation',
-    ctaSecondaryText: 'सक्रिय अभियान देखें',
+    ctaSecondaryText: 'View Active Campaigns',
     ctaSecondaryLink: '/campaigns',
   },
   {
     imageUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1920&auto=format&fit=crop&q=80',
-    tag: '24/7 स्वास्थ्य जांच एवं देखभाल',
-    title: 'नियमित स्वास्थ्य जांच, सात्विक भोजन व सम्मान',
-    subtitle: 'फिजियोथेरेपी, दैनिक बीपी/शुगर मॉनिटरिंग, विशेषज्ञ डॉक्टरों का विजिट, एवं नित्य आध्यात्मिक सत्संग व योग से भरपूर एक गरिमापूर्ण वातावरण।',
-    ctaPrimaryText: 'स्वयंसेवक (Volunteer) बनें',
+    tag: '24/7 Healthcare & Loving Elder Care',
+    title: 'Round-the-Clock Medical Care & Nutritious Satvik Diet',
+    subtitle: 'Daily physiotherapy, vitals monitoring, regular visits by specialist doctors, spiritual satsang, and peaceful living in a loving atmosphere.',
+    ctaPrimaryText: 'Join as a Volunteer',
     ctaPrimaryLink: '/apply-volunteer',
-    ctaSecondaryText: 'सेवाएं एवं सुविधाएं',
+    ctaSecondaryText: 'Facilities & Services',
     ctaSecondaryLink: '/services',
   },
 ];
@@ -61,7 +61,7 @@ export default function HomeCarousel({ slides = [] }) {
 
   return (
     <div
-      className="relative w-full h-[520px] sm:h-[580px] md:h-[640px] lg:h-[700px] overflow-hidden bg-slate-950 group"
+      className="relative w-full h-[440px] sm:h-[500px] md:h-[560px] lg:h-[600px] overflow-hidden bg-slate-950 group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -99,9 +99,9 @@ export default function HomeCarousel({ slides = [] }) {
                 <div className="max-w-2xl lg:max-w-3xl space-y-4 sm:space-y-6 text-white animate-in fade-in slide-in-from-bottom-4 duration-700">
 
                   {/* Badge */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 text-xs font-black shadow-lg border border-amber-300/80">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 text-xs font-black shadow-lg border border-amber-300/80">
                     <FiShield className="w-3.5 h-3.5 text-stone-950" />
-                    <span>{slide.tag || 'सेवा • सम्मान • परिवार'}</span>
+                    <span>{slide.tag || 'Service • Dignity • Family'}</span>
                   </div>
 
                   {/* Title */}
@@ -118,17 +118,17 @@ export default function HomeCarousel({ slides = [] }) {
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <Link
                       href={slide.ctaPrimaryLink || '/donation'}
-                      className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/40 transform hover:scale-105 transition-all"
+                      className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-500/40 transform hover:scale-105 transition-all"
                     >
                       <FiHeart className="w-4 h-4 fill-stone-950 text-stone-950 animate-pulse" />
-                      <span>{slide.ctaPrimaryText || 'दान करें (80G कर छूट)'}</span>
+                      <span>{slide.ctaPrimaryText || 'Donate Now (80G Tax Exemption)'}</span>
                     </Link>
 
                     <Link
                       href={slide.ctaSecondaryLink || '/about'}
                       className="inline-flex items-center gap-2 px-6 py-3 sm:px-7 sm:py-3.5 rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/30 font-bold text-xs sm:text-sm transition-all"
                     >
-                      <span>{slide.ctaSecondaryText || 'आश्रम के बारे में'}</span>
+                      <span>{slide.ctaSecondaryText || 'About Our Aashram'}</span>
                       <FiArrowRight className="w-4 h-4 text-amber-300" />
                     </Link>
                   </div>
@@ -169,8 +169,8 @@ export default function HomeCarousel({ slides = [] }) {
                 type="button"
                 onClick={() => setCurrentIdx(i)}
                 className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${i === currentIdx
-                    ? 'w-10 bg-linear-to-r from-[#f59e0b] to-[#d97706] shadow-md shadow-amber-500/50'
-                    : 'w-2.5 bg-white/50 hover:bg-white'
+                  ? 'w-10 bg-linear-to-r from-[#f59e0b] to-[#d97706] shadow-md shadow-amber-500/50'
+                  : 'w-2.5 bg-white/50 hover:bg-white'
                   }`}
                 aria-label={`Slide ${i + 1}`}
               />

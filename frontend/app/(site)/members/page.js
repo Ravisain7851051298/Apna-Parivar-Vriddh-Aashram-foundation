@@ -75,7 +75,7 @@ export default function PublicMembersPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-12 text-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200 shadow-2xs">
@@ -94,7 +94,7 @@ export default function PublicMembersPage() {
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
               href={isMember ? '/profile/member' : '/apply-member'}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 text-xs font-black shadow-md shadow-amber-500/20 transition transform hover:scale-102"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-amber-950 text-xs font-black shadow-md shadow-amber-500/20 transition transform hover:scale-102"
             >
               <FiUserPlus className="w-4 h-4" />
               <span>{isMember ? 'My Member Profile' : 'Apply for Official Membership'}</span>
@@ -124,11 +124,10 @@ export default function PublicMembersPage() {
               <button
                 key={st}
                 onClick={() => setStateFilter(st)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
-                  stateFilter === st
-                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 font-black shadow-xs'
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${stateFilter === st
+                    ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 font-black shadow-xs'
                     : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
-                }`}
+                  }`}
               >
                 {st}
               </button>
@@ -151,7 +150,7 @@ export default function PublicMembersPage() {
             </p>
             <Link
               href="/apply-member"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-amber-950 text-xs font-black mt-2 shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 text-xs font-black mt-2 shadow-sm"
             >
               <span>Join as Member</span>
               <FiArrowRight className="w-3.5 h-3.5" />

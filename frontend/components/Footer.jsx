@@ -40,7 +40,7 @@ export default function Footer() {
       name: 'Instagram',
       url: settings?.instagram || 'https://instagram.com',
       icon: FaInstagram,
-      bg: 'hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888]',
+      bg: 'hover:bg-linear-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888]',
     },
     {
       name: 'YouTube',
@@ -74,7 +74,7 @@ export default function Footer() {
       {/* ================= 1. HIGHLIGHT CONTACT CARDS ================= */}
       <div className="border-b border-slate-800/80 py-8 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
-          
+
           {/* Aashram Address Card */}
           <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-2xl p-5 transition-all duration-300 shadow-sm flex items-start gap-4 group">
             <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
@@ -145,7 +145,7 @@ export default function Footer() {
               <div className="w-16 h-16 rounded-2xl border-2 border-amber-400/80 p-1 bg-white flex items-center justify-center shrink-0 shadow-lg overflow-hidden">
                 <img
                   src={getContentImageUrl(settings?.logoUrl) || '/logo.jpg'}
-                  alt={settings?.ngoName || 'अपना परिवार वृद्ध आश्रम'}
+                  alt={settings?.ngoName || 'Apna Parivar Vriddh Aashram'}
                   className="w-full h-full object-contain"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
@@ -157,7 +157,7 @@ export default function Footer() {
                 <h3 className="text-base sm:text-lg font-black text-white leading-tight">
                   Apna Parivar Vriddh Aashram
                 </h3>
-                <p className="text-[11px] text-emerald-400 font-bold mt-0.5">
+                <p className="text-[11px] text-amber-400 font-bold mt-0.5">
                   {settings?.tagline || 'Selfless Service, Loving Dedication & Dignified Shelter for Senior Citizens'}
                 </p>
               </div>

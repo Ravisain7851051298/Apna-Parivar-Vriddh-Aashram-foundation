@@ -76,7 +76,7 @@ function ResetPasswordForm() {
               <div className="pt-4">
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center w-full px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs transition-colors shadow-md shadow-amber-500/20"
+                  className="inline-flex items-center justify-center w-full px-4 py-3 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs transition-colors shadow-md shadow-amber-500/20"
                 >
                   Proceed to Login
                 </Link>
@@ -132,7 +132,7 @@ function ResetPasswordForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs transition shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
+                className="w-full py-3 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs transition shadow-md shadow-amber-500/20 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? 'Updating password...' : 'Update Password & Access Account'}
               </button>

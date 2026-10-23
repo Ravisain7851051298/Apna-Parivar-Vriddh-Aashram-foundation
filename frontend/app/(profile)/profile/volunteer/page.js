@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  FiUserCheck, 
-  FiShield, 
-  FiAward, 
-  FiCheckCircle, 
-  FiHeart, 
-  FiClock, 
-  FiArrowRight, 
+import {
+  FiUserCheck,
+  FiShield,
+  FiAward,
+  FiCheckCircle,
+  FiHeart,
+  FiClock,
+  FiArrowRight,
   FiUserPlus,
   FiActivity,
   FiPhone,
@@ -24,8 +24,8 @@ export default function ProfileVolunteerPage() {
   const effectiveUser = reduxUser || currentUser;
 
   const isVolunteer = (
-    effectiveUser?.role === 'Volunteer' || 
-    effectiveUser?.isVolunteer || 
+    effectiveUser?.role === 'Volunteer' ||
+    effectiveUser?.isVolunteer ||
     effectiveUser?.volunteerApplication?.status === 'approved' ||
     effectiveUser?.volunteerApplication?.status === 'pending'
   );
@@ -74,7 +74,7 @@ export default function ProfileVolunteerPage() {
       {isVolunteer ? (
         <div className="space-y-6">
           {/* Volunteer Hero Banner */}
-          <div className="bg-gradient-to-r from-indigo-700 via-indigo-800 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+          <div className="bg-linear-to-r from-indigo-700 via-indigo-800 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
               <div className="space-y-2">
                 <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 text-white backdrop-blur-xs inline-block">
@@ -84,7 +84,7 @@ export default function ProfileVolunteerPage() {
                   {effectiveUser?.name}
                 </h2>
                 <p className="text-xs text-indigo-100 max-w-xl leading-relaxed">
-                  Thank you for serving on the frontlines of humanitarian action! As an authorized volunteer of <strong>Yuva Kranti Dal</strong>, you lead blood donation helplines, free child teaching classes, and relief distribution.
+                  Thank you for serving on the frontlines of humanitarian action! As an authorized volunteer of <strong>{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</strong>, you lead elderly care drives, medical camps, nutrition distribution, and community relief.
                 </p>
               </div>
 
@@ -190,24 +190,24 @@ export default function ProfileVolunteerPage() {
       ) : (
         /* ----------------- NOT A VOLUNTEER YET (ENROLMENT INFO) ----------------- */
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-indigo-200 shadow-sm space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+          <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 rounded-3xl p-6 sm:p-10 border-2 border-amber-300/80 shadow-sm space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-amber-200/60">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-2xl shrink-0 border border-indigo-200 shadow-inner">
-                  <FiUserPlus className="w-7 h-7 text-indigo-600" />
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl shrink-0 shadow-md shadow-amber-500/20">
+                  <FiUserPlus className="w-7 h-7" />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-100 text-indigo-800 border border-indigo-200">
-                      Youth Volunteer Wing
+                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
+                      Community Volunteer Wing
                     </span>
-                    <span className="text-xs text-slate-500 font-semibold">• Open Enrolment</span>
+                    <span className="text-xs text-stone-500 font-semibold">• Open Enrolment</span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black text-black">
-                    Join the Grassroots Volunteer Movement
+                  <h2 className="text-xl sm:text-2xl font-black text-stone-900">
+                    Join the Volunteer Care Movement
                   </h2>
-                  <p className="text-xs text-black leading-relaxed max-w-2xl font-medium">
-                    Volunteer with Yuva Kranti Dal to bring real change at the grassroots level: free child slum teaching, 24x7 blood bank helplines, tree plantations, and emergency relief drives.
+                  <p className="text-xs text-stone-600 leading-relaxed max-w-2xl font-medium">
+                    Volunteer with {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} to bring compassionate care to vulnerable elderly citizens: residential shelter assistance, regular health checkup camps, nutritious food distribution, and community relief.
                   </p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function ProfileVolunteerPage() {
               <div className="shrink-0">
                 <Link
                   href="/profile/apply-volunteer"
-                  className="px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/25 transition flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition flex items-center gap-2 cursor-pointer"
                 >
                   <span>Apply as Volunteer Now</span>
                   <FiArrowRight className="w-4 h-4" />
@@ -225,51 +225,51 @@ export default function ProfileVolunteerPage() {
 
             {/* Volunteer Activities Highlights */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-indigo-600 font-black">
-                  <FiHeart className="w-4 h-4 text-red-600" />
-                  <span>24x7 Emergency Blood Roster</span>
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
+                  <FiHeart className="w-4 h-4 text-amber-600" />
+                  <span>Compassionate Elder Care</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
-                  Respond to urgent critical hospital blood requests across district networks and save innocent lives.
+                <p className="text-stone-600 leading-relaxed font-medium">
+                  Support elderly residents with companionship, recreational activities, and personalized daily care assistance.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-indigo-600 font-black">
-                  <FiActivity className="w-4 h-4 text-indigo-600" />
-                  <span>Free Slum Child Education</span>
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
+                  <FiActivity className="w-4 h-4 text-amber-600" />
+                  <span>Free Medical &amp; Health Camps</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
-                  Teach basic literacy, arithmetic, and digital education to underprivileged street and slum children.
+                <p className="text-stone-600 leading-relaxed font-medium">
+                  Assist in coordinating physician visits, medicine distributions, and physiotherapy camps for senior citizens.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-indigo-600 font-black">
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
                   <FiAward className="w-4 h-4 text-amber-600" />
                   <span>Certificates &amp; National Honors</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
+                <p className="text-stone-600 leading-relaxed font-medium">
                   Earn digitally verifiable Certificates of Honor from the Board of Trustees recognized for CVs and careers.
                 </p>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <span className="text-xs text-slate-500 font-medium">
-                No compulsory fees. 100% voluntary service for community empowerment.
+            <div className="pt-4 border-t border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <span className="text-xs text-stone-500 font-medium">
+                No compulsory fees. 100% voluntary service for senior dignity and community empowerment.
               </span>
               <div className="flex items-center gap-3">
                 <Link
                   href="/volunteer"
-                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-black font-bold text-xs hover:bg-slate-50 transition"
+                  className="px-4 py-2.5 rounded-xl border border-amber-300 bg-white text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                 >
                   Volunteer Program Info
                 </Link>
                 <Link
                   href="/profile/apply-volunteer"
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                 >
                   <span>Fill Volunteer Form</span>
                   <FiArrowRight className="w-3.5 h-3.5" />

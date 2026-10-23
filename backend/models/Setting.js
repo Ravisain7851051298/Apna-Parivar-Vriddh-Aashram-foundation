@@ -115,12 +115,6 @@ const settingSchema = new mongoose.Schema({
     }
   ],
 
-  // Homepage Ticker / Marquee
-  newsTickerText: {
-    type: String,
-    default: 'युवा क्रांति दल में आपका स्वागत है • निःशुल्क सदस्यता एवं समाज सेवा अभियान • हेल्पलाइन: +918959055269'
-  },
-
   // Homepage About Us text sections
   homeAboutTitle: { type: String, default: 'About Us' },
   homeAboutStory: {
@@ -139,32 +133,6 @@ const settingSchema = new mongoose.Schema({
     type: String,
     default: 'Join us in our mission to create a brighter, more empowered nation for all. Together, we can make a difference.'
   },
-
-  // President Message
-  presidentMessageTitle: { type: String, default: 'President Message' },
-  presidentPhotoUrl: { type: String, default: '' },
-  presidentMessageContent: {
-    type: String,
-    default: `Dear Friends,
-
-It is with great pride and humility that I address you as the National President of APNA PARIVAR VRIDDH AASHRAM FOUNDATION. Our organization has been driven by a simple yet profound belief: that every youth and citizen, regardless of circumstance, deserves the opportunity to thrive and lead.
-
-At APNA PARIVAR VRIDDH AASHRAM FOUNDATION, we work tirelessly to turn our vision of a better society into reality—from education and healthcare to youth leadership and social justice.
-
-Warm regards,
-
-Ravi Saini
-National President & Trustee
-APNA PARIVAR VRIDDH AASHRAM FOUNDATION`
-  },
-
-  // YouTube Videos List
-  youtubeVideos: [
-    {
-      title: { type: String, default: '' },
-      url: { type: String, default: '' }
-    }
-  ],
 
   // Objectives List
   objectives: [

@@ -23,7 +23,7 @@ import api from '@/services/api';
 
 const TIER_THEMES = {
   Gold: {
-    badgeBg: 'bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600',
+    badgeBg: 'bg-linear-to-br from-amber-400 via-yellow-500 to-amber-600',
     ringColor: 'border-amber-400',
     cardBorder: 'border-amber-300',
     pillBg: 'bg-amber-100 text-amber-900 border-amber-300',
@@ -32,7 +32,7 @@ const TIER_THEMES = {
     accentText: 'text-amber-800'
   },
   Silver: {
-    badgeBg: 'bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500',
+    badgeBg: 'bg-linear-to-br from-slate-200 via-slate-400 to-slate-500',
     ringColor: 'border-slate-300',
     cardBorder: 'border-slate-300',
     pillBg: 'bg-slate-100 text-slate-800 border-slate-300',
@@ -41,7 +41,7 @@ const TIER_THEMES = {
     accentText: 'text-slate-800'
   },
   Bronze: {
-    badgeBg: 'bg-gradient-to-br from-amber-700 via-orange-800 to-amber-900',
+    badgeBg: 'bg-linear-to-br from-amber-700 via-orange-800 to-amber-900',
     ringColor: 'border-orange-400',
     cardBorder: 'border-orange-300',
     pillBg: 'bg-orange-100 text-orange-900 border-orange-300',
@@ -50,7 +50,7 @@ const TIER_THEMES = {
     accentText: 'text-orange-900'
   },
   Platinum: {
-    badgeBg: 'bg-gradient-to-br from-cyan-400 via-sky-500 to-blue-600',
+    badgeBg: 'bg-linear-to-br from-cyan-400 via-sky-500 to-blue-600',
     ringColor: 'border-cyan-300',
     cardBorder: 'border-cyan-200',
     pillBg: 'bg-cyan-100 text-cyan-900 border-cyan-300',
@@ -59,7 +59,7 @@ const TIER_THEMES = {
     accentText: 'text-cyan-900'
   },
   Diamond: {
-    badgeBg: 'bg-gradient-to-br from-purple-400 via-fuchsia-500 to-indigo-600',
+    badgeBg: 'bg-linear-to-br from-purple-400 via-fuchsia-500 to-indigo-600',
     ringColor: 'border-purple-300',
     cardBorder: 'border-purple-200',
     pillBg: 'bg-purple-100 text-purple-900 border-purple-300',
@@ -102,13 +102,13 @@ export default function MyAwardsPage() {
   const totalPoints = awards.reduce((sum, item) => sum + (item.award?.points || 0), 0);
 
   const handleShare = (badge) => {
-    const text = `I am honored to have received the official "${badge.award?.title || 'Honor Badge'}" (${badge.badgeNumber}) from Yuva Kranti Dal for youth service and community development!`;
+    const text = `I am honored to have received the official "${badge.award?.title || 'Honor Badge'}" (${badge.badgeNumber}) from ${settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} for elderly care and social service!`;
     if (navigator.share) {
       navigator.share({
         title: badge.award?.title,
         text,
         url: window.location.href
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(text);
       setCopiedId(badge._id);
@@ -227,8 +227,8 @@ export default function MyAwardsPage() {
             <div class="header">
               <img src="${logoSrc}" class="logo" alt="Logo" />
               <div>
-                <h1 class="org-title">${settings?.ngoName || 'YUVA KRANTI DAL'}</h1>
-                <p class="org-sub">Registered Public Charitable Trust • 12A & 80G Certified • National Youth Excellence Wing</p>
+                <h1 class="org-title">${settings?.ngoName || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION'}</h1>
+                <p class="org-sub">Registered Public Charitable Trust • 12A &amp; 80G Certified • National Welfare Wing</p>
               </div>
               <div style="text-align: right;">
                 <div style="font-size: 10px; color: #64748b;">OFFICIAL HONOR ID</div>
@@ -271,8 +271,8 @@ export default function MyAwardsPage() {
   return (
     <div className="space-y-8">
       {/* ----------------- TOP HERO BANNER ----------------- */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-red-900 via-red-800 to-black text-white p-6 sm:p-8 rounded-3xl shadow-lg border border-red-950">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-linear-to-r from-stone-900 via-amber-950 to-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-lg border border-amber-800/40">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-amber-500/15 rounded-full blur-2xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold border border-amber-400/30">
@@ -282,19 +282,19 @@ export default function MyAwardsPage() {
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               My Awards &amp; Badges of Honor
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl font-medium leading-relaxed">
-              Official distinctions conferred by the Yuva Kranti Dal Board of Trustees for exceptional leadership, social service, volunteer action, and charitable dedication.
+            <p className="text-xs sm:text-sm text-stone-300 max-w-xl font-medium leading-relaxed">
+              Official distinctions conferred by the {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} Board of Trustees for exceptional leadership, social service, volunteer action, and charitable dedication.
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start sm:self-auto">
             <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-[100px]">
-              <span className="text-[10px] text-slate-300 uppercase tracking-wider font-bold block">Earned Badges</span>
+              <span className="text-[10px] text-amber-200 uppercase tracking-wider font-bold block">Earned Badges</span>
               <span className="text-2xl font-black text-amber-400">{awards.length}</span>
             </div>
             {totalPoints > 0 && (
               <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-[100px]">
-                <span className="text-[10px] text-slate-300 uppercase tracking-wider font-bold block">Honor Points</span>
+                <span className="text-[10px] text-emerald-200 uppercase tracking-wider font-bold block">Honor Points</span>
                 <span className="text-2xl font-black text-emerald-400">{totalPoints}</span>
               </div>
             )}
@@ -304,67 +304,67 @@ export default function MyAwardsPage() {
 
       {/* ----------------- AWARDS CONTENT ----------------- */}
       {loading ? (
-        <div className="p-16 text-center text-xs font-bold text-black flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="p-16 text-center text-xs font-bold text-stone-700 flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-3 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
           <span>Loading your honors and badges...</span>
         </div>
       ) : awards.length === 0 ? (
         /* Empty State with Action Pathways */
-        <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 text-center max-w-2xl mx-auto shadow-2xs space-y-6">
-          <div className="w-20 h-20 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border-2 border-amber-200 shadow-inner">
-            <FiAward className="w-10 h-10 text-amber-600" />
+        <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 p-8 sm:p-12 rounded-3xl border-2 border-amber-300/80 text-center max-w-2xl mx-auto shadow-sm space-y-6">
+          <div className="w-20 h-20 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center mx-auto shadow-md shadow-amber-500/20">
+            <FiAward className="w-10 h-10" />
           </div>
 
           <div className="space-y-2">
-            <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 inline-block border border-amber-200">
+            <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 inline-block border border-amber-300">
               Honors Showcase
             </span>
-            <h2 className="text-xl font-black text-black">
+            <h2 className="text-xl font-black text-stone-900">
               No Award Badges Conferred Yet
             </h2>
-            <p className="text-xs text-slate-600 leading-relaxed max-w-lg mx-auto font-medium">
-              Honor badges are presented by administrators and trustees to active volunteers, lifetime members, blood donors, and project champions for outstanding dedication.
+            <p className="text-xs text-stone-600 leading-relaxed max-w-lg mx-auto font-medium">
+              Honor badges are presented by administrators and trustees to active volunteers, lifetime members, patrons, and project champions for outstanding dedication.
             </p>
           </div>
 
           {/* How to earn badges */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left pt-2">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-              <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+            <div className="p-4 rounded-2xl bg-white border border-amber-200 space-y-1.5 shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-sm">
                 1
               </div>
-              <h3 className="text-xs font-black text-black">Volunteer in Field Drives</h3>
-              <p className="text-[11px] text-slate-600 font-medium">Participate in blood camps, relief missions, and youth rallies.</p>
+              <h3 className="text-xs font-black text-stone-900">Volunteer in Field Drives</h3>
+              <p className="text-[11px] text-stone-600 font-medium">Assist in senior care, medical camps, nutrition drives, and relief missions.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
+            <div className="p-4 rounded-2xl bg-white border border-amber-200 space-y-1.5 shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-sm">
                 2
               </div>
-              <h3 className="text-xs font-black text-black">Lead Projects</h3>
-              <p className="text-[11px] text-slate-600 font-medium">Coordinate chapter activities, education campaigns, or tree plantations.</p>
+              <h3 className="text-xs font-black text-stone-900">Lead Projects</h3>
+              <p className="text-[11px] text-stone-600 font-medium">Coordinate shelter welfare, medical equipment, and outreach campaigns.</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-              <div className="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">
+            <div className="p-4 rounded-2xl bg-white border border-amber-200 space-y-1.5 shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-sm">
                 3
               </div>
-              <h3 className="text-xs font-black text-black">Patronize Causes</h3>
-              <p className="text-[11px] text-slate-600 font-medium">Support community welfare drives as a recurring patron or life member.</p>
+              <h3 className="text-xs font-black text-stone-900">Patronize Causes</h3>
+              <p className="text-[11px] text-stone-600 font-medium">Support community elder welfare drives as a recurring patron or life member.</p>
             </div>
           </div>
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/profile/apply-volunteer"
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition shadow-md flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs transition shadow-md shadow-amber-500/20 flex items-center gap-2"
             >
               <FiUserPlus className="w-4 h-4" />
               <span>Apply for Field Volunteering</span>
             </Link>
             <Link
               href="/profile/apply-member"
-              className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition shadow-md flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-white text-stone-900 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition shadow-xs flex items-center gap-2"
             >
-              <FiCreditCard className="w-4 h-4" />
+              <FiCreditCard className="w-4 h-4 text-amber-700" />
               <span>Become a Life Member</span>
             </Link>
           </div>
@@ -486,7 +486,7 @@ export default function MyAwardsPage() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl overflow-hidden border border-slate-300 my-auto animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-red-900 to-black text-white p-5 px-6 flex items-center justify-between">
+            <div className="bg-linear-to-r from-red-900 to-black text-white p-5 px-6 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <FiAward className="w-5 h-5 text-amber-400" />
                 <span className="font-black text-sm">Official Conferred Honor</span>

@@ -230,6 +230,26 @@ export const uploadAndUpdateAvatar = createAsyncThunk(
   }
 );
 
+/**
+ * Update authenticated user email address
+ */
+export const updateUserEmail = createAsyncThunk(
+  'auth/updateUserEmail',
+  async ({ newEmail, currentPassword }, { rejectWithValue }) => {
+    try {
+      const res = await api.put('/auth/update-email', { newEmail, currentPassword });
+      if (res.data.success && res.data.user) {
+        saveUserToStorage(res.data.user);
+        notifyUserUpdated(res.data.user);
+        return res.data.user;
+      }
+      return rejectWithValue(res.data.message || 'Email update failed');
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message || 'Error updating email');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: getInitialAuthState(),
@@ -379,6 +399,21 @@ const authSlice = createSlice({
       .addCase(uploadAndUpdateAvatar.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Photo upload failed';
+      })
+      // Update User Email
+      .addCase(updateUserEmail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(updateUserEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.successMessage = 'Email address updated successfully!';
+      })
+      .addCase(updateUserEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Email update failed';
       });
   }
 });

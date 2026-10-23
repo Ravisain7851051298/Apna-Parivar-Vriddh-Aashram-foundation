@@ -317,27 +317,27 @@ export default function ProfileCertificatesPage() {
       )}
 
       {loading ? (
-        <div className="p-16 text-center text-xs font-bold text-black flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="p-16 text-center text-xs font-bold text-stone-700 flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-3 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
           <span>Loading certificate records...</span>
         </div>
       ) : certificates.length === 0 ? (
         <div className="space-y-6">
           {/* Dedicated Inspiring Donor Card */}
           {isDonor ? (
-            <div className="bg-white p-8 sm:p-10 rounded-3xl border-2 border-red-200 text-center max-w-2xl mx-auto shadow-sm space-y-5">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto shadow-inner border border-red-200">
-                <FiHeart className="w-8 h-8 text-red-600" />
+            <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 p-8 sm:p-10 rounded-3xl border-2 border-amber-300/80 text-center max-w-2xl mx-auto shadow-sm space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center mx-auto shadow-md shadow-amber-500/20">
+                <FiHeart className="w-8 h-8" />
               </div>
               <div className="space-y-2">
-                <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-red-100 text-red-800 inline-block">
+                <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 inline-block">
                   Honored Donor &amp; Patron
                 </span>
-                <h3 className="text-xl font-black text-black">
+                <h3 className="text-xl font-black text-stone-900">
                   Thank You for Powering Our Mission!
                 </h3>
-                <p className="text-xs text-black leading-relaxed max-w-lg mx-auto font-medium">
-                  As an esteemed <strong>Donor</strong>, your financial contributions directly empower our education, health, and blood donation drives on the ground.
+                <p className="text-xs text-stone-600 leading-relaxed max-w-lg mx-auto font-medium">
+                  As an esteemed <strong>Donor</strong>, your financial contributions directly empower shelter, healthcare, nutritious meals, and compassionate care for elderly residents.
                   Official certificates of honor are awarded for volunteer service and drive participation. Your <strong>80G Tax Exemption Receipts</strong> are available under your Donations portal.
                 </p>
               </div>
@@ -346,46 +346,46 @@ export default function ProfileCertificatesPage() {
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link
                   href="/profile/donations"
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center justify-center gap-2"
                 >
                   <FiFileText className="w-4 h-4" />
                   <span>View 80G Receipts &amp; Donations</span>
                 </Link>
                 <Link
                   href="/profile/apply-volunteer"
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-slate-300 text-black font-bold text-xs hover:bg-red-50 hover:border-red-300 transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-amber-300 text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition flex items-center justify-center gap-2"
                 >
-                  <FiUserPlus className="w-4 h-4 text-red-600" />
+                  <FiUserPlus className="w-4 h-4 text-amber-700" />
                   <span>Join as Volunteer</span>
                 </Link>
                 <Link
                   href="/profile/apply-member"
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-slate-300 text-black font-bold text-xs hover:bg-red-50 hover:border-red-300 transition flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-amber-300 text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition flex items-center justify-center gap-2"
                 >
-                  <FiCreditCard className="w-4 h-4 text-red-600" />
+                  <FiCreditCard className="w-4 h-4 text-amber-700" />
                   <span>Become a Member</span>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 text-center max-w-lg mx-auto shadow-2xs space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+            <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 p-8 sm:p-12 rounded-3xl border-2 border-amber-300/80 text-center max-w-lg mx-auto shadow-sm space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center mx-auto shadow-md shadow-amber-500/20">
                 <FiAward className="w-8 h-8" />
               </div>
-              <h3 className="text-base font-black text-black">No Certificates Conferred Yet</h3>
-              <p className="text-xs text-black leading-relaxed font-medium">
-                Official certificates are conferred for field volunteer drives, emergency blood donations, or constitutional membership milestones by the Board of Trustees.
+              <h3 className="text-base font-black text-stone-900">No Certificates Conferred Yet</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-medium">
+                Official certificates are conferred for field volunteer drives, elder care services, or constitutional membership milestones by the Board of Trustees.
               </p>
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/profile/apply-volunteer"
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700 transition shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs transition shadow-md"
                 >
                   Apply as Field Volunteer
                 </Link>
                 <Link
                   href="/profile/apply-member"
-                  className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-white text-stone-900 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition shadow-sm"
                 >
                   Apply for Membership
                 </Link>
@@ -568,11 +568,11 @@ export default function ProfileCertificatesPage() {
                     }}
                   />
                   <div>
-                    <h2 className="text-2xl font-black text-red-900 tracking-wide font-serif">
-                      {settings?.ngoName || 'YUVA KRANTI DAL'}
+                    <h2 className="text-2xl font-black text-amber-950 tracking-wide font-serif">
+                      {settings?.ngoName || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION'}
                     </h2>
-                    <h3 className="text-sm font-bold text-slate-800 font-sans">
-                      {settings?.ngoNameHi || 'युवा क्रांति दल (राष्ट्रीय सामाजिक न्यास)'}
+                    <h3 className="text-sm font-bold text-stone-800 font-sans">
+                      {settings?.ngoNameHi || 'अपना परिवार वृद्ध आश्रम'}
                     </h3>
                     <p className="text-[10px] text-slate-600 font-medium">
                       Registered Public Charitable Trust • Reg. No: {settings?.registrationNo || '421/2019'} • 12A &amp; 80G Certified NGO

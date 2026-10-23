@@ -63,12 +63,37 @@ export default function GoogleTranslate() {
     }
   }, []);
 
+  // Read initial language from cookie if set
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(/googtrans=\/en\/([a-z]{2})/i);
+      if (match && match[1]) {
+        setSelectedLang(match[1]);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
   // Set Google translate cookie and trigger select change
   const changeLanguage = (langCode) => {
     setSelectedLang(langCode);
     setIsOpen(false);
 
     try {
+      if (langCode === 'en') {
+        // Reset cookie for pure English default
+        document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = `googtrans=; domain=${window.location.hostname}; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+        const select = document.querySelector('.goog-te-combo');
+        if (select) {
+          select.value = 'en';
+          select.dispatchEvent(new Event('change'));
+        }
+        window.location.reload();
+        return;
+      }
+
       // Set the googtrans cookie for both root and current domain
       const cookieValue = `/en/${langCode}`;
       document.cookie = `googtrans=${cookieValue}; path=/;`;
@@ -91,7 +116,7 @@ export default function GoogleTranslate() {
   const activeLangObj = LANGUAGES.find((l) => l.code === selectedLang) || LANGUAGES[0];
 
   return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
+    <div className="relative z-50 inline-block text-left" ref={dropdownRef}>
       {/* Hidden Official Mount Node */}
       <div id="google_translate_hidden_element" className="hidden" />
 
@@ -99,18 +124,18 @@ export default function GoogleTranslate() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 lg:py-2 rounded-full border border-slate-300 hover:border-[#0b8026] bg-slate-50 hover:bg-emerald-50/50 text-slate-800 text-md font-bold transition shadow-2xs cursor-pointer group"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-300 hover:border-amber-500 bg-white/95 hover:bg-white text-stone-900 text-xs font-bold transition shadow-2xs cursor-pointer group"
         aria-label="Select Language"
       >
-        <FiGlobe className="w-3.5 h-3.5 text-[#0b8026] group-hover:rotate-12 transition-transform duration-300" />
-        <span className="font-semibold">{activeLangObj.native}</span>
-        <FiChevronDown className={`w-3 h-3 text-slate-400 group-hover:text-[#0b8026] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <FiGlobe className="w-3.5 h-3.5 text-amber-700 group-hover:rotate-12 transition-transform duration-300" />
+        <span className="font-bold">{activeLangObj.native}</span>
+        <FiChevronDown className={`w-3 h-3 text-stone-500 group-hover:text-amber-800 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-1.5 w-44 rounded-2xl bg-white border border-slate-200 shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1">
+        <div className="absolute right-0 top-full mt-1.5 w-48 rounded-xl bg-white border border-amber-200 shadow-2xl py-1.5 z-[100] animate-in fade-in slide-in-from-top-1 duration-150 ring-1 ring-amber-500/20">
+          <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-amber-900 border-b border-amber-100 mb-1">
             Translate Website
           </div>
           <div className="max-h-60 overflow-y-auto">
@@ -121,13 +146,13 @@ export default function GoogleTranslate() {
                   key={lang.code}
                   type="button"
                   onClick={() => changeLanguage(lang.code)}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 text-xs font-medium text-left transition cursor-pointer ${isSelected
-                    ? 'bg-emerald-50 text-[#0b8026] font-bold'
-                    : 'text-slate-700 hover:bg-slate-50 hover:text-black'
+                  className={`w-full flex items-center justify-between px-3 py-1.5 text-xs font-semibold text-left transition cursor-pointer ${isSelected
+                    ? 'bg-amber-100/90 text-amber-950 font-black'
+                    : 'text-stone-700 hover:bg-amber-50 hover:text-amber-950'
                     }`}
                 >
                   <span>{lang.native}</span>
-                  <span className="text-[10px] text-slate-400 font-mono">({lang.label})</span>
+                  <span className="text-[10px] text-stone-400 font-mono">({lang.label})</span>
                 </button>
               );
             })}

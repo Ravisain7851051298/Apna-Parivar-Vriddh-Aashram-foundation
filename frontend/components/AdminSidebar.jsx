@@ -50,8 +50,6 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Complaints & Inquiries", href: "/complaints", icon: FiAlertCircle },
   { label: "Event", href: "/event", icon: FiCalendar },
   { label: "Gallery", href: "/gallery", icon: FiImage },
-  { label: "President Message", href: "/dashboard/president-message", icon: FiUserCheck },
-  { label: "YouTube Videos", href: "/dashboard/youtube-videos", icon: FiPlay },
   { label: "Manage Home Content", href: "/dashboard/managecontent", icon: FiLayers },
   { label: "Contact & NGO Settings", href: "/settings", icon: FiSettings },
   { label: "Profile", href: "/profile", icon: FiUser }
@@ -126,7 +124,7 @@ export default function AdminSidebar({ activeRole = null }) {
       {/* Mobile Sticky Bar Toggle */}
       <div className="lg:hidden w-full bg-white text-black px-4 py-3 flex items-center justify-between border-b border-slate-200 sticky top-20 z-40 shadow-xs">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#0b8026] animate-pulse" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
           <span className="text-xs font-bold truncate text-black">
             {roleBadgeText}
           </span>
@@ -152,14 +150,14 @@ export default function AdminSidebar({ activeRole = null }) {
         {/* Brand Header */}
         <div className="p-4 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-[#0b8026] flex items-center justify-center font-bold text-white shadow-md shadow-emerald-800/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 flex items-center justify-center font-black text-stone-950 shadow-md shadow-amber-500/20 shrink-0">
               IYF
             </div>
             <div className="overflow-hidden">
               <h2 className="font-bold text-xs tracking-wide text-black truncate">
                 {settings?.ngoName || 'Yuva Kranti Dal'}
               </h2>
-              <span className="text-[10px] text-[#0b8026] font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 inline-block mt-0.5">
+              <span className="text-[10px] text-amber-800 font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 inline-block mt-0.5">
                 {role}
               </span>
             </div>
@@ -174,8 +172,8 @@ export default function AdminSidebar({ activeRole = null }) {
         </div>
 
         {/* User Card */}
-        <div className="px-4 py-3 bg-emerald-50/50 border-b border-emerald-100 flex items-center gap-3">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-emerald-400 bg-[#0b8026] flex items-center justify-center text-white text-xs font-black shrink-0 shadow-2xs">
+        <div className="px-4 py-3 bg-amber-50/50 border-b border-amber-100 flex items-center gap-3">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-amber-400 bg-amber-500 flex items-center justify-center text-stone-950 text-xs font-black shrink-0 shadow-2xs">
             {effectiveUser?.photoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -212,11 +210,11 @@ export default function AdminSidebar({ activeRole = null }) {
                 href={item.href}
                 onClick={() => setMobileSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${isActive
-                  ? 'bg-[#0b8026] text-white shadow-md shadow-emerald-800/20'
-                  : 'text-slate-700 hover:bg-emerald-50 hover:text-[#0b8026]'
+                  ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold shadow-md shadow-amber-500/20'
+                  : 'text-slate-700 hover:bg-amber-50 hover:text-amber-800'
                   }`}
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-stone-950' : 'text-slate-500'}`} />
                 <span className="truncate">{item.label}</span>
               </Link>
             );

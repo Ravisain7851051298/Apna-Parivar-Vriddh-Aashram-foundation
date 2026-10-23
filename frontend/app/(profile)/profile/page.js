@@ -148,14 +148,8 @@ export default function ProfileOverviewPage() {
         <div className="bg-white border-2 border-amber-300 rounded-3xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 flex items-center justify-center font-bold text-2xl shrink-0 shadow-md border-2 border-amber-300">
-                <FiCheckCircle className="w-7 h-7" />
-              </div>
               <div className="space-y-1">
-                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 inline-block">
-                  Verified Active Credentials
-                </span>
-                <h2 className="text-lg sm:text-xl font-black text-amber-950">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-amber-950">
                   Welcome, {currentUser?.name}!
                 </h2>
                 <p className="text-xs text-stone-700 leading-relaxed max-w-2xl font-medium">
@@ -168,7 +162,7 @@ export default function ProfileOverviewPage() {
             <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
               <Link
                 href="/profile/id-card"
-                className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <FiShield className="w-4 h-4" />
                 <span>Open Digital ID Card</span>

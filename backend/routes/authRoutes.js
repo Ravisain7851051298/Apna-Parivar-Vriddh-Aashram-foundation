@@ -24,6 +24,8 @@ router.post('/logout', (req, res, next) => {
 router.get('/verify-session', verifyToken, authController.verifySession);
 router.get('/me', verifyToken, authController.getMe);
 router.put('/profile', verifyToken, authController.updateProfile);
+router.put('/update-email', verifyToken, authController.updateEmail);
+router.put('/change-password', verifyToken, authController.changePassword);
 
 // Password Recovery Workflow
 router.post('/forgot-password', authController.forgotPassword);

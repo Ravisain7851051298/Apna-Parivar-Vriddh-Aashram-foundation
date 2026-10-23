@@ -489,9 +489,17 @@ class AuthService {
       throw new Error('Unauthorized: Role modification is strictly forbidden.');
     }
 
-    const { name, phone, designation, bloodGroup, dob, address, district, state, photoUrl } = updateData;
+    const { name, email, phone, designation, bloodGroup, dob, address, district, state, photoUrl } = updateData;
     if (name) user.name = name.trim();
     if (phone) user.phone = phone.trim();
+    if (email && email.toLowerCase().trim() !== user.email) {
+      const cleanEmail = email.toLowerCase().trim();
+      const existing = await userRepository.findByEmail(cleanEmail);
+      if (existing && existing._id.toString() !== userId.toString()) {
+        throw new Error('This email address is already registered by another account.');
+      }
+      user.email = cleanEmail;
+    }
     // Only existing Admins can adjust their leadership designation
     if (designation && user.role === 'Admin') user.designation = designation.trim();
     if (bloodGroup) user.bloodGroup = bloodGroup;
@@ -506,6 +514,95 @@ class AuthService {
     await user.save();
     const { password: _, ...userSafe } = user.toObject();
     return userSafe;
+  }
+
+  /**
+   * Dedicated email update workflow with duplicate check and optional password verification
+   */
+  async updateEmail(userId, newEmail, currentPassword) {
+    if (!newEmail) {
+      throw new Error('New email address is required.');
+    }
+    const cleanEmail = newEmail.toLowerCase().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      throw new Error('Please provide a valid email address.');
+    }
+
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    if (user.email === cleanEmail) {
+      throw new Error('The new email is the same as your current email.');
+    }
+
+    const existing = await userRepository.findByEmail(cleanEmail);
+    if (existing && existing._id.toString() !== userId.toString()) {
+      throw new Error('This email address is already in use by another account.');
+    }
+
+    if (currentPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        throw new Error('Current password does not match.');
+      }
+    }
+
+    const oldEmail = user.email;
+    user.email = cleanEmail;
+    await user.save();
+
+    try {
+      const MembershipApplication = require('../models/MembershipApplication');
+      const VolunteerApplication = require('../models/VolunteerApplication');
+      await Promise.all([
+        MembershipApplication.updateMany({ $or: [{ user: userId }, { email: oldEmail }] }, { email: cleanEmail }),
+        VolunteerApplication.updateMany({ $or: [{ user: userId }, { email: oldEmail }] }, { email: cleanEmail })
+      ]);
+    } catch (e) {
+      console.warn('Note updating related application emails:', e.message);
+    }
+
+    const { password: _, ...userSafe } = user.toObject();
+    return userSafe;
+  }
+
+  /**
+   * Password update / change workflow for authenticated user
+   */
+  async changePassword(userId, currentPassword, newPassword, confirmPassword) {
+    if (!currentPassword || !newPassword) {
+      throw new Error('Both current password and new password are required.');
+    }
+
+    if (confirmPassword && newPassword !== confirmPassword) {
+      throw new Error('New password and confirm password do not match.');
+    }
+
+    if (newPassword.length < 6) {
+      throw new Error('New password must be at least 6 characters long.');
+    }
+
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error('Current password is incorrect.');
+    }
+
+    if (currentPassword === newPassword) {
+      throw new Error('New password cannot be the same as your current password.');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 12);
+    await user.save();
+
+    return { message: 'Password has been successfully updated.' };
   }
 }
 

@@ -203,8 +203,8 @@ export default function ProfileGrievancePage() {
       {/* ----------------- 1. TOP HEADER BANNER ----------------- */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold border border-red-200">
-            <FiShield className="w-3.5 h-3.5 text-red-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300">
+            <FiShield className="w-3.5 h-3.5 text-amber-700" />
             <span>Direct Trustee Redressal Portal</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-black tracking-tight">
@@ -218,9 +218,9 @@ export default function ProfileGrievancePage() {
 
         {/* User Identity Chip & Refresh Button */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-          <div className="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-2xl text-xs">
-            <span className="text-[10px] text-slate-500 font-bold block uppercase">Active Profile</span>
-            <span className="font-black text-black truncate block max-w-[170px]">
+          <div className="bg-amber-50/60 border border-amber-200 px-3.5 py-2 rounded-2xl text-xs">
+            <span className="text-[10px] text-amber-800 font-bold block uppercase">Active Profile</span>
+            <span className="font-black text-stone-950 truncate block max-w-[170px]">
               {currentUser?.name || 'Verified User'}
             </span>
           </div>
@@ -228,10 +228,10 @@ export default function ProfileGrievancePage() {
           <button
             onClick={() => loadGrievances(true)}
             disabled={refreshing}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition border border-slate-300 shadow-2xs cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white hover:bg-amber-50 text-stone-800 font-bold text-xs transition border border-amber-200 shadow-2xs cursor-pointer"
             title="Refresh Inquiries"
           >
-            <FiRefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-red-600' : 'text-slate-600'}`} />
+            <FiRefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-amber-600' : 'text-stone-600'}`} />
             <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
           </button>
         </div>
@@ -241,8 +241,8 @@ export default function ProfileGrievancePage() {
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-lg border border-red-200 shadow-2xs">
-              <FiMessageSquare className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-lg border border-amber-300 shadow-2xs">
+              <FiMessageSquare className="w-5 h-5 text-amber-700" />
             </div>
             <div>
               <h2 className="text-lg font-black text-black">Submit New Grievance / Inquiry</h2>
@@ -299,13 +299,13 @@ export default function ProfileGrievancePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Category Dropdown */}
             <div>
-              <label className="font-bold text-black block mb-1.5">
-                Inquiry Category <span className="text-red-600">*</span>
+              <label className="font-bold text-stone-900 block mb-1.5">
+                Inquiry Category <span className="text-amber-600">*</span>
               </label>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 text-black bg-white font-medium"
+                className="w-full px-4 py-3 rounded-2xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-stone-950 bg-white font-medium"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -317,8 +317,8 @@ export default function ProfileGrievancePage() {
 
             {/* Subject */}
             <div>
-              <label className="font-bold text-black block mb-1.5">
-                Subject Summary <span className="text-red-600">*</span>
+              <label className="font-bold text-stone-900 block mb-1.5">
+                Subject Summary <span className="text-amber-600">*</span>
               </label>
               <input
                 type="text"
@@ -326,7 +326,7 @@ export default function ProfileGrievancePage() {
                 placeholder="e.g. Spelling error in Name on official ID Card"
                 value={form.subject}
                 onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 text-black bg-white font-medium"
+                className="w-full px-4 py-3 rounded-2xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-stone-950 bg-white font-medium"
               />
             </div>
           </div>
@@ -334,10 +334,10 @@ export default function ProfileGrievancePage() {
           {/* Description Textarea */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="font-bold text-black">
-                Detailed Description / Problem Statement <span className="text-red-600">*</span>
+              <label className="font-bold text-stone-900">
+                Detailed Description / Problem Statement <span className="text-amber-600">*</span>
               </label>
-              <span className="text-[11px] text-slate-500 font-semibold">
+              <span className="text-[11px] text-stone-500 font-semibold">
                 {form.message.length} characters
               </span>
             </div>
@@ -347,16 +347,16 @@ export default function ProfileGrievancePage() {
               placeholder="Explain what assistance or correction is needed in detail. Mention correct spelling, transaction dates, or specific issues..."
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 leading-relaxed text-black bg-white font-medium"
+              className="w-full px-4 py-3 rounded-2xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed text-stone-950 bg-white font-medium"
             />
           </div>
 
           {/* Photo / Video / Document Upload Box */}
           <div>
-            <label className="font-bold text-black block mb-1">
+            <label className="font-bold text-stone-900 block mb-1">
               Attach Supporting Photo / Video Proof (Optional)
             </label>
-            <p className="text-[11px] text-slate-600 mb-2">
+            <p className="text-[11px] text-stone-600 mb-2">
               Attach a screenshot, transaction receipt, ID photo, or short video clip (Supported: JPG, PNG, WEBP, MP4, MOV, PDF up to 15MB).
             </p>
 
@@ -372,22 +372,22 @@ export default function ProfileGrievancePage() {
             {!selectedFile ? (
               <label
                 htmlFor="grievance-file-upload-input"
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 p-5 border-2 border-dashed border-slate-300 hover:border-red-500 rounded-2xl bg-slate-50/70 hover:bg-red-50/30 cursor-pointer transition text-center sm:text-left group"
+                className="flex flex-col sm:flex-row items-center justify-center gap-3 p-5 border-2 border-dashed border-amber-300 hover:border-amber-500 rounded-2xl bg-amber-50/30 hover:bg-amber-50/70 cursor-pointer transition text-center sm:text-left group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition shadow-xs">
-                  <FiUploadCloud className="w-6 h-6 text-red-600" />
+                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-110 transition shadow-xs">
+                  <FiUploadCloud className="w-6 h-6 text-amber-700" />
                 </div>
                 <div>
-                  <span className="text-xs font-black text-black block">
+                  <span className="text-xs font-black text-stone-950 block">
                     Click to browse and upload Image or Video proof
                   </span>
-                  <span className="text-[11px] text-slate-500 mt-0.5 block">
+                  <span className="text-[11px] text-stone-600 mt-0.5 block">
                     Upload ID card screenshot, bank UTR proof, or video testimony
                   </span>
                 </div>
               </label>
             ) : (
-              <div className="p-4 bg-slate-50 border border-slate-300 rounded-2xl space-y-3">
+              <div className="p-4 bg-stone-50 border border-stone-300 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5 truncate">
                     {fileType === 'video' ? (
@@ -404,10 +404,10 @@ export default function ProfileGrievancePage() {
                       </div>
                     )}
                     <div>
-                      <span className="text-xs font-black text-black block truncate max-w-sm" title={selectedFile.name}>
+                      <span className="text-xs font-black text-stone-950 block truncate max-w-sm" title={selectedFile.name}>
                         {selectedFile.name}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-bold block">
+                      <span className="text-[10px] text-stone-500 font-bold block">
                         {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {fileType.toUpperCase()}
                       </span>
                     </div>
@@ -415,7 +415,7 @@ export default function ProfileGrievancePage() {
                   <button
                     type="button"
                     onClick={removeSelectedFile}
-                    className="text-slate-500 hover:text-red-700 px-3 py-1.5 rounded-xl hover:bg-red-50 text-xs font-bold transition flex items-center gap-1 border border-slate-200"
+                    className="text-stone-500 hover:text-amber-900 px-3 py-1.5 rounded-xl hover:bg-amber-50 text-xs font-bold transition flex items-center gap-1 border border-stone-200"
                   >
                     <FiX className="w-4 h-4" />
                     <span>Remove</span>
@@ -424,7 +424,7 @@ export default function ProfileGrievancePage() {
 
                 {/* Image Live Preview */}
                 {fileType === 'image' && filePreview && (
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 max-h-48 bg-white flex items-center justify-center p-2">
+                  <div className="relative rounded-2xl overflow-hidden border border-stone-200 max-h-48 bg-white flex items-center justify-center p-2">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={filePreview}
@@ -436,7 +436,7 @@ export default function ProfileGrievancePage() {
 
                 {/* Video Live Preview */}
                 {fileType === 'video' && filePreview && (
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 max-h-52 bg-black">
+                  <div className="relative rounded-2xl overflow-hidden border border-stone-200 max-h-52 bg-black">
                     <video
                       src={filePreview}
                       controls
@@ -450,24 +450,24 @@ export default function ProfileGrievancePage() {
 
           {/* Form Actions Footer */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
-            <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
-              <FiHelpCircle className="w-4 h-4 text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2 text-[11px] text-stone-500 font-medium">
+              <FiHelpCircle className="w-4 h-4 text-stone-400 shrink-0" />
               <span>Replies and resolution notes will appear in your past enquiries history below.</span>
             </div>
 
             <button
               type="submit"
               disabled={!isFormValid || submitting}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 disabled:bg-slate-300 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow-md shadow-red-600/20 cursor-pointer shrink-0"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 disabled:from-stone-200 disabled:to-stone-300 disabled:text-stone-400 disabled:opacity-50 disabled:cursor-not-allowed text-stone-950 font-black text-xs transition flex items-center justify-center gap-2 shadow-md shadow-amber-500/20 cursor-pointer shrink-0"
             >
               {submitting ? (
                 <>
-                  <FiRefreshCw className="w-4 h-4 animate-spin" />
+                  <FiRefreshCw className="w-4 h-4 animate-spin text-stone-950" />
                   <span>Submitting Ticket &amp; Evidence...</span>
                 </>
               ) : (
                 <>
-                  <FiSend className="w-4 h-4" />
+                  <FiSend className="w-4 h-4 text-stone-950" />
                   <span>
                     {!isFormValid 
                       ? 'Fill Subject & Description to Submit' 
@@ -490,7 +490,7 @@ export default function ProfileGrievancePage() {
                 <h2 className="text-xl font-black text-black tracking-tight">
                   Your Past Enquiries &amp; Grievances
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-red-100 text-red-800">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-950 border border-amber-300">
                   {stats.total} {stats.total === 1 ? 'Record' : 'Records'}
                 </span>
               </div>
@@ -500,7 +500,7 @@ export default function ProfileGrievancePage() {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200 self-start md:self-auto">
+            <div className="flex flex-wrap items-center gap-1.5 p-1 bg-amber-50/50 rounded-2xl border border-amber-200 self-start md:self-auto">
               {[
                 { key: 'all', label: 'All', count: stats.total },
                 { key: 'pending', label: 'Pending', count: stats.pending },
@@ -512,13 +512,13 @@ export default function ProfileGrievancePage() {
                   onClick={() => setActiveFilter(key)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
                     activeFilter === key
-                      ? 'bg-white text-black shadow-2xs'
-                      : 'text-slate-600 hover:text-black hover:bg-white/60'
+                      ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-2xs'
+                      : 'text-stone-700 hover:text-stone-950 hover:bg-amber-100/50'
                   }`}
                 >
                   <span>{label}</span>
                   <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                    activeFilter === key ? 'bg-slate-200 text-black' : 'bg-slate-200/70 text-slate-700'
+                    activeFilter === key ? 'bg-amber-200/80 text-stone-950 font-black' : 'bg-stone-200/70 text-stone-700'
                   }`}>
                     {count}
                   </span>
@@ -558,7 +558,7 @@ export default function ProfileGrievancePage() {
         {/* Tickets Cards Listing */}
         {loading ? (
           <div className="bg-white p-16 rounded-3xl border border-slate-200 text-center shadow-xs">
-            <div className="w-6 h-6 border-3 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <div className="w-6 h-6 border-3 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
             <p className="text-xs font-bold text-slate-700">Loading your enquiries history...</p>
           </div>
         ) : filteredGrievances.length === 0 ? (
@@ -590,7 +590,7 @@ export default function ProfileGrievancePage() {
                   {/* Top Bar: Ticket Number, Date, Status */}
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-black text-red-700 bg-red-50 border border-red-200 px-3 py-1 rounded-xl">
+                      <span className="font-mono text-xs font-black text-amber-950 bg-amber-100 border border-amber-300 px-3 py-1 rounded-xl">
                         #{g.ticketNumber || 'TICKET'}
                       </span>
                       <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1.5">

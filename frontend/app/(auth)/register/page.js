@@ -3,17 +3,17 @@
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { 
-  FiUser, 
-  FiMail, 
-  FiPhone, 
-  FiLock, 
-  FiCheckCircle, 
-  FiAlertTriangle, 
-  FiEye, 
-  FiEyeOff, 
-  FiMapPin, 
-  FiShield, 
+import {
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiLock,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiEye,
+  FiEyeOff,
+  FiMapPin,
+  FiShield,
   FiArrowRight,
   FiDroplet,
   FiUserPlus
@@ -122,7 +122,7 @@ function RegisterForm() {
 
         {/* Brand Banner */}
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 font-black text-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/20 border-2 border-amber-300">
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 font-black text-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/20 border-2 border-amber-300">
             सेवा
           </div>
           <h1 className="text-2xl font-black text-amber-950">Create User Account</h1>
@@ -250,9 +250,8 @@ function RegisterForm() {
                   placeholder="Repeat password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`w-full pl-10 pr-9 py-2.5 rounded-xl bg-white border text-stone-900 placeholder-stone-400 focus:outline-none text-xs font-medium transition ${
-                    passwordMismatch ? 'border-amber-600' : 'border-amber-200 focus:border-amber-500'
-                  }`}
+                  className={`w-full pl-10 pr-9 py-2.5 rounded-xl bg-white border text-stone-900 placeholder-stone-400 focus:outline-none text-xs font-medium transition ${passwordMismatch ? 'border-amber-600' : 'border-amber-200 focus:border-amber-500'
+                    }`}
                 />
                 <button
                   type="button"
@@ -290,7 +289,7 @@ function RegisterForm() {
             </div>
 
             <div>
-              <label className="font-bold text-stone-800 block mb-1 flex items-center gap-1">
+              <label className="font-bold text-stone-800 mb-1 flex items-center gap-1">
                 <FiDroplet className="w-3.5 h-3.5 text-amber-700" />
                 <span>Blood Group</span>
               </label>
@@ -310,7 +309,7 @@ function RegisterForm() {
           <button
             type="submit"
             disabled={loading || passwordMismatch || !isPasswordLongEnough}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer mt-2 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer mt-2 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <span>Registering account...</span>

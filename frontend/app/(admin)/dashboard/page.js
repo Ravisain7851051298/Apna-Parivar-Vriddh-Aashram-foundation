@@ -63,7 +63,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center p-6 bg-slate-100">
         <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl text-center border border-slate-200">
-          <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+          <div className="w-16 h-16 bg-amber-50 border border-amber-200 text-amber-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
             🔒
           </div>
           <h2 className="text-xl font-black text-slate-900">Dashboard Access Required</h2>
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/login"
-              className="w-full py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer"
+              className="w-full py-3 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-bold text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
             >
               Go to Login Page
             </Link>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center p-6 bg-slate-100">
         <div className="max-w-lg w-full bg-white p-8 rounded-3xl shadow-xl text-center border border-slate-200">
-          <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+          <div className="w-16 h-16 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
             👤
           </div>
           <h2 className="text-xl font-black text-slate-900">Member Profile Dashboard</h2>
@@ -104,7 +104,7 @@ export default function DashboardPage() {
           <div className="mt-6">
             <Link
               href="/profile"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-bold text-xs shadow-md shadow-amber-500/20 transition"
             >
               <FiUser className="w-4 h-4" />
               <span>Open My Profile &amp; ID Card Dashboard</span>
@@ -365,7 +365,7 @@ export default function DashboardPage() {
   // -------------------------------------------------------------
   const donutCauses = useMemo(() => {
     const validDonations = donations.filter(d => d.status !== 'rejected');
-    const colorPalette = ['#0b8026', '#059669', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#06b6d4'];
+    const colorPalette = ['#d97706', '#f59e0b', '#eab308', '#ca8a04', '#b45309', '#3b82f6', '#8b5cf6'];
 
     const map = {};
     let grandTotal = 0;
@@ -381,7 +381,7 @@ export default function DashboardPage() {
 
     if (entries.length === 0) {
       return [
-        { name: 'General Social Welfare Fund', percentage: 100, amount: 0, color: '#0b8026' }
+        { name: 'General Social Welfare Fund', percentage: 100, amount: 0, color: '#d97706' }
       ];
     }
 
@@ -453,7 +453,7 @@ export default function DashboardPage() {
       <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-emerald-50 text-emerald-700">
+            <span className="p-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
               <FiGrid className="w-5 h-5" />
             </span>
             <div>
@@ -475,16 +475,16 @@ export default function DashboardPage() {
             title="Refresh Metrics"
             aria-label="Refresh Metrics"
           >
-            <FiRefreshCw className={`w-4 h-4 text-emerald-700 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <FiRefreshCw className={`w-4 h-4 text-amber-700 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
 
           <a
             href="/api/members/export/excel"
             target="_blank"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-xs font-bold transition shadow-2xs"
             title="Export Members Directory"
           >
-            <FiDownload className="w-3.5 h-3.5 text-emerald-600" />
+            <FiDownload className="w-3.5 h-3.5 text-amber-700" />
             <span>Members Excel</span>
           </a>
 
@@ -500,7 +500,7 @@ export default function DashboardPage() {
 
           <Link
             href="/settings"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-700/20 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 text-xs font-bold shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiSettings className="w-3.5 h-3.5" />
           </Link>
@@ -539,11 +539,11 @@ export default function DashboardPage() {
       {/* 4 Interactive Executive KPI Cards */}
       <div className="mx-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: 80G Donations */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-300 transition group flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-300 hover:shadow-md transition group flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Total 80G Donations</span>
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg group-hover:scale-110 transition">
+              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center text-lg group-hover:scale-110 transition">
                 <FiCreditCard className="w-4 h-4" />
               </div>
             </div>
@@ -553,22 +553,22 @@ export default function DashboardPage() {
           </div>
 
           <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700">
               <FiTrendingUp className="w-3.5 h-3.5" />
               <span>{donations.length} Direct Inflows</span>
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 font-bold border border-amber-200">
               100% Tax Exempt
             </span>
           </div>
         </div>
 
         {/* Card 2: Verified Members */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-emerald-300 transition group flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-amber-300 hover:shadow-md transition group flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Enrolled Members</span>
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg group-hover:scale-110 transition">
+              <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 flex items-center justify-center text-lg group-hover:scale-110 transition">
                 <FiUsers className="w-4 h-4" />
               </div>
             </div>
@@ -655,7 +655,7 @@ export default function DashboardPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <FiActivity className="text-emerald-700 w-4 h-4" />
+                  <FiActivity className="text-amber-600 w-4 h-4" />
                   <h3 className="text-sm font-black text-slate-900">Donation Velocity &amp; Inflow Trajectory</h3>
                 </div>
                 <p className="text-[11px] text-slate-500 mt-0.5">
@@ -689,7 +689,7 @@ export default function DashboardPage() {
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
-                      className={`px-2 py-1 rounded-lg uppercase tracking-wider text-[10px] font-black transition cursor-pointer ${timeRange === range ? 'bg-emerald-700 text-white shadow-xs' : 'text-slate-600 hover:text-emerald-700'
+                      className={`px-2 py-1 rounded-lg uppercase tracking-wider text-[10px] font-black transition cursor-pointer ${timeRange === range ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-xs' : 'text-slate-600 hover:text-amber-700'
                         }`}
                     >
                       {range}
@@ -707,13 +707,13 @@ export default function DashboardPage() {
               >
                 <defs>
                   <linearGradient id="donationGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0b8026" stopOpacity="0.35" />
-                    <stop offset="70%" stopColor="#0b8026" stopOpacity="0.08" />
-                    <stop offset="100%" stopColor="#0b8026" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#d97706" stopOpacity="0.35" />
+                    <stop offset="70%" stopColor="#d97706" stopOpacity="0.08" />
+                    <stop offset="100%" stopColor="#d97706" stopOpacity="0.0" />
                   </linearGradient>
 
                   <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#0b8026" floodOpacity="0.3" />
+                    <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#d97706" floodOpacity="0.3" />
                   </filter>
                 </defs>
 
@@ -764,7 +764,7 @@ export default function DashboardPage() {
                   <path
                     d={svgCoords.path}
                     fill="none"
-                    stroke="#0b8026"
+                    stroke="#d97706"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     filter="url(#glow)"
@@ -783,7 +783,7 @@ export default function DashboardPage() {
                           y1="25"
                           x2={pt.x}
                           y2="175"
-                          stroke="#0b8026"
+                          stroke="#d97706"
                           strokeWidth="1.5"
                           strokeDasharray="3 3"
                         />
@@ -794,8 +794,8 @@ export default function DashboardPage() {
                         cx={pt.x}
                         cy={pt.y}
                         r={isHovered ? 7 : 4}
-                        fill={isHovered ? "#0b8026" : "#ffffff"}
-                        stroke="#0b8026"
+                        fill={isHovered ? "#d97706" : "#ffffff"}
+                        stroke="#d97706"
                         strokeWidth={isHovered ? 3 : 2.5}
                         className="transition-all duration-150 cursor-pointer"
                         onMouseEnter={() => setHoveredPoint(idx)}
@@ -817,7 +817,7 @@ export default function DashboardPage() {
                       <text
                         x={pt.x}
                         y="192"
-                        fill={isHovered ? "#0b8026" : "#64748b"}
+                        fill={isHovered ? "#d97706" : "#64748b"}
                         fontSize="10"
                         fontWeight={isHovered ? "800" : "600"}
                         textAnchor="middle"
@@ -840,7 +840,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider pb-1 border-b border-slate-800">
                     <span>{trendData[hoveredPoint].label} Period</span>
-                    <span className="text-emerald-400">{trendData[hoveredPoint].growth}</span>
+                    <span className="text-amber-400">{trendData[hoveredPoint].growth}</span>
                   </div>
                   <div className="text-sm font-black text-white">
                     ₹{trendData[hoveredPoint].amount.toLocaleString('en-IN')}
@@ -864,7 +864,7 @@ export default function DashboardPage() {
             </div>
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
               <span className="text-[10px] text-slate-500 font-bold uppercase">Tax Deductibility</span>
-              <div className="font-extrabold text-emerald-600 mt-0.5 flex items-center gap-1">
+              <div className="font-extrabold text-amber-700 mt-0.5 flex items-center gap-1">
                 <FiCheckCircle className="w-3.5 h-3.5" />
                 <span>80G Active</span>
               </div>
@@ -884,7 +884,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <FiPieChart className="text-emerald-700" />
+                  <FiPieChart className="text-amber-600" />
                   <span>Cause Allocation</span>
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">
@@ -938,7 +938,7 @@ export default function DashboardPage() {
                     <span className="text-base font-black text-slate-900 mt-0.5">
                       {donutCauses[hoveredDonutIdx].percentage}%
                     </span>
-                    <span className="text-[11px] font-bold text-emerald-600">
+                    <span className="text-[11px] font-bold text-amber-700">
                       ₹{donutCauses[hoveredDonutIdx].amount.toLocaleString('en-IN')}
                     </span>
                   </>
@@ -1004,7 +1004,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <FiBarChart2 className="text-emerald-700" />
+                  <FiBarChart2 className="text-amber-600" />
                   <span>Members &amp; Volunteers Enrolment Velocity</span>
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">
@@ -1015,11 +1015,11 @@ export default function DashboardPage() {
               {/* Legend */}
               <div className="flex items-center gap-3 text-xs font-bold">
                 <span className="flex items-center gap-1.5 text-[11px] text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-700"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                   <span>Members</span>
                 </span>
                 <span className="flex items-center gap-1.5 text-[11px] text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
                   <span>Volunteers</span>
                 </span>
               </div>
@@ -1051,7 +1051,7 @@ export default function DashboardPage() {
                         {/* Members Bar */}
                         <div
                           style={{ height: `${memberH}%` }}
-                          className={`w-3.5 sm:w-4 rounded-t-lg bg-emerald-700 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-emerald-600/30' : 'opacity-90'
+                          className={`w-3.5 sm:w-4 rounded-t-lg bg-amber-500 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-amber-500/30' : 'opacity-90'
                             }`}
                           title={`Members: ${item.members}`}
                         ></div>
@@ -1059,7 +1059,7 @@ export default function DashboardPage() {
                         {/* Volunteers Bar */}
                         <div
                           style={{ height: `${volH}%` }}
-                          className={`w-3.5 sm:w-4 rounded-t-lg bg-emerald-500 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-emerald-500/30' : 'opacity-90'
+                          className={`w-3.5 sm:w-4 rounded-t-lg bg-yellow-400 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-yellow-400/30' : 'opacity-90'
                             }`}
                           title={`Volunteers: ${item.volunteers}`}
                         ></div>
@@ -1075,7 +1075,7 @@ export default function DashboardPage() {
 
               <div className="pt-3 flex items-center justify-between text-xs text-slate-500">
                 <span>Verified ID Cards Minted: <strong className="text-slate-900 font-mono">{activeMembers.length}</strong></span>
-                <span>Active Volunteer Wing: <strong className="text-emerald-700">{members.filter(m => m.isVolunteer || m.role === 'Volunteer').length} Cadres</strong></span>
+                <span>Active Volunteer Wing: <strong className="text-amber-700">{members.filter(m => m.isVolunteer || m.role === 'Volunteer').length} Cadres</strong></span>
               </div>
             </div>
           </div>
@@ -1087,7 +1087,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
                 <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <FiTarget className="text-emerald-700" />
+                  <FiTarget className="text-amber-600" />
                   <span>Campaign Goal Completion</span>
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">
@@ -1096,7 +1096,7 @@ export default function DashboardPage() {
               </div>
               <Link
                 href="/campaigns"
-                className="text-[11px] font-bold text-emerald-700 hover:underline flex items-center gap-0.5"
+                className="text-[11px] font-bold text-amber-700 hover:underline flex items-center gap-0.5"
               >
                 <span>All</span>
                 <FiArrowUpRight className="w-3.5 h-3.5" />
@@ -1130,7 +1130,7 @@ export default function DashboardPage() {
                       <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                         <div
                           style={{ width: `${pct}%` }}
-                          className={`h-full rounded-full transition-all duration-500 ${pct >= 80 ? 'bg-emerald-500' : pct >= 50 ? 'bg-teal-600' : 'bg-emerald-700'
+                          className={`h-full rounded-full transition-all duration-500 ${pct >= 80 ? 'bg-amber-500' : pct >= 50 ? 'bg-yellow-500' : 'bg-amber-600'
                             }`}
                         ></div>
                       </div>
@@ -1146,7 +1146,7 @@ export default function DashboardPage() {
                 <div className="text-center py-6 text-slate-400 text-xs">
                   <FiTarget className="w-7 h-7 mx-auto mb-2 text-slate-300" />
                   <p>No active campaigns launched yet.</p>
-                  <Link href="/campaigns" className="text-emerald-700 font-bold hover:underline mt-1 inline-block">
+                  <Link href="/campaigns" className="text-amber-700 font-bold hover:underline mt-1 inline-block">
                     + Launch First Campaign
                   </Link>
                 </div>
@@ -1163,7 +1163,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
           <div>
             <h2 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-              <FiShield className="text-emerald-700" />
+              <FiShield className="text-amber-600" />
               <span>Foundation Control Hub &amp; Module Directory (18 Modules)</span>
             </h2>
             <p className="text-[11px] text-slate-500 mt-0.5">
@@ -1182,12 +1182,12 @@ export default function DashboardPage() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-emerald-50/60 hover:border-emerald-300 text-slate-800 hover:text-emerald-800 transition flex flex-col items-center text-center group shadow-2xs cursor-pointer"
+                className="p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-amber-50/60 hover:border-amber-300 text-slate-800 hover:text-amber-900 transition flex flex-col items-center text-center group shadow-2xs cursor-pointer"
               >
-                <div className="w-9 h-9 rounded-xl bg-slate-50 group-hover:bg-emerald-100 text-slate-700 group-hover:text-emerald-800 flex items-center justify-center mb-2 transition">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 group-hover:bg-amber-100 text-slate-700 group-hover:text-amber-900 flex items-center justify-center mb-2 transition">
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-bold line-clamp-1 group-hover:text-emerald-800">{item.label}</span>
+                <span className="text-xs font-bold line-clamp-1 group-hover:text-amber-900">{item.label}</span>
               </Link>
             );
           })}
@@ -1204,8 +1204,8 @@ export default function DashboardPage() {
             <button
               onClick={() => setActiveRecentTab('donations')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${activeRecentTab === 'donations'
-                ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/20'
-                : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md shadow-amber-500/20'
+                : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
                 }`}
             >
               <FiCreditCard className="w-3.5 h-3.5" />
@@ -1215,8 +1215,8 @@ export default function DashboardPage() {
             <button
               onClick={() => setActiveRecentTab('members')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${activeRecentTab === 'members'
-                ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/20'
-                : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md shadow-amber-500/20'
+                : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-900'
                 }`}
             >
               <FiUsers className="w-3.5 h-3.5" />
@@ -1226,7 +1226,7 @@ export default function DashboardPage() {
 
           <Link
             href={activeRecentTab === 'donations' ? '/donation' : '/members'}
-            className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1 self-start sm:self-auto"
+            className="text-xs font-bold text-amber-700 hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
             <span>{activeRecentTab === 'donations' ? 'View All Donations Directory' : 'View Full Member Directory'}</span>
             <FiArrowUpRight className="w-3.5 h-3.5" />
@@ -1259,7 +1259,7 @@ export default function DashboardPage() {
                 ) : (
                   donations.slice(0, 6).map((d) => (
                     <tr key={d._id || d.receiptNumber} className="group hover:bg-slate-50/80 transition">
-                      <td className="py-3 px-4 font-mono font-bold text-emerald-800 whitespace-nowrap">
+                      <td className="py-3 px-4 font-mono font-bold text-amber-800 whitespace-nowrap">
                         {d.receiptNumber || 'BYK-80G-PENDING'}
                       </td>
                       <td className="py-3 px-4">
@@ -1269,7 +1269,7 @@ export default function DashboardPage() {
                       <td className="py-3 px-4 font-mono text-slate-700 whitespace-nowrap">
                         {d.panNumber || 'NA'}
                       </td>
-                      <td className="py-3 px-4 font-black text-emerald-600 whitespace-nowrap text-sm">
+                      <td className="py-3 px-4 font-black text-amber-700 whitespace-nowrap text-sm">
                         ₹{Number(d.amount).toLocaleString('en-IN')}
                       </td>
                       <td className="py-3 px-4 max-w-50">
@@ -1279,9 +1279,9 @@ export default function DashboardPage() {
                       <td className="py-3 px-4 text-right whitespace-nowrap sticky right-0 bg-white group-hover:bg-slate-50 z-10 shadow-[-6px_0_10px_-2px_rgba(0,0,0,0.06)]">
                         <Link
                           href={`/donation?receipt=${d.receiptNumber}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-bold text-[11px] border border-emerald-200 transition cursor-pointer"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-900 hover:bg-amber-100 font-bold text-[11px] border border-amber-200 transition cursor-pointer"
                         >
-                          <FiPrinter className="w-3.5 h-3.5 text-emerald-700" />
+                          <FiPrinter className="w-3.5 h-3.5 text-amber-700" />
                           <span>Print 80G Receipt</span>
                         </Link>
                       </td>
@@ -1344,7 +1344,7 @@ export default function DashboardPage() {
                         </td>
                         <td className="py-3 px-4 whitespace-nowrap">
                           {member.feePaid ? (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px]">
                               ₹{member.feeAmount || 250} Paid
                             </span>
                           ) : (
@@ -1354,7 +1354,7 @@ export default function DashboardPage() {
                           )}
                         </td>
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
+                          <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${isActive ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-700'
                             }`}>
                             {isActive ? 'Active & Minted' : (member.status || 'Pending')}
                           </span>
@@ -1364,7 +1364,7 @@ export default function DashboardPage() {
                             {!isActive ? (
                               <button
                                 onClick={() => verifyMember(id)}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] shadow-xs cursor-pointer transition"
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-bold text-[11px] shadow-xs cursor-pointer transition"
                               >
                                 <FiCheck className="w-3.5 h-3.5" />
                                 <span>Verify &amp; Issue ID</span>

@@ -82,25 +82,11 @@ export const INITIAL_SETTINGS = {
       highlight: 'Official Digital ID Card & Appointment Letter issued upon admin approval',
     },
   ],
-  newsTickerText: 'Welcome to Apna Parivar Vriddh Aashram Foundation • Free Shelter, Medical Care & Satvik Meals for Destitute Elders • 24x7 Helpline: +91 8959055269',
   homeAboutTitle: 'About Apna Parivar Foundation',
   homeAboutStory: 'Apna Parivar Vriddh Aashram Foundation is a home for senior citizens who have no one else to rely on. We provide far more than a roof: we offer a vibrant family, genuine respect, and loving emotional shelter.',
   homeOurValues: 'Compassion, integrity, selfless service, and dignity are our foundational pillars. Serving senior citizens who are like our own parents is our highest calling.',
   homeOurImpact: 'Our foundation has provided secure shelter, free high-level medical care, cataract surgeries, and daily fresh satvik meals to over 200+ elderly mothers and fathers.',
   homeJoinUs: 'Join this sacred cause. Whether through donations, membership, or volunteering, every contribution brings heartfelt smiles to our elders.',
-  presidentMessageTitle: 'Message from Founder & President',
-  presidentPhotoUrl: '/logo.jpg',
-  presidentMessageContent: 'Dear Supporters & Well-wishers,\n\nOld age is the phase of life when human beings require the utmost affection, medical support, and attentive care. Tragically, many elderly parents find themselves abandoned in their hour of need. Apna Parivar Vriddh Aashram was founded to end this suffering. Every elder residing here is an honoured member of our family. We invite you to join this sacred journey of selfless service.\n\n- President, Apna Parivar Vriddh Aashram Foundation',
-  youtubeVideos: [
-    {
-      title: 'Apna Parivar Vriddh Aashram - Overview & Resident Experiences',
-      url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      title: 'Free Health Camp & Community Bhoj Seva at Jabalpur Aashram',
-      url: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    }
-  ],
   objectives: [
     {
       title: 'Safe Residential Shelter',

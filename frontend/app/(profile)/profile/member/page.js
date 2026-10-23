@@ -2,16 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  FiCreditCard, 
-  FiShield, 
-  FiFileText, 
-  FiAward, 
-  FiCheckCircle, 
-  FiCheck, 
-  FiClock, 
-  FiArrowRight, 
-  FiDownload, 
+import {
+  FiCreditCard,
+  FiShield,
+  FiFileText,
+  FiAward,
+  FiCheckCircle,
+  FiCheck,
+  FiClock,
+  FiArrowRight,
+  FiDownload,
   FiUserCheck,
   FiAlertCircle,
   FiExternalLink
@@ -25,10 +25,10 @@ export default function ProfileMemberPage() {
   const effectiveUser = reduxUser || currentUser;
 
   const isMember = (
-    effectiveUser?.role === 'Member' || 
-    effectiveUser?.role === 'Admin' || 
-    effectiveUser?.isMember || 
-    !!effectiveUser?.memberId || 
+    effectiveUser?.role === 'Member' ||
+    effectiveUser?.role === 'Admin' ||
+    effectiveUser?.isMember ||
+    !!effectiveUser?.memberId ||
     effectiveUser?.membershipApplication?.status === 'approved'
   );
 
@@ -56,14 +56,14 @@ export default function ProfileMemberPage() {
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <Link
               href="/profile/id-card?type=member"
-              className="px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
             >
               <FiShield className="w-4 h-4" />
               <span>Member ID Card</span>
             </Link>
             <Link
               href="/profile/appointment-letter"
-              className="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-2xl bg-stone-900 hover:bg-black text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5"
             >
               <FiFileText className="w-4 h-4" />
               <span>Appointment Letter</span>
@@ -76,7 +76,7 @@ export default function ProfileMemberPage() {
       {isMember ? (
         <div className="space-y-6">
           {/* Status Banner */}
-          <div className="bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-800 text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
+          <div className="bg-linear-to-r from-emerald-600 via-emerald-700 to-teal-800 text-white rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
               <div className="space-y-2">
                 <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 text-white backdrop-blur-xs inline-block">
@@ -86,7 +86,7 @@ export default function ProfileMemberPage() {
                   {effectiveUser?.name}
                 </h2>
                 <p className="text-xs text-emerald-100 max-w-xl leading-relaxed">
-                  You are officially enrolled as a verified member of <strong>Yuva Kranti Dal</strong>. Your statutory rights include voting participation in the annual general assembly, digital identity verification, and community representation.
+                  You are officially enrolled as a verified member of <strong>{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</strong>. Your statutory rights include voting participation in the annual general assembly, digital identity verification, and community representation.
                 </p>
               </div>
 
@@ -122,7 +122,7 @@ export default function ProfileMemberPage() {
 
             <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs">
               <span className="text-slate-500 font-bold block text-[10px] uppercase">Blood Group on Record</span>
-              <span className="font-mono font-black text-red-600 text-sm mt-1 block">
+              <span className="font-mono font-black text-amber-700 text-sm mt-1 block">
                 {effectiveUser?.bloodGroup || 'O+'}
               </span>
               <span className="text-[11px] text-slate-500 font-medium mt-1 block">Donor Registry Sync</span>
@@ -146,9 +146,9 @@ export default function ProfileMemberPage() {
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-2xl bg-red-50/50 border border-red-200 flex flex-col justify-between">
+              <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-300 flex flex-col justify-between">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold mb-3 shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold mb-3 shadow-xs">
                     <FiShield className="w-5 h-5" />
                   </div>
                   <h4 className="font-black text-black text-sm">Official Member ID Card</h4>
@@ -159,7 +159,7 @@ export default function ProfileMemberPage() {
                 <div className="pt-4">
                   <Link
                     href="/profile/id-card?type=member"
-                    className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-xs transition flex items-center justify-center gap-1.5"
                   >
                     <span>Open Member ID Card</span>
                     <FiArrowRight className="w-3.5 h-3.5" />
@@ -214,23 +214,23 @@ export default function ProfileMemberPage() {
       ) : (
         /* ----------------- NOT A MEMBER YET (APPLICATION INFO) ----------------- */
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-red-200 shadow-sm space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+          <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 rounded-3xl p-6 sm:p-10 border-2 border-amber-300/80 shadow-sm space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-amber-200/60">
               <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center font-bold text-2xl shrink-0 border border-red-200 shadow-inner">
-                  <FiCreditCard className="w-7 h-7 text-red-600" />
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl shrink-0 shadow-md shadow-amber-500/20">
+                  <FiCreditCard className="w-7 h-7" />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
                       Constitutional Membership
                     </span>
-                    <span className="text-xs text-slate-500 font-semibold">• Not Enrolled</span>
+                    <span className="text-xs text-stone-500 font-semibold">• Not Enrolled</span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black text-black">
-                    Join as an Official Member of Yuva Kranti Dal
+                  <h2 className="text-xl sm:text-2xl font-black text-stone-900">
+                    Join as an Official Member of {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}
                   </h2>
-                  <p className="text-xs text-black leading-relaxed max-w-2xl font-medium">
+                  <p className="text-xs text-stone-600 leading-relaxed max-w-2xl font-medium">
                     Become a voting, verified member of an official 12A &amp; 80G Certified Non-Governmental Organization registered under Indian Trust Bylaws.
                   </p>
                 </div>
@@ -239,7 +239,7 @@ export default function ProfileMemberPage() {
               <div className="shrink-0">
                 <Link
                   href="/profile/apply-member"
-                  className="px-6 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/25 transition flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition flex items-center gap-2 cursor-pointer"
                 >
                   <span>Apply for Membership Now</span>
                   <FiArrowRight className="w-4 h-4" />
@@ -249,51 +249,51 @@ export default function ProfileMemberPage() {
 
             {/* Member Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-red-600 font-black">
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
                   <FiShield className="w-4 h-4" />
                   <span>Verifiable Photo ID Card</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
+                <p className="text-stone-600 leading-relaxed font-medium">
                   Official dual-sided digital identity card signed by National President with anti-fraud QR code for field authorization.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-red-600 font-black">
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
                   <FiFileText className="w-4 h-4" />
                   <span>Statutory Appointment Letter</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
+                <p className="text-stone-600 leading-relaxed font-medium">
                   Formal appointment letter printed with government registration numbers, 12A/80G orders, and Trust seals.
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2 text-red-600 font-black">
+              <div className="p-5 rounded-2xl bg-white border border-amber-200 space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-amber-800 font-black">
                   <FiCheckCircle className="w-4 h-4" />
                   <span>Voting &amp; Executive Council</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed font-medium">
-                  Direct voting privileges in the annual general assembly and opportunity to lead district-level youth welfare committees.
+                <p className="text-stone-600 leading-relaxed font-medium">
+                  Direct voting privileges in the annual general assembly and opportunity to lead welfare committees.
                 </p>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <span className="text-xs text-slate-500 font-medium">
-                Annual membership fees directly support grassroots child education and emergency blood banks.
+            <div className="pt-4 border-t border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <span className="text-xs text-stone-500 font-medium">
+                Annual membership contributions directly support elderly shelter, healthcare, and humanitarian care.
               </span>
               <div className="flex items-center gap-3">
                 <Link
                   href="/members"
-                  className="px-4 py-2.5 rounded-xl border border-slate-300 text-black font-bold text-xs hover:bg-slate-50 transition"
+                  className="px-4 py-2.5 rounded-xl border border-amber-300 bg-white text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition"
                 >
                   Explore Member Directory
                 </Link>
                 <Link
                   href="/profile/apply-member"
-                  className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                 >
                   <span>Start Application</span>
                   <FiArrowRight className="w-3.5 h-3.5" />

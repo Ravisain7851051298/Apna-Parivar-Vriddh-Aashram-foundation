@@ -24,15 +24,12 @@ import { getYoutubeVideoId, getYoutubeEmbedUrl, getYoutubeThumbnail, isVideoItem
 import api from '@/services/api';
 
 const CATEGORIES = [
-  { id: 'all', label: 'All Categories' },
+  { id: 'all', label: 'All Media' },
+  { id: 'Aashram Life', label: 'Aashram Living' },
+  { id: 'Satvik Bhojan', label: 'Satvik Meals & Nutrition' },
+  { id: 'Healthcare & Medical', label: 'Health Camps & Vitals' },
+  { id: 'Satsang & Festivals', label: 'Satsang & Celebrations' },
   { id: 'Video Footage', label: 'Video Archives' },
-  { id: 'Child Education', label: 'Child Education' },
-  { id: 'Healthcare & Blood Donation', label: 'Health & Blood Camps' },
-  { id: 'Food & Ration Drives', label: 'Food & Ration Drives' },
-  { id: 'Women Empowerment', label: 'Women Empowerment' },
-  { id: 'Disaster Relief', label: 'Disaster Relief' },
-  { id: 'Youth & Community', label: 'Youth Leadership' },
-  { id: 'Tree Plantation & Green India', label: 'Green India' },
   { id: 'General', label: 'General' },
 ];
 
@@ -203,28 +200,28 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-12 text-black">
+    <div className="min-h-screen bg-white py-10 sm:py-14 text-stone-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Header Section */}
-        <div className="bg-slate-50/70 border border-slate-200 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+        <div className="bg-amber-50/60 border border-amber-200 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-2 border border-emerald-200">
-              <FiImage className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Official Media &amp; Field Archives</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold mb-2 border border-amber-300">
+              <FiImage className="w-3.5 h-3.5 text-amber-700" />
+              <span>Official Photo &amp; Video Archives</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-stone-950 tracking-tight">
               Photo &amp; Video Gallery
             </h1>
-            <p className="text-xs sm:text-sm text-slate-700 mt-2 max-w-2xl font-medium">
-              Transparent, real-time photographic and audiovisual documentation of our grassroots drives, student scholarships, youth mentorship sessions, and disaster interventions across India.
+            <p className="text-xs sm:text-sm text-stone-700 mt-2 max-w-2xl font-medium">
+              Joyful, real-time photographic and video documentation of resident elder care, satvik meals, medical health camps, festival celebrations, and daily life at Apna Parivar Vriddh Aashram Foundation.
             </p>
           </div>
 
           {isAdmin && (
             <button
               onClick={openAddModal}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer self-start md:self-auto shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer self-start md:self-auto shrink-0"
             >
               <FiPlus className="w-4 h-4" />
               <span>Add Media (Photo / Video)</span>
@@ -233,15 +230,15 @@ export default function GalleryPage() {
         </div>
 
         {/* Search & Media Format Toolbar */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="bg-slate-50 border border-amber-200/80 rounded-2xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xs">
           <div className="relative flex-1 max-w-md">
             <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search albums, videos, captions, or locations..."
+              placeholder="Search albums, videos, captions, or celebrations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-emerald-600 font-medium text-black placeholder:text-slate-400"
+              className="w-full pl-10 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-amber-500 font-medium text-black placeholder:text-slate-400"
             />
           </div>
 
@@ -264,7 +261,7 @@ export default function GalleryPage() {
                       isSelected
                         ? fmt.id === 'video'
                           ? 'bg-red-600 text-white font-extrabold shadow-xs'
-                          : 'bg-emerald-700 text-white font-extrabold shadow-xs'
+                          : 'bg-amber-500 text-stone-950 font-extrabold shadow-xs'
                         : 'text-slate-600 hover:text-black'
                     }`}
                   >
@@ -294,7 +291,7 @@ export default function GalleryPage() {
                   isActive
                     ? isVideoCategory
                       ? 'bg-red-600 text-white shadow-xs'
-                      : 'bg-emerald-700 text-white shadow-xs'
+                      : 'bg-amber-500 text-stone-950 shadow-xs'
                     : 'bg-slate-100 text-slate-800 hover:bg-slate-200'
                 }`}
               >

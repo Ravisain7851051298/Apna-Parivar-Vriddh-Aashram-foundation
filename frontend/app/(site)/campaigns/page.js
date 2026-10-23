@@ -2,17 +2,17 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { 
-  FiTarget, 
-  FiPlus, 
-  FiHeart, 
-  FiUsers, 
-  FiX, 
-  FiCheckCircle, 
-  FiEdit2, 
-  FiTrash2, 
-  FiUploadCloud, 
-  FiImage, 
+import {
+  FiTarget,
+  FiPlus,
+  FiHeart,
+  FiUsers,
+  FiX,
+  FiCheckCircle,
+  FiEdit2,
+  FiTrash2,
+  FiUploadCloud,
+  FiImage,
   FiAlertTriangle,
   FiCheck,
   FiFilter
@@ -32,13 +32,13 @@ const CATEGORIES = [
 ];
 
 export default function CampaignsPage() {
-  const { 
-    campaigns = [], 
-    addCampaign, 
-    updateCampaign, 
-    deleteCampaign, 
+  const {
+    campaigns = [],
+    addCampaign,
+    updateCampaign,
+    deleteCampaign,
     uploadFile,
-    currentUser 
+    currentUser
   } = useNGO();
 
   const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
@@ -287,7 +287,7 @@ export default function CampaignsPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-200">
           <div>
@@ -328,11 +328,10 @@ export default function CampaignsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${
-                  isSelected
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${isSelected
                     ? 'bg-emerald-700 text-white shadow-sm'
                     : 'bg-white text-black border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800'
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -340,11 +339,10 @@ export default function CampaignsPage() {
           })}
           <button
             onClick={() => setSelectedCategory('Urgent')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${
-              selectedCategory === 'Urgent'
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${selectedCategory === 'Urgent'
                 ? 'bg-emerald-700 text-white shadow-sm'
                 : 'bg-white text-black border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800'
-            }`}
+              }`}
           >
             🔥 Urgent Only
           </button>
@@ -374,8 +372,8 @@ export default function CampaignsPage() {
               const raised = Number(camp.raisedAmount) || 0;
               const goal = Number(camp.goalAmount) || 100000;
               const percent = Math.min(100, Math.round((raised / goal) * 100));
-              const displayImage = camp.bannerImage 
-                ? getContentImageUrl(camp.bannerImage) 
+              const displayImage = camp.bannerImage
+                ? getContentImageUrl(camp.bannerImage)
                 : 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600';
 
               return (
@@ -394,7 +392,7 @@ export default function CampaignsPage() {
                           e.target.src = 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600';
                         }}
                       />
-                      
+
                       {/* Category Badge */}
                       <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-xs text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full border border-emerald-200 shadow-sm">
                         {camp.category || 'General Drive'}
@@ -441,7 +439,7 @@ export default function CampaignsPage() {
                       <div className="mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                         <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-emerald-600 to-teal-500 h-full rounded-full transition-all duration-500"
+                            className="bg-linear-to-r from-emerald-600 to-teal-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
@@ -503,7 +501,7 @@ export default function CampaignsPage() {
         {showAddModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
             <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-slate-200 shadow-2xl relative my-8">
-              <button 
+              <button
                 onClick={() => {
                   clearAddImage();
                   setShowAddModal(false);
@@ -707,7 +705,7 @@ export default function CampaignsPage() {
         {editingCampaign && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
             <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-slate-200 shadow-2xl relative my-8">
-              <button 
+              <button
                 onClick={closeEditModal}
                 className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition"
               >

@@ -244,6 +244,28 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const updateEmail = async (req, res) => {
+  try {
+    const { newEmail, email, currentPassword, password } = req.body;
+    const targetEmail = newEmail || email;
+    const pwd = currentPassword || password;
+    const user = await authService.updateEmail(req.user.id, targetEmail, pwd);
+    return res.json({ success: true, message: 'Email address updated successfully', user });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const result = await authService.changePassword(req.user.id, currentPassword, newPassword, confirmPassword);
+    return res.json({ success: true, message: result.message });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createAdmin,
   register,
@@ -253,6 +275,8 @@ module.exports = {
   verifySession,
   getMe,
   updateProfile,
+  updateEmail,
+  changePassword,
   forgotPassword,
   resetPassword
 };

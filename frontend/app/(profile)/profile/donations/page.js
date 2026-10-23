@@ -122,30 +122,30 @@ export default function ProfileDonationsPage() {
   return (
     <div className="space-y-6">
       {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-amber-200/60">
         <div>
-          <h2 className="text-xl font-black text-black flex items-center gap-2">
-            <FiHeart className="text-red-600 w-5 h-5" />
+          <h2 className="text-xl font-black text-stone-900 flex items-center gap-2">
+            <FiHeart className="text-amber-600 w-5 h-5" />
             <span>Contributions &amp; Statutory 80G Tax Receipts</span>
           </h2>
-          <p className="text-xs text-black font-medium mt-1">
+          <p className="text-xs text-stone-600 font-medium mt-1">
             Section 80G tax exemption certificates are issued solely upon verification of bank transactions.
           </p>
         </div>
 
         <button
           onClick={() => setDonateModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition self-start sm:self-auto cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition self-start sm:self-auto cursor-pointer"
         >
-          <FiHeart className="w-4 h-4" />
+          <FiHeart className="w-4 h-4 text-stone-950" />
           <span>Make a Charitable Contribution</span>
         </button>
       </div>
 
       {/* Submitted Notice */}
       {submittedNotice && (
-        <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-4 text-xs text-black flex items-center gap-3">
-          <FiCheckCircle className="w-5 h-5 text-red-600 shrink-0" />
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-xs text-stone-900 flex items-center gap-3 shadow-xs">
+          <FiCheckCircle className="w-5 h-5 text-amber-600 shrink-0" />
           <span className="font-medium">
             Contribution received for verification! Once approved by the audit committee, your official 80G Tax Exemption Receipt will unlock and be emailed to you.
           </span>
@@ -158,7 +158,7 @@ export default function ProfileDonationsPage() {
           ⚖️ Statutory Tax Exemption Notice (Income Tax Act 1961 - Section 80G)
         </p>
         <p>
-          Donations to Yuva Kranti Dal qualify for 50% tax deduction under Section 80G.
+          Donations to {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} qualify for 50% tax deduction under Section 80G.
           In compliance with Form 10BD regulations, tax receipts are generated exclusively following bank reconciliation by our accountants.
         </p>
       </div>
@@ -418,8 +418,8 @@ export default function ProfileDonationsPage() {
                       onClick={() => setDonateForm(prev => ({ ...prev, amount: amt }))}
                       className={`px-3 py-1.5 rounded-xl font-bold border transition cursor-pointer ${
                         Number(donateForm.amount) === amt
-                          ? 'bg-red-600 text-white border-red-600'
-                          : 'bg-white text-black border-slate-300 hover:bg-red-50'
+                          ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 border-amber-400 font-black shadow-xs'
+                          : 'bg-white text-stone-900 border-amber-300 hover:bg-amber-50'
                       }`}
                     >
                       ₹{amt}
@@ -432,7 +432,7 @@ export default function ProfileDonationsPage() {
                   min="10"
                   value={donateForm.amount}
                   onChange={(e) => setDonateForm(prev => ({ ...prev, amount: e.target.value }))}
-                  className="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-bold text-sm text-black bg-white"
+                  className="w-full p-3 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold text-sm text-stone-900 bg-white"
                 />
               </div>
 
@@ -443,13 +443,13 @@ export default function ProfileDonationsPage() {
                   placeholder="e.g. ABCDE1234F"
                   value={donateForm.panNumber}
                   onChange={(e) => setDonateForm(prev => ({ ...prev, panNumber: e.target.value.toUpperCase() }))}
-                  className="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-mono uppercase text-black bg-white"
+                  className="w-full p-3 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono uppercase text-black bg-white"
                 />
               </div>
 
               {/* UPI QR Display */}
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-center space-y-2">
-                <span className="text-[11px] font-bold text-black uppercase tracking-wider block">
+              <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-200 text-center space-y-2">
+                <span className="text-[11px] font-bold text-amber-950 uppercase tracking-wider block">
                   Scan Official UPI QR to Pay
                 </span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -458,7 +458,7 @@ export default function ProfileDonationsPage() {
                   alt="UPI QR"
                   className="w-36 h-36 mx-auto object-contain bg-white p-2 rounded-xl border border-amber-300 shadow-2xs"
                 />
-                <span className="font-mono text-xs font-bold text-black block">
+                <span className="font-mono text-xs font-bold text-stone-900 block">
                   {settings?.upiId || 'apnaparivar@okhdfcbank'}
                 </span>
               </div>
@@ -471,7 +471,7 @@ export default function ProfileDonationsPage() {
                   placeholder="Enter UPI reference UTR..."
                   value={donateForm.transactionId}
                   onChange={(e) => setDonateForm(prev => ({ ...prev, transactionId: e.target.value }))}
-                  className="w-full p-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-mono text-black bg-white"
+                  className="w-full p-3 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-black bg-white"
                 />
               </div>
 
@@ -479,7 +479,7 @@ export default function ProfileDonationsPage() {
               <div>
                 <label className="block font-bold text-black mb-1">Attach Payment Screenshot (Optional)</label>
                 {!selectedFile ? (
-                  <div className="border-2 border-dashed border-slate-300 hover:border-red-500 rounded-2xl p-4 text-center transition bg-slate-50">
+                  <div className="border-2 border-dashed border-stone-300 hover:border-amber-500 rounded-2xl p-4 text-center transition bg-amber-50/30">
                     <input
                       type="file"
                       id="donationScreenshot"
@@ -488,24 +488,24 @@ export default function ProfileDonationsPage() {
                       className="hidden"
                     />
                     <label htmlFor="donationScreenshot" className="cursor-pointer space-y-1 block">
-                      <FiUploadCloud className="w-5 h-5 text-red-600 mx-auto" />
-                      <span className="text-xs font-bold text-red-600 block hover:underline">
+                      <FiUploadCloud className="w-5 h-5 text-amber-700 mx-auto" />
+                      <span className="text-xs font-bold text-amber-900 block hover:underline">
                         Select Payment Screenshot
                       </span>
-                      <span className="text-[10px] text-black block">
+                      <span className="text-[10px] text-stone-600 block">
                         Uploaded in single API request with contribution
                       </span>
                     </label>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-xl border border-red-200 bg-red-50/50 flex items-center justify-between gap-3">
+                  <div className="p-3 rounded-xl border border-amber-200 bg-amber-50/50 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       {previewUrl && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={previewUrl}
                           alt="Screenshot"
-                          className="w-12 h-12 rounded-lg object-contain bg-white border border-slate-200"
+                          className="w-12 h-12 rounded-lg object-contain bg-white border border-amber-200"
                         />
                       )}
                       <div>
@@ -532,14 +532,14 @@ export default function ProfileDonationsPage() {
                 <button
                   type="button"
                   onClick={() => setDonateModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-black font-bold text-xs hover:bg-slate-200 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-stone-100 text-stone-800 font-bold text-xs hover:bg-stone-200 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 shadow-md shadow-red-600/20 cursor-pointer"
+                  className="px-6 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 cursor-pointer"
                 >
                   {submitting ? 'Submitting...' : 'Submit Contribution for Verification'}
                 </button>

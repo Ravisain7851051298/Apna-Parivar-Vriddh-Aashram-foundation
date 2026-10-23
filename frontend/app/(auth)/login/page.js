@@ -88,7 +88,7 @@ function LoginForm() {
       badgeColor: 'bg-amber-100/90 text-amber-950 border-amber-300',
       icon: FiUsers,
       btnText: 'Sign In as Volunteer',
-      btnColor: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
+      btnColor: 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
       subText: 'Access field tasks, attendance logs, and volunteer certificates.'
     },
     member: {
@@ -97,7 +97,7 @@ function LoginForm() {
       badgeColor: 'bg-amber-100/90 text-amber-950 border-amber-300',
       icon: FiUserCheck,
       btnText: 'Sign In as Member',
-      btnColor: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
+      btnColor: 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
       subText: 'Access membership card, appointment letter, and welfare benefits.'
     },
     admin: {
@@ -106,7 +106,7 @@ function LoginForm() {
       badgeColor: 'bg-amber-200/90 text-amber-950 border-amber-400',
       icon: FiShield,
       btnText: 'Sign In to Admin Dashboard',
-      btnColor: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-700 text-stone-950 font-black shadow-md shadow-amber-500/30',
+      btnColor: 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-600 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-700 text-stone-950 font-black shadow-md shadow-amber-500/30',
       subText: 'Central governance, approval desk, and content operations.'
     },
     donor: {
@@ -115,7 +115,7 @@ function LoginForm() {
       badgeColor: 'bg-amber-100/90 text-amber-950 border-amber-300',
       icon: FiHeart,
       btnText: 'Sign In as Donor',
-      btnColor: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
+      btnColor: 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black shadow-md shadow-amber-500/30',
       subText: 'Access official 80G tax receipts and cumulative donation records.'
     }
   };
@@ -162,11 +162,10 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleRoleChange('volunteer')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeRole === 'volunteer'
-                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeRole === 'volunteer'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-            }`}
+              }`}
           >
             <FiUsers className="w-3.5 h-3.5 shrink-0" />
             <span>Volunteer</span>
@@ -175,11 +174,10 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleRoleChange('member')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeRole === 'member'
-                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeRole === 'member'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-            }`}
+              }`}
           >
             <FiUserCheck className="w-3.5 h-3.5 shrink-0" />
             <span>Member</span>
@@ -188,11 +186,10 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleRoleChange('donor')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeRole === 'donor'
-                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeRole === 'donor'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-            }`}
+              }`}
           >
             <FiHeart className="w-3.5 h-3.5 shrink-0" />
             <span>Donor</span>
@@ -201,11 +198,10 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => handleRoleChange('admin')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeRole === 'admin'
-                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeRole === 'admin'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-sm font-black'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-            }`}
+              }`}
           >
             <FiShield className="w-3.5 h-3.5 shrink-0" />
             <span>Admin</span>
