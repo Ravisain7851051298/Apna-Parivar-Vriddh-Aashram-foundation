@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '@/services/api';
 import {
@@ -69,6 +69,25 @@ export function NGOProvider({ children }) {
 
   const loading = authLoading || ngoLoading;
 
+  const [sponsorships, setSponsorships] = useState([]);
+  const [awards, setAwards] = useState([]);
+
+  const refreshSponsorships = useCallback(async () => {
+    try {
+      const res = await api.get('/sponsorships');
+      const list = res.data?.data || res.data?.sponsorships || [];
+      setSponsorships(Array.isArray(list) ? list : []);
+    } catch (e) {}
+  }, []);
+
+  const refreshAwards = useCallback(async () => {
+    try {
+      const res = await api.get('/awards');
+      const list = res.data?.data || res.data?.awards || [];
+      setAwards(Array.isArray(list) ? list : []);
+    } catch (e) {}
+  }, []);
+
   // On mount, load initial data into Redux store
   useEffect(() => {
     dispatch(fetchCurrentUser());
@@ -81,14 +100,16 @@ export function NGOProvider({ children }) {
     // Fetch ancillary dynamic collections
     const fetchAncillary = async () => {
       try {
-        const [srvRes, evtRes, newsRes, galRes, teamRes, grvRes, fbRes] = await Promise.allSettled([
+        const [srvRes, evtRes, newsRes, galRes, teamRes, grvRes, fbRes, sponRes, awdRes] = await Promise.allSettled([
           api.get('/services'),
           api.get('/events'),
           api.get('/news'),
           api.get('/gallery'),
           api.get('/team-members'),
           api.get('/grievances'),
-          api.get('/feedback')
+          api.get('/feedback'),
+          api.get('/sponsorships'),
+          api.get('/awards')
         ]);
 
         if (srvRes.status === 'fulfilled' && (srvRes.value.data?.data || srvRes.value.data?.items)) {
@@ -112,6 +133,14 @@ export function NGOProvider({ children }) {
         }
         if (fbRes.status === 'fulfilled' && (fbRes.value.data?.feedbacks || fbRes.value.data?.data)) {
           dispatch(setFeedbacks(fbRes.value.data.feedbacks || fbRes.value.data.data));
+        }
+        if (sponRes.status === 'fulfilled' && (sponRes.value.data?.data || sponRes.value.data?.sponsorships)) {
+          const sList = sponRes.value.data?.data || sponRes.value.data?.sponsorships;
+          if (Array.isArray(sList)) setSponsorships(sList);
+        }
+        if (awdRes.status === 'fulfilled' && (awdRes.value.data?.data || awdRes.value.data?.awards)) {
+          const aList = awdRes.value.data?.data || awdRes.value.data?.awards;
+          if (Array.isArray(aList)) setAwards(aList);
         }
       } catch (e) {
         console.warn('Ancillary data load notice:', e.message);
@@ -721,6 +750,10 @@ export function NGOProvider({ children }) {
     addTeamMember,
     updateTeamMember,
     deleteTeamMember,
+    sponsorships,
+    awards,
+    refreshSponsorships,
+    refreshAwards,
     loading
   };
 

@@ -38,6 +38,21 @@ export default function IdCardPage() {
     (effectiveUser?.memberId && (effectiveUser.memberId.startsWith('APVAF-MEM-') || effectiveUser.memberId.startsWith('BYK-MEM-') || effectiveUser.memberId.startsWith('MEM-')))
   );
 
+  // Expired Member Plan Check
+  const isPlanExpired = Boolean(
+    effectiveUser?.role !== 'Admin' && (
+      effectiveUser?.isPlanExpired ||
+      effectiveUser?.membershipStatus === 'expired' ||
+      effectiveUser?.status === 'expired' ||
+      effectiveUser?.membershipApplication?.status === 'expired' ||
+      effectiveUser?.membershipApplication?.membershipStatus === 'expired' ||
+      (effectiveUser?.membershipExpiresAt && new Date(effectiveUser.membershipExpiresAt).getTime() < Date.now()) ||
+      (effectiveUser?.membershipApplication?.expiresAt && new Date(effectiveUser.membershipApplication.expiresAt).getTime() < Date.now())
+    )
+  );
+
+  const isMemberUnlocked = isMemberVerified && !isPlanExpired;
+
   const isVolunteerVerified = Boolean(
     effectiveUser?.role === 'Volunteer' || 
     effectiveUser?.isVolunteer || 
@@ -48,16 +63,16 @@ export default function IdCardPage() {
   // Default tab: if user is volunteer and NOT verified member, default directly to volunteer
   const defaultTab = paramType 
     ? paramType 
-    : (isVolunteerVerified && !isMemberVerified ? 'volunteer' : 'member');
+    : (isVolunteerVerified && !isMemberUnlocked ? 'volunteer' : 'member');
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   useEffect(() => {
     if (paramType) {
       setActiveTab(paramType);
-    } else if (isVolunteerVerified && !isMemberVerified) {
+    } else if (isVolunteerVerified && !isMemberUnlocked) {
       setActiveTab('volunteer');
     }
-  }, [paramType, isVolunteerVerified, isMemberVerified]);
+  }, [paramType, isVolunteerVerified, isMemberUnlocked]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -81,7 +96,7 @@ export default function IdCardPage() {
   const memberVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/member/${memberId}`;
   const volunteerVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/volunteer/${volunteerId}`;
 
-  const isCurrentCardVerified = activeTab === 'member' ? isMemberVerified : isVolunteerVerified;
+  const isCurrentCardVerified = activeTab === 'member' ? isMemberUnlocked : isVolunteerVerified;
 
   const handlePrint = () => {
     window.print();
@@ -96,8 +111,13 @@ export default function IdCardPage() {
             <FiShield className="w-3.5 h-3.5 text-amber-700" />
             <span>Digital ID Card Verification Desk</span>
           </div>
-          <h1 className="text-2xl font-black text-stone-900 tracking-tight">
-            Official Verifiable Identity Badges
+          <h1 className="text-2xl font-black text-stone-900 tracking-tight flex items-center gap-2">
+            <span>Official Verifiable Identity Badges</span>
+            {isPlanExpired && (
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300 uppercase">
+                Plan Expired
+              </span>
+            )}
           </h1>
           <p className="text-xs text-stone-600 font-medium mt-1">
             Official dual-sided identification cards with statutory anti-tamper QR code and National Trustee seals.
@@ -128,9 +148,13 @@ export default function IdCardPage() {
           >
             <FiCreditCard className="w-4 h-4" />
             <span>Official Member ID Card</span>
-            {isMemberVerified && (
+            {isPlanExpired ? (
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-rose-600 text-white">
+                Expired
+              </span>
+            ) : isMemberVerified ? (
               <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
-            )}
+            ) : null}
           </button>
 
           <button
@@ -153,7 +177,43 @@ export default function IdCardPage() {
       {/* ==================== TAB 1: MEMBER ID CARD ==================== */}
       {activeTab === 'member' && (
         <>
-          {!isMemberVerified ? (
+          {isPlanExpired ? (
+            /* Expired Member Plan Locked State */
+            <div className="space-y-6">
+              <div className="bg-linear-to-b from-rose-50/80 to-amber-50/50 border-2 border-rose-300 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-rose-500 to-amber-500 text-white flex items-center justify-center font-bold text-2xl mx-auto shadow-md shadow-rose-500/20">
+                  <FiLock className="w-8 h-8" />
+                </div>
+                <div>
+                  <span className="px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-900 border border-rose-300 inline-block mb-1.5">
+                    ● Expired Member • Plan Renewal Required
+                  </span>
+                  <h3 className="text-xl font-black text-stone-900">
+                    Official Member ID Card is Locked
+                  </h3>
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                    Your foundation membership plan has expired. In accordance with statutory foundation governance and anti-fraud policies, your digital ID card credentials and print permissions are locked until membership is renewed.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/profile/member"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
+                  >
+                    <span>Renew Membership Plan</span>
+                    <FiArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="px-6 py-2.5 rounded-2xl bg-white text-stone-800 border border-amber-300 font-bold text-xs hover:bg-amber-50 transition"
+                  >
+                    Back to Profile
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : !isMemberVerified ? (
             /* Locked State for Member ID Card */
             <div className="space-y-6">
               <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">

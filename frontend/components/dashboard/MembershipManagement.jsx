@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCheck,
@@ -23,7 +24,9 @@ import {
   FiFileText,
   FiCamera,
   FiExternalLink,
-  FiCreditCard
+  FiCreditCard,
+  FiStar,
+  FiZap
 } from "react-icons/fi";
 import api from "@/services/api";
 import { getContentImageUrl } from "@/lib/authApi";
@@ -49,12 +52,31 @@ export default function MembershipManagement() {
   const [certRole, setCertRole] = useState("Official Member");
   const [issuingCert, setIssuingCert] = useState(false);
 
+  // Offer an Award Modal State
+  const [awardTemplates, setAwardTemplates] = useState([]);
+  const [offerAwardModalItem, setOfferAwardModalItem] = useState(null);
+  const [submittingAward, setSubmittingAward] = useState(false);
+  const [awardForm, setAwardForm] = useState({
+    awardId: "",
+    title: "Dedicated Member Seva Honor",
+    tier: "Gold",
+    badgeColor: "gold",
+    badgeIcon: "FiAward",
+    reason: "In recognition of dedicated membership, lifelong humanitarian service, and compassionate contributions to Apna Parivar Vriddh Aashram."
+  });
+
   const loadData = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/applications/members");
-      const list = res.data?.applications || res.data?.data || [];
+      const [resMembers, resAwards] = await Promise.all([
+        api.get("/applications/members"),
+        api.get("/awards").catch(() => ({ data: { awards: [] } }))
+      ]);
+      const list = resMembers.data?.applications || resMembers.data?.data || [];
       setMemberships(Array.isArray(list) ? list : []);
+
+      const aList = resAwards.data?.awards || resAwards.data?.data || [];
+      setAwardTemplates(Array.isArray(aList) ? aList.filter(a => !a.isOrgAward) : []);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load memberships");
     } finally {
@@ -163,9 +185,74 @@ export default function MembershipManagement() {
     }
   };
 
+  const openOfferAwardModal = (member) => {
+    setOfferAwardModalItem(member);
+    const defaultTemplate = awardTemplates[0];
+    setAwardForm({
+      awardId: defaultTemplate?._id || "",
+      title: defaultTemplate?.title || "Dedicated Member Seva Honor",
+      tier: defaultTemplate?.tier || "Gold",
+      badgeColor: defaultTemplate?.badgeColor || "gold",
+      badgeIcon: defaultTemplate?.badgeIcon || "FiAward",
+      reason: `In recognition of dedicated membership, lifelong humanitarian service, and compassionate contributions to Apna Parivar Vriddh Aashram.`
+    });
+  };
+
+  const handleOfferAward = async (e) => {
+    e.preventDefault();
+    if (!offerAwardModalItem) return;
+    if (!awardForm.reason.trim()) {
+      toast.error("Please enter a citation reason for this award");
+      return;
+    }
+    try {
+      setSubmittingAward(true);
+      const recipientUser = offerAwardModalItem.user || {};
+      const payload = {
+        userId: recipientUser._id || offerAwardModalItem.userId || offerAwardModalItem.user || offerAwardModalItem._id,
+        email: recipientUser.email || offerAwardModalItem.email,
+        name: recipientUser.name || offerAwardModalItem.name,
+        awardId: awardForm.awardId || undefined,
+        title: awardForm.title || "Excellence in Member Seva",
+        tier: awardForm.tier || "Gold",
+        badgeColor: awardForm.badgeColor || "gold",
+        badgeIcon: awardForm.badgeIcon || "FiAward",
+        category: "Membership Honor",
+        reason: awardForm.reason.trim(),
+        citation: awardForm.reason.trim()
+      };
+      const res = await api.post("/awards/grant", payload);
+      if (res.data?.success) {
+        toast.success(res.data?.message || "Award successfully offered to member!");
+        setOfferAwardModalItem(null);
+      } else {
+        toast.error(res.data?.message || "Failed to offer award");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || "Error offering award");
+    } finally {
+      setSubmittingAward(false);
+    }
+  };
+
+  const isMemberExpired = (m) => {
+    if (m.status === 'expired' || m.membershipStatus === 'expired') return true;
+    const expiry = m.expiresAt || m.membershipExpiresAt || m.user?.membershipExpiresAt;
+    if (expiry && new Date(expiry).getTime() < Date.now()) return true;
+    if (m.verifiedAt && !expiry && (Date.now() - new Date(m.verifiedAt).getTime() > 365 * 24 * 60 * 60 * 1000)) return true;
+    return false;
+  };
+
   const filtered = memberships.filter((m) => {
+    const expired = isMemberExpired(m);
     const status = (m.status || "pending").toLowerCase();
-    const matchStatus = activeTab === "all" || status === activeTab.toLowerCase();
+    
+    let matchStatus = true;
+    if (activeTab === "all") matchStatus = true;
+    else if (activeTab === "expired") matchStatus = expired;
+    else if (activeTab === "approved") matchStatus = (status === "approved" || status === "active") && !expired;
+    else matchStatus = status === activeTab.toLowerCase();
+
     const q = searchQuery.toLowerCase();
     const name = (m.user?.name || m.name || "").toLowerCase();
     const email = (m.user?.email || m.email || "").toLowerCase();
@@ -175,22 +262,35 @@ export default function MembershipManagement() {
 
   return (
     <div className="space-y-4">
-      {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header Card (Light Yellow Hero) */}
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-b-2xl border-b border-amber-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Membership Management</h1>
-          <p className="text-xs text-slate-700 mt-1">
-            Review membership applications, verify payment proofs, and issue dual-sided QR ID cards.
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-200/70 text-amber-950 border border-amber-300 mb-1">
+            Trustee Members Registry
+          </div>
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Membership Management</h1>
+          <p className="text-xs text-stone-700 mt-0.5">
+            Audit membership applications, track active &amp; expired plans, and issue verifiable digital QR ID cards.
           </p>
         </div>
 
-        <button
-          onClick={loadData}
-          className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer self-start md:self-auto"
-          title="Refresh"
-        >
-          <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/awards"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+            title="Open Awards & Honors Desk"
+          >
+            <FiAward className="w-4 h-4" />
+            <span>Offer an Award</span>
+          </Link>
+          <button
+            onClick={loadData}
+            className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-stone-800 transition cursor-pointer shadow-2xs"
+            title="Refresh Directory"
+          >
+            <FiRefreshCw className={`w-4 h-4 text-amber-700 ${loading ? "animate-spin" : ""}`} />
+          </button>
+        </div>
       </div>
 
       {/* Approval Success Banner */}
@@ -200,7 +300,7 @@ export default function MembershipManagement() {
             <FiCheckCircle className="w-6 h-6 text-emerald-600 shrink-0" />
             <div>
               <p className="text-sm font-black text-emerald-950">{approvalNotice}</p>
-              <p className="text-xs text-emerald-750 font-medium mt-0.5">डैशबोर्ड अपडेट करने के लिए पेज रिफ्रेश हो रहा है...</p>
+              <p className="text-xs text-emerald-700 font-medium mt-0.5">डैशबोर्ड अपडेट करने के लिए पेज रिफ्रेश हो रहा है...</p>
             </div>
           </div>
           <FiRefreshCw className="w-5 h-5 text-emerald-700 animate-spin shrink-0" />
@@ -208,45 +308,54 @@ export default function MembershipManagement() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="bg-white mx-3 p-1 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white mx-3 p-2 rounded-2xl border border-amber-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative flex-1 w-full max-w-md">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4" />
           <input
             type="text"
             placeholder="Search by name, email, or transaction ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-red-500 text-black placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 placeholder:text-stone-400 bg-stone-50/50"
           />
         </div>
 
         <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-          {["All", "Pending", "Approved", "Rejected"].map((st) => (
+          {["All", "Pending", "Approved", "Expired", "Rejected"].map((st) => (
             <button
               key={st}
               onClick={() => setActiveTab(st.toLowerCase())}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${activeTab === st.toLowerCase()
-                ? "bg-red-600 text-white shadow-md shadow-red-600/20"
-                : "bg-slate-100 text-black hover:bg-red-50 hover:text-red-600"
-                }`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition whitespace-nowrap cursor-pointer ${
+                activeTab === st.toLowerCase()
+                  ? st === "Expired"
+                    ? "bg-rose-600 text-white shadow-md shadow-rose-600/20"
+                    : "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md shadow-amber-500/20"
+                  : "bg-amber-50/60 text-stone-700 hover:bg-amber-100 hover:text-stone-950 border border-amber-200/60"
+              }`}
             >
               {st}
+              {st === "Expired" && (
+                <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[9px] bg-rose-200 text-rose-950 font-black">
+                  {memberships.filter(isMemberExpired).length}
+                </span>
+              )}
             </button>
           ))}
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white mx-3 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white mx-3 rounded-3xl border border-amber-200 shadow-xs overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-700 text-xs space-y-2">
-            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-red-600" />
-            <p>Loading memberships...</p>
+          <div className="p-12 text-center text-stone-700 text-xs space-y-2">
+            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-amber-600" />
+            <p className="font-bold">Loading membership registry...</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-slate-700 text-xs space-y-2">
-            <FiAlertCircle className="w-8 h-8 mx-auto text-slate-400" />
-            <p className="font-semibold text-black">No membership applications found.</p>
+          <div className="p-12 text-center text-stone-700 text-xs space-y-2">
+            <FiAlertCircle className="w-8 h-8 mx-auto text-amber-500" />
+            <p className="font-bold text-stone-900">No {activeTab !== "all" ? activeTab : ""} membership applications found.</p>
+            <p className="text-[11px] text-stone-500">Applications submitted online will appear here in real-time.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -383,19 +492,29 @@ export default function MembershipManagement() {
                             </>
                           )}
                           {(status.toLowerCase() === "approved" || status.toLowerCase() === "active") && (
-                            <button
-                              onClick={() => {
-                                setCertModalItem(m);
-                                setCertRole(m.user?.designation || m.planName || "Official Foundation Member");
-                                setCertTitle("Certificate of Official Membership & Recognition");
-                                setCertReason("In honor of official membership, lifelong commitment to community welfare, and support of the Yuva Kranti Dal.");
-                              }}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition cursor-pointer shadow-xs"
-                              title="Offer Official Member Certificate"
-                            >
-                              <FiAward className="w-3.5 h-3.5" />
-                              <span>Certificate</span>
-                            </button>
+                            <>
+                              <button
+                                onClick={() => openOfferAwardModal(m)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-linear-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-black text-[11px] transition cursor-pointer shadow-xs"
+                                title="Offer an Award / Honor Badge to Member"
+                              >
+                                <FiAward className="w-3.5 h-3.5" />
+                                <span>Offer an Award</span>
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setCertModalItem(m);
+                                  setCertRole(m.user?.designation || m.planName || "Official Foundation Member");
+                                  setCertTitle("Certificate of Official Membership & Recognition");
+                                  setCertReason("In honor of official membership, lifelong commitment to community welfare, and support of the Yuva Kranti Dal.");
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-bold text-[11px] transition cursor-pointer shadow-xs"
+                                title="Offer Official Member Certificate"
+                              >
+                                <FiFileText className="w-3.5 h-3.5 text-amber-800" />
+                                <span>Certificate</span>
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={() => setDeleteModalItem(m)}
@@ -882,6 +1001,151 @@ export default function MembershipManagement() {
                   className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition cursor-pointer disabled:opacity-50"
                 >
                   {issuingCert ? "Minting Certificate..." : "Mint & Send Certificate"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Offer an Award Modal */}
+      {offerAwardModalItem && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full border border-amber-200 shadow-2xl relative text-black p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-amber-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-linear-to-tr from-amber-500 to-yellow-400 text-stone-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+                  <FiAward className="w-5 h-5 text-stone-950" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-stone-950">Offer an Award to Member</h3>
+                  <p className="text-[11px] text-stone-500">
+                    Recipient: <strong className="text-amber-950">{offerAwardModalItem.user?.name || offerAwardModalItem.name}</strong> ({offerAwardModalItem.user?.email || offerAwardModalItem.email})
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setOfferAwardModalItem(null)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-black cursor-pointer transition"
+              >
+                <FiX className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleOfferAward} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Select Award Preset (Optional)</label>
+                <select
+                  value={awardForm.awardId}
+                  onChange={(e) => {
+                    const selId = e.target.value;
+                    const found = awardTemplates.find(a => (a._id || a.id) === selId);
+                    if (found) {
+                      setAwardForm(prev => ({
+                        ...prev,
+                        awardId: selId,
+                        title: found.title,
+                        tier: found.tier || "Gold",
+                        badgeColor: found.badgeColor || "gold",
+                        badgeIcon: found.badgeIcon || "FiAward"
+                      }));
+                    } else {
+                      setAwardForm(prev => ({ ...prev, awardId: "" }));
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-semibold focus:outline-amber-500 text-stone-900 bg-amber-50/40"
+                >
+                  <option value="">-- Choose from preset honors or write custom title --</option>
+                  {awardTemplates.map(a => (
+                    <option key={a._id || a.id} value={a._id || a.id}>
+                      {a.title} ({a.tier || "Honor"}) - {a.points || 100} pts
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Award / Honor Title</label>
+                <input
+                  type="text"
+                  required
+                  value={awardForm.title}
+                  onChange={(e) => setAwardForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="e.g. Dedicated Member Seva Honor"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-semibold focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">Honor Tier</label>
+                  <select
+                    value={awardForm.tier}
+                    onChange={(e) => setAwardForm(prev => ({ ...prev, tier: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-stone-900 bg-white"
+                  >
+                    <option value="Bronze">Bronze Tier</option>
+                    <option value="Silver">Silver Tier</option>
+                    <option value="Gold">Gold Tier</option>
+                    <option value="Platinum">Platinum Tier</option>
+                    <option value="Diamond">Diamond Tier</option>
+                    <option value="Special Honor">Special Honor</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">Badge Color</label>
+                  <select
+                    value={awardForm.badgeColor}
+                    onChange={(e) => setAwardForm(prev => ({ ...prev, badgeColor: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-stone-900 bg-white"
+                  >
+                    <option value="gold">Gold / Amber</option>
+                    <option value="red">Ruby Red</option>
+                    <option value="emerald">Emerald Green</option>
+                    <option value="blue">Sapphire Blue</option>
+                    <option value="purple">Royal Purple</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Citation / Reason for Award</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={awardForm.reason}
+                  onChange={(e) => setAwardForm(prev => ({ ...prev, reason: e.target.value }))}
+                  placeholder="In recognition of dedicated service, exemplary commitment..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-medium focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3 text-xs text-amber-950 space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <FiCheckCircle className="text-amber-700" />
+                  Instant Attribution to Member:
+                </p>
+                <p className="text-[11px] text-stone-600">
+                  This award will be immediately attached to the member&apos;s verified digital profile under &quot;My Awards &amp; Badges&quot; with official citation.
+                </p>
+              </div>
+
+              <div className="flex gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setOfferAwardModalItem(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-amber-200 text-stone-700 font-bold text-xs hover:bg-amber-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingAward}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <FiAward className="w-4 h-4 text-stone-950" />
+                  <span>{submittingAward ? "Offering Award..." : "Confirm & Offer Award"}</span>
                 </button>
               </div>
             </form>

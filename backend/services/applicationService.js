@@ -431,7 +431,9 @@ class ApplicationService {
         idCardGenerated: true,
         appointmentLetterGenerated: true,
         verifiedAt: new Date(),
-        verifiedBy: adminUser?.name || 'Trustee Admin'
+        verifiedBy: adminUser?.name || 'Trustee Admin',
+        membershipExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        membershipStatus: 'active'
       });
 
       app.user = user._id;
@@ -452,6 +454,10 @@ class ApplicationService {
       user.appointmentLetterGenerated = true;
       user.verifiedAt = new Date();
       user.verifiedBy = adminUser?.name || 'Trustee Admin';
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      user.membershipExpiresAt = oneYearFromNow;
+      user.membershipStatus = 'active';
 
       // If user had no password, generate initial password
       if (!user.password) {
@@ -473,6 +479,11 @@ class ApplicationService {
     app.assignedMemberId = verifiedMemberId;
     app.reviewedBy = adminUser?.name || 'Trustee Admin';
     app.reviewedAt = new Date();
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    app.expiresAt = expiryDate;
+    app.membershipExpiresAt = expiryDate;
+    app.membershipStatus = 'active';
     await app.save();
 
     // Auto send official appointment letter, ID card & login credentials via email asynchronously

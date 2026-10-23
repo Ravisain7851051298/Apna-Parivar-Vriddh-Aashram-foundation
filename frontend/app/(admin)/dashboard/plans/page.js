@@ -96,20 +96,20 @@ export default function MembershipPlansPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <FiLayers className="text-emerald-700 w-5 h-5" />
-            Custom Membership Plans CMS
+          <h2 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight flex items-center gap-2">
+            <FiLayers className="text-amber-800 w-5 h-5" />
+            Membership Plans CMS
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
             Configure dynamic plans that applicants select when enrolling. Changes sync immediately with the public portal.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer self-start sm:self-auto"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer self-start sm:self-auto"
         >
           <FiPlus className="w-4 h-4" />
           <span>Create New Plan</span>
@@ -145,7 +145,7 @@ export default function MembershipPlansPage() {
                 <span>{plan.duration || 'Annual'}</span>
               </div>
               <h3 className="text-lg font-black text-slate-900 mt-1">{plan.name}</h3>
-              <p className="text-xs text-slate-600 mt-1 min-h-[36px] line-clamp-2">
+              <p className="text-xs text-slate-600 mt-1 min-h-9 line-clamp-2">
                 {plan.description || 'Verified membership tier empowering youth welfare initiatives.'}
               </p>
 

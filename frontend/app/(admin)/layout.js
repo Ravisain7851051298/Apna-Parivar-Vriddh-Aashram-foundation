@@ -96,6 +96,7 @@ export default function AdminLayout({ children }) {
         { label: 'News & Press Releases', href: '/dashboard/blogs', icon: FiFileText },
         { label: 'Photo & Video Gallery', href: '/dashboard/gallery', icon: FiImage },
         { label: 'Awards & Honors', href: '/dashboard/awards', icon: FiAward },
+        { label: 'Sponsorships & Partners', href: '/dashboard/sponsorships', icon: FiAward },
       ]
     },
     {
@@ -242,14 +243,14 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-[#fffdfa] text-stone-900 flex flex-col md:flex-row antialiased">
       {/* ----------------- FIXED DESKTOP SIDEBAR (COLLAPSIBLE WITH NESTED ITEMS) ----------------- */}
       <aside
-        className={`hidden md:flex flex-col justify-between fixed inset-y-0 left-0 z-30 bg-white border-r border-amber-200 transition-all duration-300 ease-in-out shadow-xs select-none ${
+        className={`hidden md:flex flex-col justify-between fixed inset-y-0 left-0 z-30 bg-[#fefce8] border-r border-amber-200/90 transition-all duration-300 ease-in-out shadow-xs select-none ${
           collapsed ? 'w-20' : 'w-64'
         }`}
       >
         <div className="flex flex-col h-full overflow-hidden">
           {/* Brand Header */}
           <div
-            className={`px-4 py-3.5 border-b border-amber-200 flex items-center transition-all bg-linear-to-r from-amber-50/60 to-yellow-50/40 ${
+            className={`px-4 py-3.5 border-b border-amber-200/90 flex items-center transition-all bg-linear-to-r from-amber-100/80 via-[#fefce8] to-amber-50/60 ${
               collapsed ? 'justify-center flex-col gap-2' : 'justify-between'
             }`}
           >
@@ -427,7 +428,7 @@ export default function AdminLayout({ children }) {
 
                   {/* Sub-items (Child links) */}
                   {isGroupOpen && (
-                    <div className="p-1 space-y-0.5 bg-white border-t border-amber-100/60">
+                    <div className="p-1 space-y-0.5 bg-[#fffdf0] border-t border-amber-200/60">
                       {group.items?.map((item) => {
                         const active = pathname === item.href;
                         const Icon = item.icon;
@@ -477,10 +478,10 @@ export default function AdminLayout({ children }) {
             onClick={() => setMobileOpen(false)}
           />
 
-          <div className="relative w-76 max-w-[85vw] bg-white h-full flex flex-col justify-between shadow-2xl z-10 border-r border-amber-200">
+          <div className="relative w-76 max-w-[85vw] bg-[#fefce8] h-full flex flex-col justify-between shadow-2xl z-10 border-r border-amber-200/90">
             <div className="flex flex-col h-full overflow-hidden">
               {/* Drawer Top Header */}
-              <div className="p-4 border-b border-amber-200 flex items-center justify-between bg-linear-to-r from-amber-50 to-yellow-50">
+              <div className="p-4 border-b border-amber-200/90 flex items-center justify-between bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-amber-500 to-yellow-400 flex items-center justify-center font-black text-stone-950 text-sm shadow-xs shrink-0 ring-2 ring-amber-300">
                     परिवार
@@ -545,7 +546,7 @@ export default function AdminLayout({ children }) {
                       </button>
 
                       {isGroupOpen && (
-                        <div className="p-1 space-y-0.5 bg-white border-t border-amber-100/60">
+                        <div className="p-1 space-y-0.5 bg-[#fffdf0] border-t border-amber-200/60">
                           {group.items?.map((item) => {
                             const active = pathname === item.href;
                             const Icon = item.icon;
@@ -581,7 +582,7 @@ export default function AdminLayout({ children }) {
               </div>
 
               {/* Drawer Bottom Actions */}
-              <div className="p-3 border-t border-amber-200 space-y-1.5 bg-stone-50">
+              <div className="p-3 border-t border-amber-200 space-y-1.5 bg-amber-100/40">
                 <Link
                   href="/profile"
                   onClick={() => setMobileOpen(false)}
@@ -619,7 +620,7 @@ export default function AdminLayout({ children }) {
         }`}
       >
         {/* TOP HEADER FOR ADMIN DASHBOARD */}
-        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-amber-200/90 px-4 py-3 flex items-center justify-between gap-4 shadow-2xs">
+        <header className="sticky top-0 z-20 bg-[#fefce8]/95 backdrop-blur-md border-b border-amber-200/90 px-4 py-3 flex items-center justify-between gap-4 shadow-2xs">
           {/* Left section: Collapse/Expand toggles & Page Breadcrumb */}
           <div className="flex items-center gap-3 min-w-0">
             {/* Desktop Collapse / Expand Toggle Button */}

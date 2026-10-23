@@ -84,6 +84,9 @@ router.use('/organization-certificates', orgDocumentRoutes);
 router.use('/team-members', createResourceRouter('team-members'));
 router.use('/team', createResourceRouter('team-members'));
 router.use('/mission-vision', createResourceRouter('mission-vision'));
+router.use('/sponsorships', createResourceRouter('sponsorships'));
+router.use('/sponsors', createResourceRouter('sponsorships'));
+router.use('/partners', createResourceRouter('sponsorships'));
 
 
 // Backwards-compatible aliases for endpoints requested by legacy pages

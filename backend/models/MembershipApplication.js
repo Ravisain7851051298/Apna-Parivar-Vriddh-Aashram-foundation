@@ -30,9 +30,16 @@ const membershipApplicationSchema = new mongoose.Schema({
   designation: { type: String, default: 'Verified Member' },
   status: { 
     type: String, 
-    enum: ['pending', 'approved', 'rejected'], 
+    enum: ['pending', 'approved', 'rejected', 'expired'], 
     default: 'pending' 
   },
+  membershipStatus: {
+    type: String,
+    enum: ['active', 'expired', 'pending', 'cancelled'],
+    default: 'active'
+  },
+  expiresAt: { type: Date, default: null },
+  membershipExpiresAt: { type: Date, default: null },
   assignedMemberId: { type: String, default: null },
   verifiedAt: { type: Date, default: null },
   verifiedBy: { type: String, default: null },

@@ -211,9 +211,9 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Top Header Card */}
-      <div className="bg-white p-5 rounded-3xl border border-amber-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300 mb-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black border border-amber-300 mb-1.5">
             <FiSettings className="w-3.5 h-3.5 text-amber-700" />
             <span>NGO Master Configuration</span>
           </div>

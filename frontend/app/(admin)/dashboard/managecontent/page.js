@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   FiSave,
   FiPlus,
@@ -18,19 +19,44 @@ import {
   FiAward,
   FiShield,
   FiBookOpen,
-  FiCompass
+  FiCompass,
+  FiEdit2,
+  FiX,
+  FiExternalLink
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
+import api from '@/services/api';
 import toast from 'react-hot-toast';
 
-export default function ManageContentPage() {
+function ManageContentInner() {
   const { settings, updateSettings, currentUser, uploadFile } = useNGO();
   const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
+  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState('carousel');
   const [uploadingField, setUploadingField] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // My Awards (Org Honors) State
+  const [orgAwards, setOrgAwards] = useState([]);
+  const [loadingOrgAwards, setLoadingOrgAwards] = useState(false);
+  const [awardModalOpen, setAwardModalOpen] = useState(false);
+  const [editingAward, setEditingAward] = useState(null);
+  const [uploadingAwardFile, setUploadingAwardFile] = useState(false);
+  const [awardForm, setAwardForm] = useState({
+    title: '',
+    awardedBy: '',
+    year: '2026',
+    category: 'Elder Care & Humanitarian Seva',
+    tier: 'National Honor',
+    description: '',
+    awardImage: '',
+    certificateUrl: '',
+    order: 0,
+    isOrgAward: true,
+    isActive: true
+  });
 
   const [form, setForm] = useState({
     heroSlides: settings?.heroSlides || [],
@@ -123,6 +149,131 @@ export default function ManageContentPage() {
     }
   }, [settings]);
 
+  const loadOrgAwards = async () => {
+    try {
+      setLoadingOrgAwards(true);
+      const res = await api.get('/awards');
+      const list = res.data?.awards || res.data?.data || [];
+      const filtered = Array.isArray(list) ? list.filter(a => a.isOrgAward || a.awardedBy) : [];
+      setOrgAwards(filtered);
+    } catch (err) {
+      console.warn('Failed to load org awards:', err);
+    } finally {
+      setLoadingOrgAwards(false);
+    }
+  };
+
+  useEffect(() => {
+    loadOrgAwards();
+  }, []);
+
+  useEffect(() => {
+    const tabParam = searchParams?.get('tab');
+    if (tabParam && ['carousel', 'about', 'whoWeAre', 'objectives', 'legal', 'myAwards'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const openCreateAwardModal = () => {
+    setEditingAward(null);
+    setAwardForm({
+      title: '',
+      awardedBy: '',
+      year: new Date().getFullYear().toString(),
+      category: 'Elder Care & Humanitarian Seva',
+      tier: 'National Honor',
+      description: '',
+      awardImage: '',
+      certificateUrl: '',
+      order: orgAwards.length,
+      isOrgAward: true,
+      isActive: true
+    });
+    setAwardModalOpen(true);
+  };
+
+  const openEditAwardModal = (awd) => {
+    setEditingAward(awd);
+    setAwardForm({
+      title: awd.title || '',
+      awardedBy: awd.awardedBy || '',
+      year: awd.year || '',
+      category: awd.category || 'Elder Care & Humanitarian Seva',
+      tier: awd.tier || 'National Honor',
+      description: awd.description || '',
+      awardImage: awd.awardImage || awd.image || '',
+      certificateUrl: awd.certificateUrl || '',
+      order: awd.order || 0,
+      isOrgAward: true,
+      isActive: awd.isActive !== undefined ? awd.isActive : true
+    });
+    setAwardModalOpen(true);
+  };
+
+  const handleAwardFileUpload = async (e, field) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingAwardFile(true);
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.post('/upload', fd);
+      const url = res.data?.url || res.data?.filePath || res.data?.data?.url;
+      if (url) {
+        setAwardForm(prev => ({ ...prev, [field]: url }));
+        toast.success(`${field === 'awardImage' ? 'Award photo' : 'Certificate'} uploaded successfully!`);
+      } else {
+        toast.error('Upload succeeded but no file URL returned');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'File upload failed');
+    } finally {
+      setUploadingAwardFile(false);
+    }
+  };
+
+  const handleSaveAward = async (e) => {
+    e.preventDefault();
+    if (!awardForm.title.trim()) {
+      toast.error('Award title is required');
+      return;
+    }
+    try {
+      setUploadingAwardFile(true);
+      const payload = {
+        ...awardForm,
+        isOrgAward: true,
+        order: Number(awardForm.order) || 0
+      };
+      if (editingAward) {
+        const id = editingAward._id || editingAward.id;
+        await api.put(`/awards/${id}`, payload);
+        toast.success('Foundation award updated successfully!');
+      } else {
+        await api.post('/awards', payload);
+        toast.success('New foundation award added successfully!');
+      }
+      setAwardModalOpen(false);
+      setEditingAward(null);
+      loadOrgAwards();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to save award');
+    } finally {
+      setUploadingAwardFile(false);
+    }
+  };
+
+  const handleDeleteAward = async (id, title) => {
+    if (!window.confirm(`Are you sure you want to delete the award "${title}"?`)) return;
+    try {
+      await api.delete(`/awards/${id}`);
+      toast.success('Foundation award deleted successfully');
+      setOrgAwards(prev => prev.filter(a => (a._id || a.id) !== id));
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete award');
+    }
+  };
+
   const handleSave = async (e) => {
     if (e) e.preventDefault();
     try {
@@ -165,16 +316,17 @@ export default function ManageContentPage() {
     { label: 'Events & Programs', href: '/dashboard/events', desc: 'Bhoj seva, health camps & gatherings', icon: FiCalendar },
     { label: 'News & Press Releases', href: '/dashboard/blogs', desc: 'Articles, news bulletins & media notes', icon: FiBookOpen },
     { label: 'Photo & Video Gallery', href: '/dashboard/gallery', desc: 'High-res photos of residents & activities', icon: FiImage },
-    { label: 'Awards & Honors', href: '/dashboard/awards', desc: 'Social recognition & trustee honors', icon: FiAward },
+    { label: 'My Awards', href: '/dashboard/managecontent?tab=myAwards', desc: 'National recognitions, state awards & citations received by Apna Ghar Ashram Foundation', icon: FiAward },
+    { label: 'Sponsorships & Partners', href: '/dashboard/sponsorships', desc: 'Corporate sponsors, CSR patrons & partners', icon: FiAward },
   ];
 
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Top Header Banner */}
-      <div className="bg-white p-5 rounded-3xl border border-amber-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-xs font-bold border border-amber-300 mb-1.5">
-            <FiLayers className="w-3.5 h-3.5 text-amber-700" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black border border-amber-300 mb-1.5">
+            <FiLayers className="w-3.5 h-3.5 text-amber-800" />
             <span>Manage Content &amp; Media CMS</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">
@@ -211,7 +363,7 @@ export default function ManageContentPage() {
             <FiLayers className="w-3.5 h-3.5 text-amber-700" />
             <span>Content Child Modules (Pages)</span>
           </span>
-          <span className="text-[11px] text-stone-500 font-semibold">6 Dynamic Sub-Systems</span>
+          <span className="text-[11px] text-stone-500 font-semibold">7 Dynamic Sub-Systems</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -252,17 +404,17 @@ export default function ManageContentPage() {
           { id: 'about', label: '2. About Us & Mission' },
           { id: 'whoWeAre', label: '3. "Who We Are" Page' },
           { id: 'objectives', label: '4. Core Objectives' },
-          { id: 'legal', label: '5. Privacy & Terms Policies' }
+          { id: 'legal', label: '5. Privacy & Terms Policies' },
+          { id: 'myAwards', label: '6. My Awards (Aashram Honors)' }
         ].map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setActiveTab(t.id)}
-            className={`px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${
-              activeTab === t.id
+            className={`px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${activeTab === t.id
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
                 : 'bg-stone-100/80 text-stone-700 hover:bg-amber-100 hover:text-amber-950'
-            }`}
+              }`}
           >
             {t.label}
           </button>
@@ -331,7 +483,7 @@ export default function ManageContentPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                     <div className="md:col-span-4 space-y-2">
-                      <div className="aspect-16/9 rounded-xl overflow-hidden bg-stone-200 border border-amber-200">
+                      <div className="aspect-video rounded-xl overflow-hidden bg-stone-200 border border-amber-200">
                         {slide.imageUrl ? (
                           <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -814,6 +966,165 @@ export default function ManageContentPage() {
             </div>
           </div>
         )}
+
+        {/* TAB 6: MY AWARDS (AASHRAM HONORS) */}
+        {activeTab === 'myAwards' && (
+          <div className="bg-white p-6 sm:p-7 rounded-3xl border border-amber-200/80 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-100 pb-4">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-950 text-[11px] font-black border border-amber-300 mb-1">
+                  <FiAward className="w-3.5 h-3.5 text-amber-800" />
+                  <span>My Awards (Foundation Recognitions)</span>
+                </div>
+                <h3 className="font-black text-base sm:text-lg text-stone-950">
+                  Awards &amp; Honors Received by Apna Parivar Vriddh Aashram
+                </h3>
+                <p className="text-xs text-stone-600 mt-0.5">
+                  Manage awards, state honors, CSR felicitations, and citations received by the trust from external bodies.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={loadOrgAwards}
+                  className="px-3.5 py-2.5 rounded-xl border border-amber-200 bg-stone-50 hover:bg-amber-50 text-stone-800 text-xs font-bold transition cursor-pointer"
+                  title="Reload Awards"
+                >
+                  Refresh
+                </button>
+                <button
+                  type="button"
+                  onClick={openCreateAwardModal}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+                >
+                  <FiPlus className="w-4 h-4 text-stone-950" />
+                  <span>Add Award Received</span>
+                </button>
+              </div>
+            </div>
+
+            {loadingOrgAwards ? (
+              <div className="py-12 text-center text-xs font-bold text-amber-800">
+                Loading foundation honors &amp; awards...
+              </div>
+            ) : orgAwards.length === 0 ? (
+              <div className="p-10 rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/40 text-center space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto shadow-2xs">
+                  <FiAward className="w-7 h-7" />
+                </div>
+                <div>
+                  <h4 className="font-black text-stone-900 text-sm">No Foundation Awards Added Yet</h4>
+                  <p className="text-xs text-stone-600 max-w-md mx-auto mt-1">
+                    Add honors, medals, citations, and awards received by Apna Parivar Vriddh Aashram Foundation to display them proudly on the homepage and public portals.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={openCreateAwardModal}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 cursor-pointer"
+                >
+                  <FiPlus className="w-4 h-4" />
+                  <span>Add First Foundation Award</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {orgAwards.map((awd) => {
+                  const id = awd._id || awd.id;
+                  return (
+                    <div
+                      key={id}
+                      className="p-5 rounded-2xl border border-amber-200 bg-linear-to-b from-white to-amber-50/20 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
+                            {awd.tier || 'Honor'}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {awd.year && (
+                              <span className="text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                {awd.year}
+                              </span>
+                            )}
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${awd.isActive !== false ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'}`}>
+                              {awd.isActive !== false ? 'Public' : 'Draft'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                          {awd.awardImage || awd.image ? (
+                            <img
+                              src={getContentImageUrl(awd.awardImage || awd.image)}
+                              alt={awd.title}
+                              className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300 shadow-2xs shrink-0"
+                            />
+                          ) : (
+                            <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl border-2 border-amber-200 shrink-0">
+                              <FiAward className="w-7 h-7" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <h4 className="font-black text-sm text-stone-950 leading-snug truncate">
+                              {awd.title}
+                            </h4>
+                            {awd.awardedBy && (
+                              <p className="text-[11px] font-bold text-amber-900 mt-0.5 truncate">
+                                By {awd.awardedBy}
+                              </p>
+                            )}
+                            <p className="text-[10px] text-stone-500 font-medium uppercase mt-0.5">
+                              {awd.category || 'Elder Welfare'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {awd.description && (
+                          <p className="text-xs text-stone-600 line-clamp-3 leading-relaxed font-medium">
+                            {awd.description}
+                          </p>
+                        )}
+
+                        {awd.certificateUrl && (
+                          <a
+                            href={getContentImageUrl(awd.certificateUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:text-amber-950 hover:underline pt-1"
+                          >
+                            <FiExternalLink className="w-3.5 h-3.5" />
+                            <span>View Official Certificate / Decree</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-amber-100 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openEditAwardModal(awd)}
+                          className="px-3 py-1.5 rounded-xl border border-amber-200 text-stone-700 hover:bg-amber-100 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiEdit2 className="w-3.5 h-3.5 text-amber-800" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAward(id, awd.title)}
+                          className="px-3 py-1.5 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiTrash2 className="w-3.5 h-3.5 text-rose-600" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Floating Save Bar */}
@@ -828,6 +1139,219 @@ export default function ManageContentPage() {
           <span>{isSaving ? 'Saving Changes...' : 'Save All CMS Content'}</span>
         </button>
       </div>
+
+      {/* ADD / EDIT MY AWARDS MODAL */}
+      {awardModalOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full border border-amber-200 shadow-2xl relative text-stone-950 max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-amber-200 flex items-center justify-between bg-amber-50/80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center font-black shadow-xs">
+                  <FiAward className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-stone-950">
+                    {editingAward ? 'Edit Foundation Award' : 'Add Foundation Award (My Awards)'}
+                  </h3>
+                  <p className="text-xs text-stone-600 font-medium">
+                    Award or honor conferred upon Apna Parivar Vriddh Aashram
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAwardModalOpen(false)}
+                className="p-2 rounded-full text-stone-400 hover:text-stone-950 hover:bg-amber-100 transition cursor-pointer"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAward} className="p-5 sm:p-6 space-y-4 overflow-y-auto text-xs font-medium">
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">Award / Honor Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Rashtriya Samaj Seva Ratna Award"
+                  value={awardForm.title}
+                  onChange={(e) => setAwardForm({ ...awardForm, title: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Conferred By (Authority / Body) *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Government of Madhya Pradesh"
+                    value={awardForm.awardedBy}
+                    onChange={(e) => setAwardForm({ ...awardForm, awardedBy: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Year Received</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 2026"
+                    value={awardForm.year}
+                    onChange={(e) => setAwardForm({ ...awardForm, year: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Honor Tier</label>
+                  <select
+                    value={awardForm.tier}
+                    onChange={(e) => setAwardForm({ ...awardForm, tier: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-amber-200 font-bold text-stone-900 bg-white"
+                  >
+                    <option value="National Honor">National Honor</option>
+                    <option value="State Award">State Award</option>
+                    <option value="Special Honor">Special Honor</option>
+                    <option value="Diamond">Diamond Tier</option>
+                    <option value="Platinum">Platinum Tier</option>
+                    <option value="Gold">Gold Tier</option>
+                    <option value="Silver">Silver Tier</option>
+                    <option value="Bronze">Bronze Tier</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">Category</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Elder Welfare & Seva"
+                    value={awardForm.category}
+                    onChange={(e) => setAwardForm({ ...awardForm, category: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-800 mb-1">Citation / Description</label>
+                <textarea
+                  rows={3}
+                  placeholder="In recognition of selfless service to destitute elderly, providing healthcare, nutritious meals, and dignified living..."
+                  value={awardForm.description}
+                  onChange={(e) => setAwardForm({ ...awardForm, description: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              {/* Award Trophy / Photo Upload */}
+              <div className="space-y-1.5 p-3 rounded-2xl bg-amber-50/60 border border-amber-200">
+                <label className="block font-bold text-stone-800">Trophy / Plaque / Award Photo</label>
+                <div className="flex items-center gap-3">
+                  {awardForm.awardImage ? (
+                    <img
+                      src={getContentImageUrl(awardForm.awardImage)}
+                      alt="Trophy Preview"
+                      className="w-14 h-14 rounded-xl object-cover border-2 border-amber-300 shadow-2xs shrink-0"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                      <FiImage className="w-6 h-6" />
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-1.5">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingAwardFile}
+                      onChange={(e) => handleAwardFileUpload(e, 'awardImage')}
+                      className="block w-full text-xs text-stone-600 file:mr-2.5 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-stone-950 hover:file:bg-amber-600 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Or paste direct image URL"
+                      value={awardForm.awardImage}
+                      onChange={(e) => setAwardForm({ ...awardForm, awardImage: e.target.value })}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 text-xs bg-white text-stone-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Certificate / Citation PDF or Image */}
+              <div className="space-y-1.5 p-3 rounded-2xl bg-amber-50/60 border border-amber-200">
+                <label className="block font-bold text-stone-800">Official Certificate / Citation Document</label>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 space-y-1.5">
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      disabled={uploadingAwardFile}
+                      onChange={(e) => handleAwardFileUpload(e, 'certificateUrl')}
+                      className="block w-full text-xs text-stone-600 file:mr-2.5 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-stone-950 hover:file:bg-amber-600 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Or paste certificate document / PDF link"
+                      value={awardForm.certificateUrl}
+                      onChange={(e) => setAwardForm({ ...awardForm, certificateUrl: e.target.value })}
+                      className="w-full px-2.5 py-1.5 rounded-lg border border-amber-200 text-xs bg-white text-stone-800"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <label className="flex items-center gap-2 cursor-pointer font-bold text-stone-800">
+                  <input
+                    type="checkbox"
+                    checked={awardForm.isActive}
+                    onChange={(e) => setAwardForm({ ...awardForm, isActive: e.target.checked })}
+                    className="w-4 h-4 text-amber-600 rounded"
+                  />
+                  <span>Display Publicly on Website</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-stone-700">Display Order:</span>
+                  <input
+                    type="number"
+                    value={awardForm.order}
+                    onChange={(e) => setAwardForm({ ...awardForm, order: Number(e.target.value) || 0 })}
+                    className="w-16 px-2 py-1 rounded-lg border border-amber-200 text-center font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2.5 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setAwardModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-amber-200 text-stone-700 font-bold text-xs hover:bg-amber-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={uploadingAwardFile}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <FiAward className="w-4 h-4 text-stone-950" />
+                  <span>{uploadingAwardFile ? 'Saving Award...' : editingAward ? 'Save Changes' : 'Confirm & Add Award'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function ManageContentPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-xs font-bold text-amber-800">Loading CMS...</div>}>
+      <ManageContentInner />
+    </Suspense>
   );
 }

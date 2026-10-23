@@ -40,6 +40,7 @@ export const ADMIN_NAV_ITEMS = [
   { label: "Our Services", href: "/dashboard/services", icon: FiActivity },
   { label: "Volunteer", href: "/dashboard/volunteers", icon: FiUserPlus },
   { label: "Members", href: "/members", icon: FiUsers },
+  { label: "Offer an Award", href: "/dashboard/awards", icon: FiAward },
   { label: "Team Members", href: "/team-members", icon: FiUserCheck },
   { label: "Mission & Vision", href: "/mission-vision", icon: FiCompass },
   { label: "Programs", href: "/programs", icon: FiLayers },
@@ -64,6 +65,7 @@ export const ROLE_NAV_ITEMS = {
     { label: "Officer Profile & ID", href: "/profile", icon: FiUser },
     { label: "Team Directory", href: "/team-members", icon: FiUserCheck },
     { label: "Members Directory", href: "/members", icon: FiUsers },
+    { label: "Offer an Award", href: "/dashboard/awards", icon: FiAward },
     { label: "Programs Oversight", href: "/programs", icon: FiLayers },
     { label: "Campaigns & Drives", href: "/campaigns", icon: FiTarget },
     { label: "Events Roster", href: "/event", icon: FiCalendar },
@@ -143,21 +145,21 @@ export default function AdminSidebar({ activeRole = null }) {
         className={`
           ${mobileSidebarOpen ? 'block fixed inset-y-0 left-0 z-50 w-72' : 'hidden'}
           lg:flex lg:flex-col lg:w-64 lg:shrink-0
-          bg-white text-black border-r border-slate-200 shadow-sm
+          bg-[#fefce8] text-stone-900 border-r border-amber-200/90 shadow-sm
           lg:sticky lg:top-20 lg:h-[calc(100vh-5rem)] lg:overflow-y-auto
         `}
       >
         {/* Brand Header */}
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="p-4 border-b border-amber-200/90 flex items-center justify-between bg-linear-to-r from-amber-100/80 via-[#fefce8] to-amber-50">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 flex items-center justify-center font-black text-stone-950 shadow-md shadow-amber-500/20 shrink-0">
-              IYF
+            <div className="w-10 h-10 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 flex items-center justify-center font-black text-stone-950 shadow-md shadow-amber-500/20 shrink-0 ring-2 ring-amber-300">
+              परिवार
             </div>
             <div className="overflow-hidden">
-              <h2 className="font-bold text-xs tracking-wide text-black truncate">
-                {settings?.ngoName || 'Yuva Kranti Dal'}
+              <h2 className="font-bold text-xs tracking-wide text-stone-950 truncate">
+                {settings?.ngoName || 'Apna Parivar Vriddh Aashram'}
               </h2>
-              <span className="text-[10px] text-amber-800 font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 inline-block mt-0.5">
+              <span className="text-[10px] text-amber-900 font-bold px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 inline-block mt-0.5">
                 {role}
               </span>
             </div>

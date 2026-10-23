@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCheck,
@@ -44,18 +45,31 @@ export default function VolunteerManagement() {
   const [certRole, setCertRole] = useState("Active Youth Volunteer");
   const [issuingCert, setIssuingCert] = useState(false);
 
+  // Offer an Award Modal State
+  const [awardTemplates, setAwardTemplates] = useState([]);
+  const [offerAwardModalItem, setOfferAwardModalItem] = useState(null);
+  const [submittingAward, setSubmittingAward] = useState(false);
+  const [awardForm, setAwardForm] = useState({
+    awardId: "",
+    title: "Outstanding Volunteer Seva Honor",
+    tier: "Gold",
+    badgeColor: "gold",
+    badgeIcon: "FiAward",
+    reason: "In recognition of exceptional dedication, compassionate volunteerism, and tireless humanitarian service at Apna Parivar Vriddh Aashram."
+  });
+
   const loadData = React.useCallback(async () => {
     setLoading(true);
     try {
-      let res;
-      try {
-        res = await api.get("/applications/volunteers");
-      } catch {
-        // Fallback to alternative endpoint
-        res = await api.get("/volunteers");
-      }
-      const list = res.data?.applications || res.data?.data || res.data?.volunteers || [];
+      const [resVol, resAwards] = await Promise.all([
+        api.get("/applications/volunteers").catch(() => api.get("/volunteers")),
+        api.get("/awards").catch(() => ({ data: { awards: [] } }))
+      ]);
+      const list = resVol.data?.applications || resVol.data?.data || resVol.data?.volunteers || [];
       setVolunteers(Array.isArray(list) ? list : []);
+
+      const aList = resAwards.data?.awards || resAwards.data?.data || [];
+      setAwardTemplates(Array.isArray(aList) ? aList.filter(a => !a.isOrgAward) : []);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to load volunteer applications");
     } finally {
@@ -67,15 +81,16 @@ export default function VolunteerManagement() {
     let ignore = false;
     const initFetch = async () => {
       try {
-        let res;
-        try {
-          res = await api.get("/applications/volunteers");
-        } catch {
-          res = await api.get("/volunteers");
-        }
+        const [resVol, resAwards] = await Promise.all([
+          api.get("/applications/volunteers").catch(() => api.get("/volunteers")),
+          api.get("/awards").catch(() => ({ data: { awards: [] } }))
+        ]);
         if (!ignore) {
-          const list = res.data?.applications || res.data?.data || res.data?.volunteers || [];
+          const list = resVol.data?.applications || resVol.data?.data || resVol.data?.volunteers || [];
           setVolunteers(Array.isArray(list) ? list : []);
+
+          const aList = resAwards.data?.awards || resAwards.data?.data || [];
+          setAwardTemplates(Array.isArray(aList) ? aList.filter(a => !a.isOrgAward) : []);
         }
       } catch (err) {
         if (!ignore) {
@@ -93,6 +108,56 @@ export default function VolunteerManagement() {
       ignore = true;
     };
   }, []);
+
+  const openOfferAwardModal = (volunteer) => {
+    setOfferAwardModalItem(volunteer);
+    const defaultTemplate = awardTemplates[0];
+    setAwardForm({
+      awardId: defaultTemplate?._id || "",
+      title: defaultTemplate?.title || "Outstanding Volunteer Seva Honor",
+      tier: defaultTemplate?.tier || "Gold",
+      badgeColor: defaultTemplate?.badgeColor || "gold",
+      badgeIcon: defaultTemplate?.badgeIcon || "FiAward",
+      reason: "In recognition of exceptional dedication, compassionate volunteerism, and tireless humanitarian service at Apna Parivar Vriddh Aashram."
+    });
+  };
+
+  const handleOfferAward = async (e) => {
+    e.preventDefault();
+    if (!offerAwardModalItem) return;
+    if (!awardForm.reason.trim()) {
+      toast.error("Please enter a citation reason for this award");
+      return;
+    }
+    try {
+      setSubmittingAward(true);
+      const recipientUser = offerAwardModalItem.user || {};
+      const payload = {
+        userId: recipientUser._id || offerAwardModalItem.userId || offerAwardModalItem.user || offerAwardModalItem._id,
+        email: recipientUser.email || offerAwardModalItem.email,
+        name: recipientUser.name || offerAwardModalItem.name,
+        awardId: awardForm.awardId || undefined,
+        title: awardForm.title || "Outstanding Volunteer Seva Honor",
+        tier: awardForm.tier || "Gold",
+        badgeColor: awardForm.badgeColor || "gold",
+        badgeIcon: awardForm.badgeIcon || "FiAward",
+        category: "Volunteer Honor",
+        reason: awardForm.reason.trim(),
+        citation: awardForm.reason.trim()
+      };
+      const res = await api.post("/awards/grant", payload);
+      if (res.data?.success) {
+        toast.success(res.data?.message || "Award successfully offered to volunteer!");
+        setOfferAwardModalItem(null);
+      } else {
+        toast.error(res.data?.message || "Failed to offer award");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || "Error offering award");
+    } finally {
+      setSubmittingAward(false);
+    }
+  };
 
   const handleApprove = async (id) => {
     try {
@@ -251,23 +316,33 @@ export default function VolunteerManagement() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Volunteer Applications</h1>
-          <p className="text-xs text-slate-700 mt-1">
-            Audit youth volunteer credentials, verify national ID proofs, and authorize official volunteer badges.
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Volunteer Wing Management</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
+            Audit volunteer credentials, verify national ID proofs, and authorize official volunteer badges.
           </p>
         </div>
 
-        <button
-          onClick={loadData}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer self-start md:self-auto disabled:opacity-50"
-          title="Refresh Data"
-        >
-          <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
-          <span>Refresh</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/awards"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+            title="Open Awards & Honors Desk"
+          >
+            <FiAward className="w-4 h-4" />
+            <span>Offer an Award</span>
+          </Link>
+          <button
+            onClick={loadData}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 font-bold text-xs transition cursor-pointer self-start md:self-auto disabled:opacity-50 shadow-2xs"
+            title="Refresh Data"
+          >
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -491,19 +566,30 @@ export default function VolunteerManagement() {
                           )}
 
                           {isApproved && (
-                            <button
-                              onClick={() => {
-                                setCertModalItem(v);
-                                setCertRole(v.user?.designation || "Active Youth Volunteer");
-                                setCertTitle("Certificate of Appreciation for Dedicated Volunteer Service");
-                                setCertReason("In recognition of outstanding dedication, volunteer service, and societal leadership.");
-                              }}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition cursor-pointer shadow-xs"
-                              title="Offer Official Certificate"
-                            >
-                              <FiAward className="w-3.5 h-3.5" />
-                              <span>Certificate</span>
-                            </button>
+                            <>
+                              <button
+                                onClick={() => openOfferAwardModal(v)}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-[11px] transition cursor-pointer shadow-xs"
+                                title="Offer an Award to this Volunteer"
+                              >
+                                <FiAward className="w-3.5 h-3.5" />
+                                <span>Offer Award</span>
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  setCertModalItem(v);
+                                  setCertRole(v.user?.designation || "Active Youth Volunteer");
+                                  setCertTitle("Certificate of Appreciation for Dedicated Volunteer Service");
+                                  setCertReason("In recognition of outstanding dedication, volunteer service, and societal leadership.");
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition cursor-pointer shadow-xs"
+                                title="Offer Official Certificate"
+                              >
+                                <FiAward className="w-3.5 h-3.5" />
+                                <span>Certificate</span>
+                              </button>
+                            </>
                           )}
 
                           <button
@@ -997,6 +1083,170 @@ export default function VolunteerManagement() {
                   className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition cursor-pointer disabled:opacity-50"
                 >
                   {issuingCert ? "Minting Certificate..." : "Mint & Send Certificate"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Offer an Award to Volunteer Modal */}
+      {offerAwardModalItem && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5">
+          <div className="bg-white rounded-3xl max-w-lg w-full border border-amber-200 shadow-2xl relative text-stone-950 max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-amber-200 flex items-center justify-between bg-amber-50/80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center font-black shadow-xs">
+                  <FiAward className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-stone-950">
+                    Offer an Award to Volunteer
+                  </h3>
+                  <p className="text-xs text-stone-600 font-medium">
+                    Confer an official recognition award &amp; badge to this volunteer.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setOfferAwardModalItem(null)}
+                className="p-2 rounded-full text-stone-400 hover:text-stone-950 hover:bg-amber-100 transition cursor-pointer"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleOfferAward} className="p-5 sm:p-6 space-y-4 overflow-y-auto text-xs">
+              {/* Recipient Details */}
+              <div className="bg-amber-50/60 rounded-xl p-3 border border-amber-200 flex items-center justify-between">
+                <div>
+                  <p className="font-extrabold text-stone-900 text-sm">
+                    {offerAwardModalItem.user?.name || offerAwardModalItem.name}
+                  </p>
+                  <p className="text-[11px] text-stone-600">
+                    {offerAwardModalItem.user?.email || offerAwardModalItem.email || offerAwardModalItem.phone}
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-200 text-amber-950 uppercase">
+                  Volunteer
+                </span>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Select Award Template (Optional)</label>
+                <select
+                  value={awardForm.awardId}
+                  onChange={(e) => {
+                    const selId = e.target.value;
+                    const found = awardTemplates.find(a => (a._id || a.id) === selId);
+                    if (found) {
+                      setAwardForm(prev => ({
+                        ...prev,
+                        awardId: found._id || found.id,
+                        title: found.title,
+                        tier: found.tier || "Gold",
+                        badgeColor: found.badgeColor || "gold",
+                        badgeIcon: found.badgeIcon || "FiAward",
+                        reason: found.description || prev.reason
+                      }));
+                    } else {
+                      setAwardForm(prev => ({ ...prev, awardId: "" }));
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-semibold focus:outline-amber-500 text-stone-900 bg-amber-50/40"
+                >
+                  <option value="">-- Choose from preset honors or write custom title --</option>
+                  {awardTemplates.map(a => (
+                    <option key={a._id || a.id} value={a._id || a.id}>
+                      {a.title} ({a.tier || "Honor"}) - {a.points || 100} pts
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Award / Honor Title</label>
+                <input
+                  type="text"
+                  required
+                  value={awardForm.title}
+                  onChange={(e) => setAwardForm(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="e.g. Outstanding Volunteer Seva Honor"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-semibold focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">Honor Tier</label>
+                  <select
+                    value={awardForm.tier}
+                    onChange={(e) => setAwardForm(prev => ({ ...prev, tier: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-stone-900 bg-white"
+                  >
+                    <option value="Bronze">Bronze Tier</option>
+                    <option value="Silver">Silver Tier</option>
+                    <option value="Gold">Gold Tier</option>
+                    <option value="Platinum">Platinum Tier</option>
+                    <option value="Diamond">Diamond Tier</option>
+                    <option value="Special Honor">Special Honor</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-stone-700 mb-1">Badge Color</label>
+                  <select
+                    value={awardForm.badgeColor}
+                    onChange={(e) => setAwardForm(prev => ({ ...prev, badgeColor: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-xl border border-amber-200 text-xs font-bold text-stone-900 bg-white"
+                  >
+                    <option value="gold">Gold / Amber</option>
+                    <option value="red">Ruby Red</option>
+                    <option value="emerald">Emerald Green</option>
+                    <option value="blue">Sapphire Blue</option>
+                    <option value="purple">Royal Purple</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-stone-700 mb-1">Citation / Reason for Award</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={awardForm.reason}
+                  onChange={(e) => setAwardForm(prev => ({ ...prev, reason: e.target.value }))}
+                  placeholder="In recognition of exceptional service, dedicated volunteerism..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-amber-200 text-xs font-medium focus:outline-amber-500 text-stone-900 bg-white"
+                />
+              </div>
+
+              <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3 text-xs text-amber-950 space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <FiCheckCircle className="text-amber-700" />
+                  Instant Attribution to Volunteer:
+                </p>
+                <p className="text-[11px] text-stone-600">
+                  This award will be immediately attached to the volunteer&apos;s verified digital profile under &quot;My Awards &amp; Badges&quot; with official citation.
+                </p>
+              </div>
+
+              <div className="flex gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setOfferAwardModalItem(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-amber-200 text-stone-700 font-bold text-xs hover:bg-amber-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingAward}
+                  className="flex-1 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  <FiAward className="w-4 h-4 text-stone-950" />
+                  <span>{submittingAward ? "Offering Award..." : "Confirm & Offer Award"}</span>
                 </button>
               </div>
             </form>

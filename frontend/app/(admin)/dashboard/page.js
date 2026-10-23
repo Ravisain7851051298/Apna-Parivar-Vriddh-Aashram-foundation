@@ -450,19 +450,19 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200">
-              <FiGrid className="w-5 h-5" />
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs">
+              <FiGrid className="w-5 h-5 text-amber-700" />
             </span>
             <div>
-              <h1 className="text-lg font-black text-slate-900 tracking-tight">
+              <h1 className="text-lg font-black text-stone-950 tracking-tight">
                 {isAdmin ? 'Admin Master Control & Analytics Hub' : 'Team Member Operations Hub'}
               </h1>
-              {/* <p className="text-xs text-slate-500">
-                Organization: <strong className="text-slate-800">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</strong> • Real-time Financials, Network Analytics &amp; Approvals
-              </p> */}
+              <p className="text-xs text-amber-950/80 font-medium">
+                {settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'} • Trustee Dashboard
+              </p>
             </div>
           </div>
         </div>

@@ -464,6 +464,24 @@ class AuthService {
       userSafe.isMember = user.role === 'Member' || user.role === 'Admin' || (membershipApp && membershipApp.status === 'approved') || (user.memberId && (user.memberId.startsWith('APVAF-MEM-') || user.memberId.startsWith('MEM-')));
       userSafe.isVolunteer = user.role === 'Volunteer' || (volunteerApp && volunteerApp.status === 'approved') || (user.volunteerId && (user.volunteerId.startsWith('APVAF-VOL-') || user.volunteerId.startsWith('VOL-')));
 
+      // Calculate and verify membership plan expiry status
+      const appExpiry = membershipApp?.expiresAt || membershipApp?.membershipExpiresAt;
+      const userExpiry = user.membershipExpiresAt;
+      const expiryDate = userExpiry || appExpiry || (user.verifiedAt ? new Date(new Date(user.verifiedAt).getTime() + 365 * 24 * 60 * 60 * 1000) : null);
+      
+      const isPlanExpired = Boolean(
+        user.membershipStatus === 'expired' ||
+        membershipApp?.status === 'expired' ||
+        membershipApp?.membershipStatus === 'expired' ||
+        (expiryDate && new Date(expiryDate).getTime() < Date.now())
+      );
+
+      userSafe.membershipExpiresAt = expiryDate;
+      userSafe.isPlanExpired = isPlanExpired;
+      if (isPlanExpired && userSafe.isMember && userSafe.role !== 'Admin') {
+        userSafe.membershipStatus = 'expired';
+      }
+
       if (!userSafe.isMember && userSafe.memberId && userSafe.memberId.startsWith('APVAF-DON-')) {
         userSafe.donorId = userSafe.memberId;
         userSafe.memberId = null;

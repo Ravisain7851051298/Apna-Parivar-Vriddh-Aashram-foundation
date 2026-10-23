@@ -14,6 +14,16 @@ const getCampaigns = async (req, res) => {
   }
 };
 
+const getCampaignById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const campaign = await campaignService.getCampaignById(id);
+    return res.json({ success: true, campaign });
+  } catch (error) {
+    return res.status(404).json({ success: false, message: error.message });
+  }
+};
+
 const createCampaign = async (req, res) => {
   try {
     if (req.file) {
@@ -109,6 +119,7 @@ const deleteCampaign = async (req, res) => {
 
 module.exports = {
   getCampaigns,
+  getCampaignById,
   createCampaign,
   updateCampaign,
   deleteCampaign

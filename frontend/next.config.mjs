@@ -19,6 +19,20 @@ const nextConfig = {
       { protocol: 'https', hostname: '**' }
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/events',
+        destination: '/event',
+        permanent: true,
+      },
+      {
+        source: '/events/:id',
+        destination: '/event/:id',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     const rawTarget = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
     const cleanTarget = rawTarget.trim().replace(/\/api\/?$/, '');

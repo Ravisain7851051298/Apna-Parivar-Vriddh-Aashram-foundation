@@ -191,10 +191,10 @@ export default function TeamMembersManagement() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Team &amp; Board Management</h1>
-          <p className="text-xs text-slate-700 mt-1">
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Team &amp; Board Management</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
             Manage trustees, executive officers, program leads, and departmental coordinators.
           </p>
         </div>
@@ -202,14 +202,14 @@ export default function TeamMembersManagement() {
         <div className="flex items-center gap-3">
           <button
             onClick={loadData}
-            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+            className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer shadow-2xs"
             title="Refresh"
           >
-            <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/25 transition cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiPlus className="w-4 h-4" />
             <span>Add Team Member</span>
@@ -265,7 +265,7 @@ export default function TeamMembersManagement() {
               return (
                 <div
                   key={id}
-                  className="group flex flex-col items-center text-center transition-transform duration-300 w-full max-w-[200px]"
+                  className="group flex flex-col items-center text-center transition-transform duration-300 w-full max-w-50"
                 >
                   {/* Profile Picture */}
                   <div className="relative mb-3">

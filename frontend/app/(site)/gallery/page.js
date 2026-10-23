@@ -21,20 +21,25 @@ import { FaYoutube } from 'react-icons/fa6';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
 import { getYoutubeVideoId, getYoutubeEmbedUrl, getYoutubeThumbnail, isVideoItem } from '@/lib/youtube';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
+import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 import api from '@/services/api';
 
 const CATEGORIES = [
   { id: 'all', label: 'All Media' },
-  { id: 'Aashram Life', label: 'Aashram Living' },
-  { id: 'Satvik Bhojan', label: 'Satvik Meals & Nutrition' },
-  { id: 'Healthcare & Medical', label: 'Health Camps & Vitals' },
-  { id: 'Satsang & Festivals', label: 'Satsang & Celebrations' },
-  { id: 'Video Footage', label: 'Video Archives' },
+  { id: 'Elder Care & Daily Living', label: 'Elder Care & Living' },
+  { id: 'Satvik Meals & Kitchen Seva', label: 'Satvik Meals & Kitchen' },
+  { id: 'Healthcare & Doctor Visits', label: 'Health Camps & Vitals' },
+  { id: 'Spiritual Satsang & Bhajans', label: 'Satsang & Bhajans' },
+  { id: 'Festivals & Celebrations', label: 'Festivals & Celebrations' },
+  { id: 'Morning Yoga & Wellness', label: 'Yoga & Wellness' },
+  { id: 'Recreational & Senior Activities', label: 'Senior Activities' },
+  { id: 'Video Footage & YouTube', label: 'Video Footage & YouTube' },
   { id: 'General', label: 'General' },
 ];
 
 export default function GalleryPage() {
-  const { gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, currentUser } = useNGO();
+  const { gallery, addGalleryItem, updateGalleryItem, deleteGalleryItem, currentUser, loading } = useNGO();
   const isAdmin = currentUser?.role === 'Admin' || currentUser?.role === 'SuperAdmin';
 
   const [activeTab, setActiveTab] = useState('all');
@@ -303,14 +308,10 @@ export default function GalleryPage() {
         </div>
 
         {/* Gallery Grid */}
-        {filteredItems.length === 0 ? (
-          <div className="text-center py-20 bg-slate-50 border border-slate-200 rounded-3xl space-y-3">
-            <FiLayers className="w-10 h-10 text-slate-400 mx-auto" />
-            <h3 className="text-base font-black text-black">No media items found in this section</h3>
-            <p className="text-xs text-slate-600">
-              Check back soon for latest photographic and video updates or try another category.
-            </p>
-          </div>
+        {loading ? (
+          <CardSkeleton count={3} />
+        ) : filteredItems.length === 0 ? (
+          <EmptyState itemName="Gallery Media" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => {
@@ -417,9 +418,9 @@ export default function GalleryPage() {
                         {item.title}
                       </h3>
                       {item.caption && (
-                        <p className="text-xs text-slate-700 line-clamp-3 leading-relaxed">
-                          {item.caption}
-                        </p>
+                        <div className="text-xs text-slate-700 line-clamp-3 leading-relaxed">
+                          <MarkdownRenderer content={item.caption} />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -527,7 +528,9 @@ export default function GalleryPage() {
 
                 <h3 className="font-black text-lg text-black">{lightboxItem.title}</h3>
                 {lightboxItem.caption && (
-                  <p className="text-xs text-slate-700 leading-relaxed">{lightboxItem.caption}</p>
+                  <div className="text-xs text-slate-700 leading-relaxed">
+                    <MarkdownRenderer content={lightboxItem.caption} />
+                  </div>
                 )}
               </div>
             </div>

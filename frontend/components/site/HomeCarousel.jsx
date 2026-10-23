@@ -16,26 +16,6 @@ const DEFAULT_SLIDES = [
     ctaSecondaryText: 'About Our Aashram',
     ctaSecondaryLink: '/about',
   },
-  {
-    imageUrl: 'https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1920&auto=format&fit=crop&q=80',
-    tag: '100% Transparent Donations • 80G Certified',
-    title: 'Smiling Faces... Our True Identity & Purpose',
-    subtitle: 'At this stage in life, no elder should ever feel lonely or neglected. Your compassionate donation provides wholesome meals and vital healthcare.',
-    ctaPrimaryText: 'Sponsor a Meal (Tithi Bhoj)',
-    ctaPrimaryLink: '/donation',
-    ctaSecondaryText: 'View Active Campaigns',
-    ctaSecondaryLink: '/campaigns',
-  },
-  {
-    imageUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1920&auto=format&fit=crop&q=80',
-    tag: '24/7 Healthcare & Loving Elder Care',
-    title: 'Round-the-Clock Medical Care & Nutritious Satvik Diet',
-    subtitle: 'Daily physiotherapy, vitals monitoring, regular visits by specialist doctors, spiritual satsang, and peaceful living in a loving atmosphere.',
-    ctaPrimaryText: 'Join as a Volunteer',
-    ctaPrimaryLink: '/apply-volunteer',
-    ctaSecondaryText: 'Facilities & Services',
-    ctaSecondaryLink: '/services',
-  },
 ];
 
 export default function HomeCarousel({ slides = [] }) {
@@ -61,7 +41,7 @@ export default function HomeCarousel({ slides = [] }) {
 
   return (
     <div
-      className="relative w-full h-[440px] sm:h-[500px] md:h-[560px] lg:h-[600px] overflow-hidden bg-slate-950 group"
+      className="relative w-full h-115 sm:h-130 md:h-145 lg:h-[580px] xl:h-[640px] 2xl:h-[700px] overflow-hidden bg-slate-950 group pt-2 lg:pt-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -77,11 +57,11 @@ export default function HomeCarousel({ slides = [] }) {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
           >
-            {/* Banner Background Image */}
+            {/* Banner Background Image with adjusted position for large screens */}
             <img
               src={imgUrl}
               alt={slide.title || `Apna Parivar Vriddh Aashram Banner ${idx + 1}`}
-              className={`w-full h-full object-cover object-center transition-transform duration-7000 ease-out ${isActive ? 'scale-105' : 'scale-100'
+              className={`w-full h-full object-cover object-center lg:object-[center_25%] transition-transform duration-7000 ease-out ${isActive ? 'scale-105' : 'scale-100'
                 }`}
               onError={(e) => {
                 e.currentTarget.onerror = null;
@@ -93,8 +73,8 @@ export default function HomeCarousel({ slides = [] }) {
             <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-900/60 to-transparent" />
             <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-transparent to-black/30" />
 
-            {/* Slide Content Overlay */}
-            <div className="absolute inset-0 flex items-center z-10">
+            {/* Slide Content Overlay with comfortable top offset */}
+            <div className="absolute inset-0 flex items-center z-10 pt-4 lg:pt-8">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div className="max-w-2xl lg:max-w-3xl space-y-4 sm:space-y-6 text-white animate-in fade-in slide-in-from-bottom-4 duration-700">
 

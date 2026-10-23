@@ -4,6 +4,7 @@ const Story = require('../models/Story');
 const Feedback = require('../models/Feedback');
 const TeamMember = require('../models/TeamMember');
 const MissionVision = require('../models/MissionVision');
+const Sponsorship = require('../models/Sponsorship');
 
 const modelMap = {
   services: Service,
@@ -18,7 +19,13 @@ const modelMap = {
   'team-members': TeamMember,
   team: TeamMember,
   'mission-vision': MissionVision,
-  missionVision: MissionVision
+  missionVision: MissionVision,
+  sponsorships: Sponsorship,
+  sponsorship: Sponsorship,
+  sponsors: Sponsorship,
+  sponsor: Sponsorship,
+  partners: Sponsorship,
+  partner: Sponsorship
 };
 
 const getModel = (resourceName) => {

@@ -205,14 +205,14 @@ export default function UsersManagement() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold mb-1">
-            <FiShield className="w-3.5 h-3.5 text-red-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1 border border-amber-300">
+            <FiShield className="w-3.5 h-3.5 text-amber-800" />
             <span>Identity &amp; Governance Center</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">All User Accounts &amp; Access Control</h1>
-          <p className="text-xs text-slate-600 mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">User Accounts &amp; Access Control</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
             Manage all registered public donors, verified members, field volunteers, and administrators.
           </p>
         </div>
@@ -220,10 +220,10 @@ export default function UsersManagement() {
         <div className="flex items-center gap-2">
           <button
             onClick={loadUsers}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
             title="Refresh Users"
           >
-            <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-red-600" : ""}`} />
+            <FiRefreshCw className={`w-3.5 h-3.5 text-amber-800 ${loading ? "animate-spin" : ""}`} />
             <span>Sync</span>
           </button>
         </div>

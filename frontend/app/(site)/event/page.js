@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { 
   FiCalendar, 
@@ -18,14 +19,17 @@ import {
   FiUserCheck,
   FiMessageSquare,
   FiSearch,
-  FiShare2
+  FiShare2,
+  FiArrowRight
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
 import EventImageCarousel from '@/components/site/EventImageCarousel';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
+import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 import api from '@/services/api';
 
 export default function EventPage() {
-  const { events, setEvents, addEvent, updateEvent, deleteEvent, currentUser } = useNGO();
+  const { events = [], setEvents, addEvent, updateEvent, deleteEvent, currentUser, loading } = useNGO();
   const isAdmin = currentUser?.role === 'Admin' || currentUser?.role === 'SuperAdmin';
 
   // Modal States
@@ -338,14 +342,10 @@ export default function EventPage() {
         </div>
 
         {/* Events Grid */}
-        {events.length === 0 ? (
-          <div className="text-center py-20 bg-slate-50 border border-slate-200 rounded-3xl space-y-3">
-            <FiCalendar className="w-10 h-10 text-slate-400 mx-auto" />
-            <h3 className="text-base font-black text-black">No upcoming events scheduled right now</h3>
-            <p className="text-xs text-slate-600">
-              Please check back soon or follow our social announcements.
-            </p>
-          </div>
+        {loading ? (
+          <CardSkeleton count={3} />
+        ) : events.length === 0 ? (
+          <EmptyState itemName="Events" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((evt) => {
@@ -380,12 +380,14 @@ export default function EventPage() {
                       </div>
 
                       <h3 className="font-black text-base text-black leading-snug">
-                        {evt.title}
+                        <Link href={`/event/${id}`} className="hover:text-emerald-700 transition">
+                          {evt.title}
+                        </Link>
                       </h3>
 
-                      <p className="text-xs text-slate-700 leading-relaxed font-medium line-clamp-3">
-                        {evt.description}
-                      </p>
+                      <div className="text-xs text-slate-700 leading-relaxed font-medium line-clamp-3">
+                        <MarkdownRenderer content={evt.description} />
+                      </div>
 
                       {/* Location & Detailed Venue Address */}
                       <div className="pt-2 space-y-1.5">
@@ -405,7 +407,7 @@ export default function EventPage() {
                   </div>
 
                   {/* Actions Bar */}
-                  <div className="p-6 pt-0 space-y-3">
+                  <div className="p-6 pt-0 space-y-2.5">
                     <button
                       type="button"
                       onClick={() => openJoinModal(evt)}
@@ -414,6 +416,14 @@ export default function EventPage() {
                       <FiUserCheck className="w-4 h-4" />
                       <span>Join / Register for Event</span>
                     </button>
+
+                    <Link
+                      href={`/event/${id}`}
+                      className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition flex items-center justify-center gap-1.5 text-center"
+                    >
+                      <span>View Event Details</span>
+                      <FiArrowRight className="w-3.5 h-3.5 text-emerald-700" />
+                    </Link>
 
                     {isAdmin && (
                       <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">

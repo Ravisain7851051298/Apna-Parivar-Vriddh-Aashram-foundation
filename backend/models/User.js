@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema({
   feeAmount: { type: Number, default: 0 },
   membershipPlan: { type: String, default: '' },
   membershipPlanId: { type: String, default: null },
+  membershipExpiresAt: { type: Date, default: null },
+  membershipStatus: { 
+    type: String, 
+    enum: ['active', 'expired', 'pending', 'cancelled'], 
+    default: 'active' 
+  },
   idCardGenerated: { type: Boolean, default: false },
   appointmentLetterGenerated: { type: Boolean, default: false },
   qrCodeUrl: { type: String, default: '' },

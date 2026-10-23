@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { 
-  FiAlertCircle, 
-  FiSend, 
-  FiCheckCircle, 
-  FiClock, 
-  FiMessageSquare, 
-  FiUploadCloud, 
-  FiX, 
-  FiImage, 
-  FiVideo, 
-  FiFileText, 
+import {
+  FiAlertCircle,
+  FiSend,
+  FiCheckCircle,
+  FiClock,
+  FiMessageSquare,
+  FiUploadCloud,
+  FiX,
+  FiImage,
+  FiVideo,
+  FiFileText,
   FiRefreshCw,
   FiFilter,
   FiEye,
@@ -157,7 +157,7 @@ export default function ProfileGrievancePage() {
       if (res.data?.success) {
         const ticketNum = res.data.grievance?.ticketNumber;
         setSuccessMsg(
-          ticketNum 
+          ticketNum
             ? `Enquiry ticket #${ticketNum} submitted successfully! The Trust Administration has been notified.`
             : (res.data.message || 'Grievance submitted successfully!')
         );
@@ -167,7 +167,7 @@ export default function ProfileGrievancePage() {
           message: ''
         });
         removeSelectedFile();
-        
+
         // Optimistically update list and refresh from server
         if (res.data.grievance) {
           setGrievances(prev => [res.data.grievance, ...prev.filter(g => g._id !== res.data.grievance._id)]);
@@ -220,7 +220,7 @@ export default function ProfileGrievancePage() {
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
           <div className="bg-amber-50/60 border border-amber-200 px-3.5 py-2 rounded-2xl text-xs">
             <span className="text-[10px] text-amber-800 font-bold block uppercase">Active Profile</span>
-            <span className="font-black text-stone-950 truncate block max-w-[170px]">
+            <span className="font-black text-stone-950 truncate block max-w-42.5">
               {currentUser?.name || 'Verified User'}
             </span>
           </div>
@@ -469,8 +469,8 @@ export default function ProfileGrievancePage() {
                 <>
                   <FiSend className="w-4 h-4 text-stone-950" />
                   <span>
-                    {!isFormValid 
-                      ? 'Fill Subject & Description to Submit' 
+                    {!isFormValid
+                      ? 'Fill Subject & Description to Submit'
                       : (selectedFile ? 'Submit Inquiry with Media' : 'Submit Grievance Ticket')}
                   </span>
                 </>
@@ -510,16 +510,14 @@ export default function ProfileGrievancePage() {
                 <button
                   key={key}
                   onClick={() => setActiveFilter(key)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
-                    activeFilter === key
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${activeFilter === key
                       ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-2xs'
                       : 'text-stone-700 hover:text-stone-950 hover:bg-amber-100/50'
-                  }`}
+                    }`}
                 >
                   <span>{label}</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                    activeFilter === key ? 'bg-amber-200/80 text-stone-950 font-black' : 'bg-stone-200/70 text-stone-700'
-                  }`}>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeFilter === key ? 'bg-amber-200/80 text-stone-950 font-black' : 'bg-stone-200/70 text-stone-700'
+                    }`}>
                     {count}
                   </span>
                 </button>
@@ -603,13 +601,12 @@ export default function ProfileGrievancePage() {
                       </span>
                     </div>
 
-                    <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
-                      g.status === 'resolved'
+                    <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${g.status === 'resolved'
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                         : g.status === 'in_progress'
                           ? 'bg-blue-100 text-blue-800 border border-blue-200'
                           : 'bg-amber-100 text-amber-800 border border-amber-200'
-                    }`}>
+                      }`}>
                       {g.status === 'in_progress' ? 'In Progress' : (g.status || 'Pending')}
                     </span>
                   </div>

@@ -17,6 +17,7 @@ import {
 import { FaWhatsapp, FaFacebookF, FaXTwitter } from 'react-icons/fa6';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import api from '@/services/api';
 
 export default function BlogDetailPage({ params }) {
@@ -153,8 +154,8 @@ export default function BlogDetailPage({ params }) {
 
           {/* Article Body */}
           <div className="p-6 sm:p-10 pt-8 space-y-6">
-            <div className="text-sm sm:text-base text-slate-800 font-normal leading-relaxed whitespace-pre-line space-y-4">
-              {blog.content || blog.description || blog.summary}
+            <div className="text-sm sm:text-base text-slate-800 font-normal leading-relaxed">
+              <MarkdownRenderer content={blog.content || blog.description || blog.summary} />
             </div>
 
             {/* Hindi Translation content if available */}
@@ -163,9 +164,9 @@ export default function BlogDetailPage({ params }) {
                 <h3 className="font-extrabold text-sm text-emerald-900 uppercase tracking-wide">
                   हिंदी विवरण (Hindi Summary)
                 </h3>
-                <p className="text-sm text-slate-800 leading-relaxed font-normal whitespace-pre-line">
-                  {blog.contentHi}
-                </p>
+                <div className="text-sm text-slate-800 leading-relaxed font-normal">
+                  <MarkdownRenderer content={blog.contentHi} />
+                </div>
               </div>
             )}
 

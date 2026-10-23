@@ -178,28 +178,28 @@ export default function NgoSettingsManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-2">
-            <span>Global Configuration</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1.5 border border-amber-300">
+            <span>Global Foundation Configuration</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">NGO Master Settings</h1>
-          <p className="text-xs text-slate-700 mt-1">
-            Configure legal trust credentials, 12A/80G orders, logo, signatures, and contact details.
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">NGO Master Settings</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
+            Configure legal trust credentials, 12A/80G statutory orders, official logo, signatures, and contact details.
           </p>
         </div>
 
         <button
           onClick={loadSettings}
-          className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer self-start md:self-auto"
+          className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer self-start md:self-auto shadow-2xs"
           title="Refresh"
         >
-          <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
+          <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-white p-1.5 rounded-2xl border border-slate-200 shadow-xs overflow-x-auto gap-1">
+      <div className="flex bg-white/80 mx-3 p-1.5 rounded-2xl border border-amber-200 shadow-2xs overflow-x-auto gap-1">
         {[
           { id: "identity", label: "Identity & Mission" },
           { id: "compliance", label: "12A & 80G Statutory" },
@@ -211,8 +211,8 @@ export default function NgoSettingsManagement() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${activeTab === tab.id
-                ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                : "text-slate-700 hover:text-black hover:bg-slate-50"
+                ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
+                : "text-stone-700 hover:text-stone-950 hover:bg-amber-50/60"
               }`}
           >
             {tab.label}

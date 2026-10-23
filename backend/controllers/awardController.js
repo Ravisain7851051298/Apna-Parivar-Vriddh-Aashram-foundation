@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Award = require('../models/Award');
 const UserAward = require('../models/UserAward');
 const User = require('../models/User');
@@ -10,52 +11,65 @@ const DEFAULT_AWARDS = [
     badgeColor: 'gold',
     category: 'Volunteerism',
     tier: 'Gold',
-    points: 150
+    points: 150,
+    isOrgAward: false
   },
   {
-    title: 'Yuva Kranti Ratna',
-    description: 'The highest honor of APNA PARIVAR VRIDDH AASHRAM FOUNDATION for transformative leadership and national contribution.',
+    title: 'Dedicated Member Seva Honor',
+    description: 'Conferred upon official members for steadfast humanitarian commitment and institutional support.',
     badgeIcon: 'FiAward',
-    badgeColor: 'red',
-    category: 'Social Service',
-    tier: 'Special Honor',
-    points: 500
+    badgeColor: 'gold',
+    category: 'Membership Honor',
+    tier: 'Platinum',
+    points: 300,
+    isOrgAward: false
   },
   {
     title: 'Community Champion',
-    description: 'Recognizing steadfast dedication to local slum empowerment, ration drives, and winter relief.',
+    description: 'Recognizing steadfast dedication to local elder care, ration drives, and winter relief.',
     badgeIcon: 'FiShield',
     badgeColor: 'emerald',
     category: 'Community Aid',
     tier: 'Platinum',
-    points: 250
+    points: 250,
+    isOrgAward: false
   },
   {
-    title: 'Healthcare & Blood Hero',
-    description: 'Awarded for organizing life-saving voluntary blood donation networks and emergency patient support.',
+    title: 'Healthcare & Elder Care Hero',
+    description: 'Awarded for organizing life-saving geriatric medical camps, medicine aid, and patient nursing care.',
     badgeIcon: 'FiHeart',
     badgeColor: 'red',
     category: 'Emergency Relief',
     tier: 'Gold',
-    points: 200
-  },
+    points: 200,
+    isOrgAward: false
+  }
+];
+
+const DEFAULT_ORG_AWARDS = [
   {
-    title: 'Child Literacy Crusader',
-    description: 'Commending outstanding effort in establishing free slum study pods and distributing school kits.',
-    badgeIcon: 'FiZap',
-    badgeColor: 'blue',
-    category: 'Child Education',
-    tier: 'Silver',
-    points: 120
-  },
-  {
-    title: 'Inspiring Changemaker',
-    description: 'Honoring youth mobilization and creative leadership in nation-building initiatives.',
+    title: 'Madhya Pradesh Rajya Samaj Seva Gaurav Samman',
+    description: 'Conferred by the State Social Welfare Board in recognition of exemplary and transparent geriatric shelter, nutritious bhoj seva, and continuous medical rehabilitation for destitute senior citizens.',
+    awardedBy: 'Government of Madhya Pradesh & State Welfare Council',
+    year: '2025',
+    category: 'Senior Citizen Rehabilitation',
+    tier: 'State Award',
+    isOrgAward: true,
+    badgeColor: 'gold',
     badgeIcon: 'FiAward',
-    badgeColor: 'purple',
-    category: 'Youth Leadership',
-    tier: 'Gold',
-    points: 180
+    order: 1
+  },
+  {
+    title: 'Rashtriya Vayoshreshtha Exemplary Institution Citation',
+    description: 'National social welfare recognition for setting benchmarks in dignity, hygiene, specialized geriatric healthcare, and peaceful sanctuary for elderly citizens.',
+    awardedBy: 'National Council for Older Persons & Humanitarian Federation',
+    year: '2024',
+    category: 'Institutional Elder Care',
+    tier: 'National Honor',
+    isOrgAward: true,
+    badgeColor: 'gold',
+    badgeIcon: 'FiAward',
+    order: 2
   }
 ];
 
@@ -64,7 +78,12 @@ const seedDefaultAwardsIfEmpty = async () => {
   try {
     const count = await Award.countDocuments();
     if (count === 0) {
-      await Award.insertMany(DEFAULT_AWARDS);
+      await Award.insertMany([...DEFAULT_AWARDS, ...DEFAULT_ORG_AWARDS]);
+    } else {
+      const orgCount = await Award.countDocuments({ isOrgAward: true });
+      if (orgCount === 0) {
+        await Award.insertMany(DEFAULT_ORG_AWARDS);
+      }
     }
   } catch (e) {
     console.error('Failed to seed default awards:', e);
@@ -76,7 +95,11 @@ const seedDefaultAwardsIfEmpty = async () => {
 const getAwards = async (req, res) => {
   try {
     await seedDefaultAwardsIfEmpty();
-    const awards = await Award.find({ isActive: true }).sort({ createdAt: -1 });
+    const query = { isActive: true };
+    if (req.query.isOrgAward !== undefined) {
+      query.isOrgAward = req.query.isOrgAward === 'true' || req.query.isOrgAward === true;
+    }
+    const awards = await Award.find(query).sort({ order: 1, createdAt: -1 });
     return res.json({ success: true, awards, data: awards, total: awards.length });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -85,7 +108,22 @@ const getAwards = async (req, res) => {
 
 const createAward = async (req, res) => {
   try {
-    const { title, description, badgeIcon, badgeColor, badgeImage, category, tier, points } = req.body;
+    const {
+      title,
+      description,
+      badgeIcon,
+      badgeColor,
+      badgeImage,
+      category,
+      tier,
+      points,
+      awardedBy,
+      year,
+      awardImage,
+      certificateUrl,
+      isOrgAward,
+      order
+    } = req.body;
     if (!title) {
       return res.status(400).json({ success: false, message: 'Award title is required' });
     }
@@ -98,7 +136,14 @@ const createAward = async (req, res) => {
       badgeImage: badgeImage || '',
       category: category || 'Social Service',
       tier: tier || 'Gold',
-      points: Number(points) || 100
+      points: Number(points) || 100,
+      awardedBy: awardedBy || '',
+      year: year || '',
+      awardImage: awardImage || '',
+      certificateUrl: certificateUrl || '',
+      isOrgAward: Boolean(isOrgAward),
+      order: Number(order) || 0,
+      createdBy: req.user?.id || null
     });
 
     await award.save();
@@ -167,31 +212,39 @@ const getAllGrantedAwards = async (req, res) => {
 
 const grantAwardToUser = async (req, res) => {
   try {
-    const { userId, awardId, title, reason, citation, tier, category, badgeColor, badgeIcon, badgeImage } = req.body;
-    if (!userId) {
-      return res.status(400).json({ success: false, message: 'Recipient user ID is required' });
+    const { userId, userEmail, email, userName, name, awardId, title, reason, citation, tier, category, badgeColor, badgeIcon, badgeImage } = req.body;
+    const recipientEmail = email || userEmail || (typeof userId === 'string' && userId.includes('@') ? userId : null);
+    
+    let user = null;
+    if (userId && mongoose.isValidObjectId(userId)) {
+      user = await User.findById(userId);
     }
+    if (!user && recipientEmail) {
+      user = await User.findOne({ email: recipientEmail.toLowerCase().trim() });
+    }
+
     if (!reason || !reason.trim()) {
       return res.status(400).json({ success: false, message: 'Citation / Reason for the award is required' });
     }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found in database' });
-    }
-
     let awardTemplate = null;
-    if (awardId) {
+    if (awardId && mongoose.isValidObjectId(awardId)) {
       awardTemplate = await Award.findById(awardId);
     }
 
+    const resolvedUserId = user ? user._id : (userId && mongoose.isValidObjectId(userId) ? userId : new mongoose.Types.ObjectId());
+    const resolvedName = user?.name || userName || name || 'Honored Contributor';
+    const resolvedEmail = user?.email || recipientEmail || '';
+    const resolvedRole = user?.role || 'Member';
+    const resolvedPhoto = user?.photoUrl || '';
+
     const userAward = new UserAward({
-      userId: user._id,
+      userId: resolvedUserId,
       awardId: awardTemplate?._id || null,
-      userName: user.name,
-      userEmail: user.email,
-      userRole: user.role,
-      userPhoto: user.photoUrl || '',
+      userName: resolvedName,
+      userEmail: resolvedEmail,
+      userRole: resolvedRole,
+      userPhoto: resolvedPhoto,
       title: title || awardTemplate?.title || 'Excellence Award',
       description: awardTemplate?.description || '',
       badgeIcon: badgeIcon || awardTemplate?.badgeIcon || 'FiAward',

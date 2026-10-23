@@ -28,9 +28,21 @@ class MemberService {
       ],
       status: 'active'
     })
-      .select('name memberId designation role state district photoUrl bloodGroup verifiedAt createdAt')
+      .select('name memberId designation role state district photoUrl bloodGroup verifiedAt createdAt membershipExpiresAt membershipStatus')
       .sort({ createdAt: -1 })
       .limit(Number(limit) || 20);
+
+    const mappedMembers = members.map(m => {
+      const obj = m.toObject ? m.toObject() : { ...m };
+      const expiry = obj.membershipExpiresAt || (obj.verifiedAt ? new Date(new Date(obj.verifiedAt).getTime() + 365 * 24 * 60 * 60 * 1000) : null);
+      const isExpired = obj.membershipStatus === 'expired' || (expiry && new Date(expiry).getTime() < Date.now());
+      return {
+        ...obj,
+        membershipExpiresAt: expiry,
+        isExpired,
+        membershipStatus: isExpired ? 'expired' : (obj.membershipStatus || 'active')
+      };
+    });
 
     const totalCount = await User.countDocuments({
       $or: [
@@ -41,7 +53,7 @@ class MemberService {
       status: 'active'
     });
 
-    return { members, total: totalCount };
+    return { members: mappedMembers, total: totalCount };
   }
 
   async updateMemberStatus(id, status) {
@@ -91,6 +103,11 @@ class MemberService {
     if (feePaid !== undefined) user.feePaid = feePaid;
     if (feeAmount !== undefined) user.feeAmount = Number(feeAmount);
     if (designation) user.designation = designation;
+    user.verifiedAt = user.verifiedAt || new Date();
+    const expiry = new Date(user.verifiedAt);
+    expiry.setFullYear(expiry.getFullYear() + 1);
+    user.membershipExpiresAt = user.membershipExpiresAt || expiry;
+    user.membershipStatus = (user.membershipExpiresAt && new Date(user.membershipExpiresAt) < new Date()) ? 'expired' : 'active';
     user.idCardGenerated = true;
     user.appointmentLetterGenerated = true;
 

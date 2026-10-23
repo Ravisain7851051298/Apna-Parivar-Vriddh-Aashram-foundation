@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 import {
   FiUsers,
   FiSearch,
@@ -12,7 +13,9 @@ import {
   FiUserPlus,
   FiArrowRight,
   FiRefreshCw,
-  FiFilter
+  FiFilter,
+  FiLock,
+  FiAlertTriangle
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
@@ -137,77 +140,93 @@ export default function PublicMembersPage() {
 
         {/* Members Cards Grid */}
         {loading ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8">
-            <div className="w-10 h-10 border-3 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-xs font-bold text-slate-600">Loading verified membership directory...</p>
-          </div>
+          <CardSkeleton count={4} />
         ) : filteredMembers.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 space-y-3">
-            <FiUsers className="w-12 h-12 text-slate-400 mx-auto" />
-            <h3 className="text-base font-black text-slate-900">No Members Found</h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              No registered members matched your search criteria. Try a different search term or apply to become a member.
-            </p>
-            <Link
-              href="/apply-member"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 text-amber-950 text-xs font-black mt-2 shadow-sm"
-            >
-              <span>Join as Member</span>
-              <FiArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+          <EmptyState itemName="Registered Members" />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredMembers.map((m, idx) => (
-              <div
-                key={m._id || m.memberId || idx}
-                className="bg-white rounded-3xl p-5 border border-slate-200 hover:border-amber-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div className="flex flex-col items-center text-center space-y-3">
-                  <div className="relative">
-                    <div className="w-20 h-20 rounded-full border-2 border-amber-400 p-0.5 overflow-hidden shadow-sm bg-white">
-                      <img
-                        src={getContentImageUrl(m.photoUrl) || '/logo.jpeg'}
-                        alt={m.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/logo.jpeg';
-                        }}
-                      />
+            {filteredMembers.map((m, idx) => {
+              const isExpired = Boolean(
+                m.isExpired ||
+                m.membershipStatus === 'expired' ||
+                m.status === 'expired' ||
+                (m.membershipExpiresAt && new Date(m.membershipExpiresAt).getTime() < Date.now())
+              );
+
+              return (
+                <div
+                  key={m._id || m.memberId || idx}
+                  className={`bg-white rounded-3xl p-5 border transition-all duration-300 flex flex-col justify-between group ${
+                    isExpired
+                      ? 'border-rose-300/80 hover:border-rose-500 bg-rose-50/20'
+                      : 'border-slate-200 hover:border-amber-400 hover:shadow-lg'
+                  }`}
+                >
+                  <div className="flex flex-col items-center text-center space-y-3">
+                    <div className="relative">
+                      <div className={`w-20 h-20 rounded-full border-2 p-0.5 overflow-hidden shadow-sm bg-white ${
+                        isExpired ? 'border-rose-400 grayscale-30' : 'border-amber-400'
+                      }`}>
+                        <img
+                          src={getContentImageUrl(m.photoUrl) || '/logo.jpeg'}
+                          alt={m.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/logo.jpeg';
+                          }}
+                        />
+                      </div>
+                      {isExpired ? (
+                        <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs shadow-xs" title="Expired Member • ID Card Locked">
+                          <FiLock className="w-3.5 h-3.5" />
+                        </div>
+                      ) : (
+                        <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center text-xs shadow-xs" title="Verified Member">
+                          <FiCheckCircle className="w-3.5 h-3.5" />
+                        </div>
+                      )}
                     </div>
-                    <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center text-xs shadow-xs" title="Verified Member">
-                      <FiCheckCircle className="w-3.5 h-3.5" />
+
+                    <div>
+                      <h3 className="font-black text-sm text-slate-900 leading-snug group-hover:text-amber-800 transition-colors">
+                        {m.name}
+                      </h3>
+                      {isExpired ? (
+                        <span className="font-mono text-[10px] font-bold text-rose-800 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mt-1">
+                          <FiAlertTriangle className="w-3 h-3 text-rose-600" />
+                          <span>Expired Member</span>
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] font-bold text-amber-900 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-full inline-block mt-1">
+                          {m.memberId || 'VERIFIED MEMBER'}
+                        </span>
+                      )}
                     </div>
+
+                    <p className="text-xs text-slate-600 font-semibold line-clamp-1">
+                      {m.designation || (isExpired ? 'Membership Expired' : 'Active Social Worker')}
+                    </p>
                   </div>
 
-                  <div>
-                    <h3 className="font-black text-sm text-slate-900 leading-snug group-hover:text-amber-800 transition-colors">
-                      {m.name}
-                    </h3>
-                    <span className="font-mono text-[10px] font-bold text-amber-900 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-full inline-block mt-1">
-                      {m.memberId || 'VERIFIED MEMBER'}
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <FiMapPin className="w-3.5 h-3.5 text-amber-700" />
+                      <span>{m.district ? `${m.district}, ${m.state}` : m.state || 'India'}</span>
                     </span>
+                    {isExpired ? (
+                      <span className="font-mono font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded text-[10px]">
+                        Plan Expired
+                      </span>
+                    ) : m.bloodGroup ? (
+                      <span className="font-mono font-bold text-[#d50000] bg-red-50 px-1.5 py-0.2 rounded text-[10px]">
+                        {m.bloodGroup}
+                      </span>
+                    ) : null}
                   </div>
-
-                  <p className="text-xs text-slate-600 font-semibold line-clamp-1">
-                    {m.designation || 'Active Social Worker'}
-                  </p>
                 </div>
-
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <FiMapPin className="w-3.5 h-3.5 text-amber-700" />
-                    <span>{m.district ? `${m.district}, ${m.state}` : m.state || 'India'}</span>
-                  </span>
-                  {m.bloodGroup && (
-                    <span className="font-mono font-bold text-[#d50000] bg-red-50 px-1.5 py-0.2 rounded text-[10px]">
-                      {m.bloodGroup}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

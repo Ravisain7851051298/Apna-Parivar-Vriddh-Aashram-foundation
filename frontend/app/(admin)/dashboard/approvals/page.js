@@ -137,17 +137,17 @@ export default function ApprovalsPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Trustee Approvals &amp; Verification Center</h1>
-          <p className="text-xs text-slate-700 mt-1">
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Trustee Approvals &amp; Verification Center</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
             Zero-Fraud Policy: ID cards, appointment letters, and 80G tax receipts are issued ONLY upon manual verification of bank receipts and transaction UTRs.
           </p>
         </div>
 
         <Link
           href="/dashboard"
-          className="text-xs font-bold text-black hover:text-emerald-700 transition flex items-center gap-1 self-start md:self-auto"
+          className="text-xs font-bold text-amber-900 hover:text-stone-950 transition flex items-center gap-1 self-start md:self-auto px-3 py-1.5 rounded-xl border border-amber-200 bg-white/80 shadow-2xs"
         >
           ← Back to Overview
         </Link>

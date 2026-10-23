@@ -256,14 +256,14 @@ export default function AdminOrganizationCertificatesPage() {
 
   return (
     <div className="space-y-4">
-      {/* Top Header Card (VolunteerManagement Standard) */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <FiAward className="text-emerald-700 w-5 h-5" />
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight flex items-center gap-2">
+            <FiAward className="text-amber-800 w-5 h-5" />
             <span>Organization Statutory Certificates &amp; Legal Documents CMS</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
             Upload, audit, and showcase the NGO&apos;s verified government registrations (12A, 80G, NITI Aayog, Trust Deed, CSR-1) in PDF or Image format.
           </p>
         </div>
@@ -272,7 +272,7 @@ export default function AdminOrganizationCertificatesPage() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-700/20 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 text-xs font-black shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiPlus className="w-4 h-4" />
             <span>Upload New Certificate</span>
@@ -280,9 +280,9 @@ export default function AdminOrganizationCertificatesPage() {
 
           <Link
             href="/certificates"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold transition shadow-2xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-amber-50 text-stone-800 border border-amber-200 text-xs font-bold transition shadow-2xs cursor-pointer"
           >
-            <FiExternalLink className="w-3.5 h-3.5 text-emerald-700" />
+            <FiExternalLink className="w-3.5 h-3.5 text-amber-800" />
             <span>Public Showcase</span>
           </Link>
 
@@ -332,8 +332,8 @@ export default function AdminOrganizationCertificatesPage() {
               key={tab.key}
               onClick={() => setActiveCategory(tab.key)}
               className={`px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${activeCategory === tab.key
-                  ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/20'
-                  : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700'
+                ? 'bg-emerald-700 text-white shadow-md shadow-emerald-700/20'
+                : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700'
                 }`}
             >
               {tab.label}
@@ -419,7 +419,7 @@ export default function AdminOrganizationCertificatesPage() {
                             </button>
                           )}
                         </div>
-                        <div className="text-[11px] text-slate-500 line-clamp-1 max-w-[200px]" title={doc.issuingAuthority}>
+                        <div className="text-[11px] text-slate-500 line-clamp-1 max-w-50" title={doc.issuingAuthority}>
                           {doc.issuingAuthority || 'Govt. of India'}
                         </div>
                       </td>
@@ -654,7 +654,7 @@ export default function AdminOrganizationCertificatesPage() {
 
                 {formData.fileUrl && (
                   <div className="pt-2 flex items-center justify-between text-xs text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
-                    <span className="truncate max-w-[350px] font-mono text-[11px]">
+                    <span className="truncate max-w-87.5 font-mono text-[11px]">
                       {formData.fileUrl}
                     </span>
                     <span className="font-bold uppercase text-[10px] bg-emerald-200 px-2 py-0.5 rounded">
@@ -732,19 +732,19 @@ export default function AdminOrganizationCertificatesPage() {
             </div>
 
             {/* Viewer Body */}
-            <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden p-2 flex items-center justify-center min-h-[400px]">
+            <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden p-2 flex items-center justify-center min-h-100">
               {previewDoc.fileType === 'pdf' || /\.pdf(\?|$)/i.test(previewDoc.fileUrl) ? (
                 <iframe
                   src={previewDoc.fileUrl}
                   title={previewDoc.title}
-                  className="w-full h-[550px] rounded-xl border border-slate-300"
+                  className="w-full h-137.5 rounded-xl border border-slate-300"
                 />
               ) : (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={previewDoc.fileUrl}
                   alt={previewDoc.title}
-                  className="max-h-[550px] w-auto object-contain rounded-xl shadow-md"
+                  className="max-h-137.5 w-auto object-contain rounded-xl shadow-md"
                 />
               )}
             </div>

@@ -204,21 +204,21 @@ export default function DonationManagement() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">80G Donation Management</h1>
-          <p className="text-xs text-slate-700 mt-1">
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">80G Donation Management</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
             Audit contributor payment proofs, verify bank transfers, and issue automated 80G tax receipts.
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start md:self-auto">
+        <div className="flex bg-white/80 p-1 rounded-2xl border border-amber-200 self-start md:self-auto shadow-2xs">
           <button
             onClick={() => setActiveTab("donations")}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "donations"
-                ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                : "text-slate-700 hover:text-black"
+              ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
+              : "text-stone-700 hover:text-stone-950"
               }`}
           >
             Donations List
@@ -226,8 +226,8 @@ export default function DonationManagement() {
           <button
             onClick={() => setActiveTab("settings")}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "settings"
-                ? "bg-red-600 text-white shadow-md shadow-red-600/25"
-                : "text-slate-700 hover:text-black"
+              ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
+              : "text-stone-700 hover:text-stone-950"
               }`}
           >
             UPI &amp; Bank Settings
@@ -256,8 +256,8 @@ export default function DonationManagement() {
                   key={st}
                   onClick={() => setStatusFilter(st)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${statusFilter === st
-                      ? "bg-red-600 text-white shadow-md shadow-red-600/20"
-                      : "bg-slate-100 text-slate-700 hover:bg-red-50 hover:text-red-600"
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/20"
+                    : "bg-slate-100 text-slate-700 hover:bg-red-50 hover:text-red-600"
                     }`}
                 >
                   {st}
@@ -332,16 +332,16 @@ export default function DonationManagement() {
                           <td className="py-3 px-3.5 whitespace-nowrap">
                             <span
                               className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${status.toLowerCase() === "approved"
-                                  ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                                  : status.toLowerCase() === "rejected"
-                                    ? "bg-rose-100 text-rose-800 border border-rose-200"
-                                    : "bg-amber-100 text-amber-800 border border-amber-200"
+                                ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                : status.toLowerCase() === "rejected"
+                                  ? "bg-rose-100 text-rose-800 border border-rose-200"
+                                  : "bg-amber-100 text-amber-800 border border-amber-200"
                                 }`}
                             >
                               {status}
                             </span>
                             {status.toLowerCase() === "rejected" && d.rejectionReason && (
-                              <div className="text-[10px] text-rose-600 font-bold mt-1 max-w-[180px]">
+                              <div className="text-[10px] text-rose-600 font-bold mt-1 max-w-45">
                                 Reason: {d.rejectionReason}
                               </div>
                             )}
@@ -539,7 +539,7 @@ export default function DonationManagement() {
               <FiX className="w-5 h-5" />
             </button>
             <h3 className="font-black text-sm text-black mb-3">Bank Transfer Proof Screenshot</h3>
-            <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center min-h-[300px]">
+            <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center min-h-75">
               <img
                 src={selectedScreenshot}
                 alt="Payment Screenshot"

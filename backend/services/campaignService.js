@@ -5,6 +5,12 @@ class CampaignService {
     return campaignRepository.find(query);
   }
 
+  async getCampaignById(id) {
+    const campaign = await campaignRepository.findById(id);
+    if (!campaign) throw new Error('Campaign not found');
+    return campaign;
+  }
+
   async createCampaign(data) {
     if (!data.title || !data.goalAmount) {
       throw new Error('Title and goal amount are required');

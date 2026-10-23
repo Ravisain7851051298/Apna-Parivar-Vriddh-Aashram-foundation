@@ -28,7 +28,9 @@ import {
 import { CONTENT_COLLECTIONS } from "@/constants/dashboard";
 import api from "@/services/api";
 import { getContentImageUrl } from "@/lib/authApi";
-import { getYoutubeEmbedUrl, getYoutubeThumbnail, isVideoItem } from "@/lib/youtube";
+import { getYoutubeEmbedUrl, getYoutubeThumbnail, isVideoItem, getYoutubeVideoId } from "@/lib/youtube";
+import MarkdownRenderer from "@/components/common/MarkdownRenderer";
+import { TableSkeleton, EmptyState } from "@/components/common/SkeletonLoader";
 
 export function getItemCategory(item) {
   if (!item) return "";
@@ -384,23 +386,23 @@ export default function ContentCollection({ resource }) {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-black tracking-tight">{config.title}</h1>
-          <p className="text-xs text-slate-700 mt-1">{config.description}</p>
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">{config.title}</h1>
+          <p className="text-xs text-amber-950/80 mt-1 font-medium">{config.description}</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={loadData}
-            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+            className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer shadow-2xs"
             title="Refresh"
           >
-            <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={openCreateForm}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/25 transition cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiPlus className="w-4 h-4" />
             <span>Add New {config.addLabel || "Item"}</span>
@@ -499,29 +501,23 @@ export default function ContentCollection({ resource }) {
           </div>
         )}
 
-        <div className="bg-red-500 rounded-xl px-4 py-1.5 flex items-center text-xs font-bold text-white shrink-0 self-end md:self-auto">
-          Records: <span className="ml-1.5">{filteredItems.length}</span>
+        <div className="bg-amber-400 text-stone-950 font-black rounded-xl px-4 py-1.5 flex items-center text-xs shrink-0 self-end md:self-auto shadow-2xs">
+          Records: <span className="ml-1.5 font-black">{filteredItems.length}</span>
         </div>
       </div>
 
       {/* Items Table / Cards */}
-      <div className="bg-white mx-3 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white mx-3 rounded-3xl border border-amber-200/80 shadow-xs overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-slate-700 text-xs space-y-2">
-            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-red-600" />
-            <p>Loading {config.title.toLowerCase()}...</p>
+          <div className="p-4">
+            <TableSkeleton rows={5} cols={5} />
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="p-12 text-center text-slate-700 text-xs space-y-3">
-            <FiAlertCircle className="w-8 h-8 mx-auto text-slate-400" />
-            <p className="font-semibold text-black">No {config.title.toLowerCase()} found matching criteria.</p>
-            <button
-              onClick={openCreateForm}
-              className="px-4 py-2 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 font-bold text-xs transition cursor-pointer"
-            >
-              Create your first record
-            </button>
-          </div>
+          <EmptyState
+            itemName={config.title}
+            onAction={openCreateForm}
+            actionLabel={`Create First ${config.addLabel || "Item"}`}
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -865,14 +861,19 @@ export default function ContentCollection({ resource }) {
 
               {/* Description */}
               <div>
-                <label className="font-extrabold text-black block mb-1">Description / Content *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-extrabold text-black block">Description / Content *</label>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                    Markdown Supported (**bold**, *italic*, # heading, - lists)
+                  </span>
+                </div>
                 <textarea
-                  rows={4}
+                  rows={5}
                   required
-                  placeholder={`Describe this ${config.itemLabel}...`}
+                  placeholder={`Describe this ${config.itemLabel}... (Markdown formatting supported)`}
                   value={form.description || form.content || ""}
                   onChange={(e) => setForm({ ...form, description: e.target.value, content: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-red-500 font-medium text-black bg-white"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-amber-500 font-medium text-black bg-white font-mono text-xs"
                 />
               </div>
 
@@ -1266,11 +1267,9 @@ export default function ContentCollection({ resource }) {
               )}
 
               {/* Event Description / Agenda */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <span className="text-[11px] font-extrabold text-black block">Event Agenda &amp; Details:</span>
-                <p className="text-xs text-slate-700 whitespace-pre-line leading-relaxed font-medium">
-                  {evt.description || evt.content || evt.summary || "No description provided."}
-                </p>
+              <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80 space-y-1.5">
+                <span className="text-[11px] font-extrabold text-amber-950 uppercase tracking-wider block">Event Agenda &amp; Details:</span>
+                <MarkdownRenderer content={evt.description || evt.content || evt.summary || "No description provided."} />
               </div>
 
               {/* Attendees Quick Inspection Strip */}
@@ -1385,9 +1384,10 @@ export default function ContentCollection({ resource }) {
 
               {/* Caption / Description */}
               {(item.caption || item.description) && (
-                <p className="text-xs text-slate-700 font-medium whitespace-pre-line leading-relaxed">
-                  {item.caption || item.description}
-                </p>
+                <div className="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-200/80 space-y-1">
+                  <span className="text-[10px] font-black uppercase text-amber-900 tracking-wider block">Caption &amp; Story:</span>
+                  <MarkdownRenderer content={item.caption || item.description} />
+                </div>
               )}
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
@@ -1460,10 +1460,10 @@ export default function ContentCollection({ resource }) {
               </div>
 
               <div>
-                <h4 className="text-xs font-extrabold text-black uppercase tracking-wider mb-1.5">Description & Scope</h4>
-                <p className="text-xs text-slate-700 font-medium leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                  {viewServiceModalItem.description || viewServiceModalItem.content || "No detailed description provided."}
-                </p>
+                <h4 className="text-xs font-extrabold text-black uppercase tracking-wider mb-1.5">Description &amp; Scope</h4>
+                <div className="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-200/80">
+                  <MarkdownRenderer content={viewServiceModalItem.description || viewServiceModalItem.content || "No detailed description provided."} />
+                </div>
               </div>
 
               {/* Key Highlights / Features */}
@@ -1581,10 +1581,10 @@ export default function ContentCollection({ resource }) {
               )}
 
               <div>
-                <h4 className="text-xs font-extrabold text-black uppercase tracking-wider mb-1.5">Article Content</h4>
-                <p className="text-xs text-slate-700 font-medium leading-relaxed bg-slate-50 p-4 rounded-2xl border border-slate-200 whitespace-pre-line">
-                  {viewBlogModalItem.content || viewBlogModalItem.description || viewBlogModalItem.summary || "No content provided."}
-                </p>
+                <h4 className="text-xs font-extrabold text-black uppercase tracking-wider mb-1.5">Article Content (Markdown)</h4>
+                <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80">
+                  <MarkdownRenderer content={viewBlogModalItem.content || viewBlogModalItem.description || viewBlogModalItem.summary || "No content provided."} />
+                </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">

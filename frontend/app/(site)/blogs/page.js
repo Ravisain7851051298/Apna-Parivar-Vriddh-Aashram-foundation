@@ -16,10 +16,12 @@ import {
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
+import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 import api from '@/services/api';
 
 export default function BlogsPage() {
-  const { blogs, addBlog, updateBlog, deleteBlog, currentUser } = useNGO();
+  const { blogs = [], addBlog, updateBlog, deleteBlog, currentUser, loading } = useNGO();
   const isAdmin = currentUser?.role === 'Admin' || currentUser?.role === 'SuperAdmin';
 
   const [formOpen, setFormOpen] = useState(false);
@@ -161,14 +163,10 @@ export default function BlogsPage() {
         </div>
 
         {/* Blogs Grid */}
-        {blogs.length === 0 ? (
-          <div className="text-center py-20 bg-slate-50 border border-slate-200 rounded-3xl space-y-3">
-            <FiFileText className="w-10 h-10 text-slate-400 mx-auto" />
-            <h3 className="text-base font-black text-black">No news articles published yet</h3>
-            <p className="text-xs text-slate-600">
-              Check back soon for latest editorial releases and field dispatches.
-            </p>
-          </div>
+        {loading ? (
+          <CardSkeleton count={3} />
+        ) : blogs.length === 0 ? (
+          <EmptyState itemName="News & Articles" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogs.map((b) => {
@@ -200,9 +198,9 @@ export default function BlogsPage() {
                       <h3 className="font-black text-base text-black leading-snug line-clamp-2">
                         {b.title}
                       </h3>
-                      <p className="text-xs text-slate-700 mt-2.5 leading-relaxed font-medium line-clamp-3">
-                        {b.content}
-                      </p>
+                      <div className="text-xs text-slate-700 mt-2.5 leading-relaxed font-medium line-clamp-3">
+                        <MarkdownRenderer content={b.content} />
+                      </div>
                     </div>
                   </div>
 

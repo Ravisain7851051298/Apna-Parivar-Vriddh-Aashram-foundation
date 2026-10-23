@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiAward,
@@ -22,6 +23,7 @@ import {
 } from "react-icons/fi";
 import api from "@/services/api";
 import { getContentImageUrl } from "@/lib/authApi";
+import { TableSkeleton, EmptyState } from "@/components/common/SkeletonLoader";
 
 export default function AwardsManagement() {
   const [activeTab, setActiveTab] = useState("grants"); // 'grants' | 'people' | 'templates'
@@ -46,6 +48,7 @@ export default function AwardsManagement() {
   // Template Create/Edit Modal
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
+  const [templateFilter, setTemplateFilter] = useState("All"); // 'All' | 'Org' | 'Individual'
   const [templateForm, setTemplateForm] = useState({
     title: "",
     description: "",
@@ -53,7 +56,13 @@ export default function AwardsManagement() {
     tier: "Gold",
     badgeColor: "gold",
     badgeIcon: "FiAward",
-    points: 100
+    points: 100,
+    isOrgAward: false,
+    awardedBy: "",
+    year: "",
+    awardImage: "",
+    certificateUrl: "",
+    order: 0
   });
   const [submittingTemplate, setSubmittingTemplate] = useState(false);
 
@@ -70,7 +79,13 @@ export default function AwardsManagement() {
     templateForm.tier === (editingTemplate.tier || "Gold") &&
     templateForm.badgeColor === (editingTemplate.badgeColor || "gold") &&
     templateForm.badgeIcon === (editingTemplate.badgeIcon || "FiAward") &&
-    Number(templateForm.points) === Number(editingTemplate.points || 100)
+    Number(templateForm.points) === Number(editingTemplate.points || 100) &&
+    Boolean(templateForm.isOrgAward) === Boolean(editingTemplate.isOrgAward) &&
+    templateForm.awardedBy.trim() === (editingTemplate.awardedBy || "").trim() &&
+    templateForm.year.trim() === (editingTemplate.year || "").trim() &&
+    templateForm.awardImage.trim() === (editingTemplate.awardImage || "").trim() &&
+    templateForm.certificateUrl.trim() === (editingTemplate.certificateUrl || "").trim() &&
+    Number(templateForm.order) === Number(editingTemplate.order || 0)
     : !templateForm.title.trim();
 
   const loadData = async () => {
@@ -208,7 +223,13 @@ export default function AwardsManagement() {
       tier: "Gold",
       badgeColor: "gold",
       badgeIcon: "FiAward",
-      points: 100
+      points: 100,
+      isOrgAward: false,
+      awardedBy: "",
+      year: "",
+      awardImage: "",
+      certificateUrl: "",
+      order: 0
     });
     setTemplateModalOpen(true);
   };
@@ -222,7 +243,13 @@ export default function AwardsManagement() {
       tier: awd.tier || "Gold",
       badgeColor: awd.badgeColor || "gold",
       badgeIcon: awd.badgeIcon || "FiAward",
-      points: awd.points || 100
+      points: awd.points || 100,
+      isOrgAward: Boolean(awd.isOrgAward),
+      awardedBy: awd.awardedBy || "",
+      year: awd.year || "",
+      awardImage: awd.awardImage || "",
+      certificateUrl: awd.certificateUrl || "",
+      order: awd.order || 0
     });
     setTemplateModalOpen(true);
   };
@@ -311,30 +338,38 @@ export default function AwardsManagement() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-white p-4 rounded-b-2xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold mb-1">
-            <FiAward className="w-3.5 h-3.5 text-amber-700" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1 border border-amber-300">
+            <FiAward className="w-3.5 h-3.5 text-amber-800" />
             <span>Honors &amp; Merits Desk</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">National Awards &amp; Honors Management</h1>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Present official recognition badges to dedicated volunteers, members, and grassroots changemakers.
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Offer an Award to Members &amp; Volunteers</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
+            Confer official recognition badges, honors, and citations upon active volunteers, dedicated members, and community supporters.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/dashboard/managecontent?tab=myAwards"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs border border-amber-300 transition shadow-2xs"
+            title="Manage honors received by Apna Parivar Vriddh Aashram Foundation"
+          >
+            <FiAward className="w-4 h-4 text-amber-800" />
+            <span>My Awards (Foundation Honors) →</span>
+          </Link>
           <button
             onClick={loadData}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
             title="Refresh Data"
           >
-            <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-red-600" : ""}`} />
+            <FiRefreshCw className={`w-3.5 h-3.5 text-amber-800 ${loading ? "animate-spin" : ""}`} />
             <span>Sync</span>
           </button>
           <button
             onClick={() => openOfferModal()}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiAward className="w-4 h-4" />
             <span>Offer Award to Person</span>
@@ -497,7 +532,7 @@ export default function AwardsManagement() {
                         </td>
 
                         {/* Citation & Reason */}
-                        <td className="py-3 px-3.5 max-w-[280px]">
+                        <td className="py-3 px-3.5 max-w-70">
                           <p className="text-xs text-slate-700 line-clamp-2 leading-relaxed font-medium">
                             {g.reason || g.citation}
                           </p>
@@ -587,10 +622,10 @@ export default function AwardsManagement() {
                       <td className="py-3 px-3.5 whitespace-nowrap">
                         <span
                           className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${u.role === "Member" || u.isMember
-                              ? "bg-blue-100 text-blue-800 border-blue-200"
-                              : u.role === "Volunteer" || u.isVolunteer
-                                ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                                : "bg-slate-100 text-slate-700 border-slate-200"
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : u.role === "Volunteer" || u.isVolunteer
+                              ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                              : "bg-slate-100 text-slate-700 border-slate-200"
                             }`}
                         >
                           {u.role || "Donor"}
@@ -631,64 +666,135 @@ export default function AwardsManagement() {
 
       {/* ----------------- TAB 3: CUSTOMIZE & MANAGE BADGE TEMPLATES ----------------- */}
       {activeTab === "templates" && (
-        <div className="mx-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {awards.map((awd) => {
-              const id = awd._id || awd.id;
-              const style = getBadgeStyle(awd.badgeColor);
-
-              return (
-                <div
-                  key={id}
-                  className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${style.pill}`}>
-                        {awd.tier || "Gold"}
-                      </span>
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">{awd.category}</span>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-2xl ${style.bg} text-white flex items-center justify-center font-bold text-xl shadow-md border-2 border-white ring-2 ${style.border}`}>
-                        <FiAward className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-black text-base text-black leading-tight">{awd.title}</h3>
-                        <span className="text-xs font-bold text-slate-500 block mt-0.5">{awd.points || 100} Merit Points</span>
-                      </div>
-                    </div>
-
-                    {awd.description && (
-                      <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-medium">
-                        {awd.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => openEditTemplate(awd)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition cursor-pointer flex items-center gap-1"
-                    >
-                      <FiEdit2 className="w-3.5 h-3.5 text-slate-600" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteTemplate(awd)}
-                      className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition cursor-pointer flex items-center gap-1 border border-rose-200"
-                    >
-                      <FiTrash2 className="w-3.5 h-3.5 text-rose-600" />
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+        <div className="mx-3 space-y-3">
+          {/* Subfilter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white rounded-2xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setTemplateFilter("All")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                templateFilter === "All" ? "bg-stone-900 text-white" : "text-slate-600 hover:text-black hover:bg-slate-100"
+              }`}
+            >
+              All Badges &amp; Honors ({awards.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setTemplateFilter("Org")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                templateFilter === "Org" ? "bg-amber-500 text-stone-950 font-black shadow-xs" : "text-amber-800 hover:bg-amber-50"
+              }`}
+            >
+              <span>🏛️ Org Public Honors ({awards.filter((a) => a.isOrgAward || a.awardedBy).length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTemplateFilter("Individual")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                templateFilter === "Individual" ? "bg-stone-900 text-white" : "text-slate-600 hover:text-black hover:bg-slate-100"
+              }`}
+            >
+              🎖️ Individual Recipient Badges ({awards.filter((a) => !a.isOrgAward && !a.awardedBy).length})
+            </button>
           </div>
+
+          {/* Cards Grid */}
+          {awards.filter((a) => {
+            if (templateFilter === "Org") return a.isOrgAward || a.awardedBy;
+            if (templateFilter === "Individual") return !a.isOrgAward && !a.awardedBy;
+            return true;
+          }).length === 0 ? (
+            <div className="bg-white rounded-3xl p-10 text-center border border-slate-200">
+              <EmptyState title="award templates" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {awards
+                .filter((a) => {
+                  if (templateFilter === "Org") return a.isOrgAward || a.awardedBy;
+                  if (templateFilter === "Individual") return !a.isOrgAward && !a.awardedBy;
+                  return true;
+                })
+                .map((awd) => {
+                  const id = awd._id || awd.id;
+                  const style = getBadgeStyle(awd.badgeColor);
+                  const isOrg = awd.isOrgAward || Boolean(awd.awardedBy);
+
+                  return (
+                    <div
+                      key={id}
+                      className={`bg-white rounded-3xl p-5 border shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between ${
+                        isOrg ? "border-amber-300 ring-1 ring-amber-100" : "border-slate-200"
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-1 flex-wrap">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${style.pill}`}>
+                            {awd.tier || "Gold"}
+                          </span>
+                          {isOrg ? (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-[9px] uppercase border border-amber-300 tracking-wider">
+                              🏛️ Org Honor (Public)
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">{awd.category}</span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          {awd.awardImage ? (
+                            <img
+                              src={getContentImageUrl(awd.awardImage)}
+                              alt={awd.title}
+                              className="w-12 h-12 rounded-2xl object-cover border-2 border-amber-300 shadow-xs shrink-0"
+                            />
+                          ) : (
+                            <div className={`w-12 h-12 rounded-2xl ${style.bg} text-white flex items-center justify-center font-bold text-xl shadow-md border-2 border-white ring-2 ${style.border} shrink-0`}>
+                              <FiAward className="w-6 h-6" />
+                            </div>
+                          )}
+                          <div>
+                            <h3 className="font-black text-base text-black leading-tight">{awd.title}</h3>
+                            {isOrg && (awd.awardedBy || awd.year) ? (
+                              <span className="text-xs font-bold text-amber-900 block mt-0.5">
+                                By {awd.awardedBy || "Authority"} {awd.year ? `(${awd.year})` : ""}
+                              </span>
+                            ) : (
+                              <span className="text-xs font-bold text-slate-500 block mt-0.5">{awd.points || 100} Merit Points</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {awd.description && (
+                          <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-medium">
+                            {awd.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openEditTemplate(awd)}
+                          className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition cursor-pointer flex items-center gap-1"
+                        >
+                          <FiEdit2 className="w-3.5 h-3.5 text-slate-600" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTemplate(awd)}
+                          className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition cursor-pointer flex items-center gap-1 border border-rose-200"
+                        >
+                          <FiTrash2 className="w-3.5 h-3.5 text-rose-600" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
       )}
 
@@ -877,6 +983,76 @@ export default function AwardsManagement() {
                   placeholder="Criteria and meaning behind this recognition..."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-black bg-white focus:outline-red-500 font-medium"
                 />
+              </div>
+
+              {/* Organization Public Honor Toggle & Fields */}
+              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={templateForm.isOrgAward}
+                    onChange={(e) => setTemplateForm({ ...templateForm, isOrgAward: e.target.checked })}
+                    className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-xs font-black text-amber-950 block">
+                      🏛️ Mark as Organization Public Honor
+                    </span>
+                    <span className="text-[11px] text-amber-900/80 font-medium block">
+                      Enable this to showcase this trophy/award publicly on the homepage Awards &amp; Honors section.
+                    </span>
+                  </div>
+                </label>
+
+                {templateForm.isOrgAward && (
+                  <div className="space-y-3 pt-2 border-t border-amber-200/60">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-700 mb-1 font-bold">Conferred Authority / Awarded By</label>
+                        <input
+                          type="text"
+                          value={templateForm.awardedBy}
+                          onChange={(e) => setTemplateForm({ ...templateForm, awardedBy: e.target.value })}
+                          placeholder="e.g. Govt of India / NITI Aayog / Governor"
+                          className="w-full px-3 py-2 rounded-xl border border-amber-200 text-black bg-white focus:outline-amber-500 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1 font-bold">Year / Date Conferred</label>
+                        <input
+                          type="text"
+                          value={templateForm.year}
+                          onChange={(e) => setTemplateForm({ ...templateForm, year: e.target.value })}
+                          placeholder="e.g. 2025"
+                          className="w-full px-3 py-2 rounded-xl border border-amber-200 text-black bg-white focus:outline-amber-500 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-700 mb-1 font-bold">Trophy / Award Photo URL</label>
+                        <input
+                          type="text"
+                          value={templateForm.awardImage}
+                          onChange={(e) => setTemplateForm({ ...templateForm, awardImage: e.target.value })}
+                          placeholder="https://... or /trophy.jpg"
+                          className="w-full px-3 py-2 rounded-xl border border-amber-200 text-black bg-white focus:outline-amber-500 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-slate-700 mb-1 font-bold">Certificate / Press Release Link</label>
+                        <input
+                          type="text"
+                          value={templateForm.certificateUrl}
+                          onChange={(e) => setTemplateForm({ ...templateForm, certificateUrl: e.target.value })}
+                          placeholder="https://example.com/certificate"
+                          className="w-full px-3 py-2 rounded-xl border border-amber-200 text-black bg-white focus:outline-amber-500 text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">

@@ -157,13 +157,13 @@ export default function FeedbackManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-2">
-            <span>Public Testimonials</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1.5 border border-amber-300">
+            <span>Public Testimonials &amp; Reviews</span>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Reviews &amp; Feedback</h1>
-          <p className="text-xs text-slate-700 mt-1">
+          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Reviews &amp; Feedback</h1>
+          <p className="text-xs text-amber-950/80 font-medium mt-1">
             Moderate community reviews, approve supporter testimonials, and curate donor stories.
           </p>
         </div>
@@ -171,14 +171,14 @@ export default function FeedbackManagement() {
         <div className="flex items-center gap-3">
           <button
             onClick={loadData}
-            className="p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+            className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer shadow-2xs"
             title="Refresh"
           >
-            <FiRefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-red-600" : ""}`} />
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
           </button>
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/25 transition cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiPlus className="w-4 h-4" />
             <span>Add Testimonial</span>

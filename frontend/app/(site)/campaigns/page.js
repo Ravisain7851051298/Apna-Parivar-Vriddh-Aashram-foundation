@@ -15,11 +15,14 @@ import {
   FiImage,
   FiAlertTriangle,
   FiCheck,
-  FiFilter
+  FiFilter,
+  FiArrowRight
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
+import MarkdownRenderer from '@/components/common/MarkdownRenderer';
+import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 
 const CATEGORIES = [
   'All Drives',
@@ -38,7 +41,8 @@ export default function CampaignsPage() {
     updateCampaign,
     deleteCampaign,
     uploadFile,
-    currentUser
+    currentUser,
+    loading
   } = useNGO();
 
   const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
@@ -349,22 +353,10 @@ export default function CampaignsPage() {
         </div>
 
         {/* Campaigns Grid */}
-        {filteredCampaigns.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto">
-            <FiTarget className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-black text-black">No Campaigns in This Category</h3>
-            <p className="text-xs text-slate-600 mt-1 mb-5">
-              Try switching your filter or check back later for newly launched welfare initiatives.
-            </p>
-            {isAdmin && (
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition"
-              >
-                Launch First Campaign
-              </button>
-            )}
-          </div>
+        {loading ? (
+          <CardSkeleton count={3} />
+        ) : filteredCampaigns.length === 0 ? (
+          <EmptyState itemName="Campaigns" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCampaigns.map((camp) => {
@@ -383,11 +375,11 @@ export default function CampaignsPage() {
                 >
                   <div>
                     {/* Campaign Image Container */}
-                    <div className="relative h-56 overflow-hidden bg-slate-100">
+                    <Link href={`/campaigns/${id}`} className="block relative h-56 overflow-hidden bg-slate-100 group/img">
                       <img
                         src={displayImage}
                         alt={camp.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
                         onError={(e) => {
                           e.target.src = 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600';
                         }}
@@ -407,7 +399,7 @@ export default function CampaignsPage() {
 
                       {/* Admin Quick Action Floating Buttons */}
                       {isAdmin && (
-                        <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+                        <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => openEditModal(camp)}
                             className="p-2 rounded-xl bg-white/90 hover:bg-white text-slate-800 hover:text-black border border-slate-200 shadow-md backdrop-blur-xs transition cursor-pointer"
@@ -424,16 +416,18 @@ export default function CampaignsPage() {
                           </button>
                         </div>
                       )}
-                    </div>
+                    </Link>
 
                     {/* Campaign Body Details */}
                     <div className="p-6">
                       <h3 className="font-extrabold text-base text-black line-clamp-2 leading-snug">
-                        {camp.title}
+                        <Link href={`/campaigns/${id}`} className="hover:text-emerald-700 transition">
+                          {camp.title}
+                        </Link>
                       </h3>
-                      <p className="text-xs text-slate-700 mt-2 leading-relaxed line-clamp-3">
-                        {camp.description}
-                      </p>
+                      <div className="text-xs text-slate-700 mt-2 leading-relaxed line-clamp-3">
+                        <MarkdownRenderer content={camp.description} />
+                      </div>
 
                       {/* Progress Bar & Financials */}
                       <div className="mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
@@ -470,6 +464,14 @@ export default function CampaignsPage() {
                     >
                       <FiHeart className="w-4 h-4 fill-white" />
                       <span>Donate to This Campaign (80G)</span>
+                    </Link>
+
+                    <Link
+                      href={`/campaigns/${id}`}
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition cursor-pointer text-center"
+                    >
+                      <span>View Campaign Details</span>
+                      <FiArrowRight className="w-3.5 h-3.5 text-emerald-700" />
                     </Link>
 
                     {isAdmin && (

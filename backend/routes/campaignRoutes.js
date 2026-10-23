@@ -5,6 +5,7 @@ const { verifyToken, requireRole } = require('../middlewares/auth');
 const { handleOptionalFileUpload } = require('../middlewares/upload');
 
 router.get('/', campaignController.getCampaigns);
+router.get('/:id', campaignController.getCampaignById);
 router.post('/', verifyToken, requireRole(['admin', 'Admin']), handleOptionalFileUpload, campaignController.createCampaign);
 router.put('/:id', verifyToken, requireRole(['admin', 'Admin']), handleOptionalFileUpload, campaignController.updateCampaign);
 router.delete('/:id', verifyToken, requireRole(['admin', 'Admin']), campaignController.deleteCampaign);
