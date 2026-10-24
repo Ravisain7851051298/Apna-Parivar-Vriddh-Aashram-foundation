@@ -11,6 +11,8 @@ const getUsers = async (req, res) => {
         query.$or = [{ role: 'Member' }, { isMember: true }];
       } else if (role === 'Volunteer') {
         query.$or = [{ role: 'Volunteer' }, { isVolunteer: true }];
+      } else if (role === 'Coordinator') {
+        query.$or = [{ role: 'Coordinator' }, { isCoordinator: true }];
       } else {
         query.role = role;
       }
@@ -142,6 +144,7 @@ const getUserStats = async (req, res) => {
     const blockedUsers = await User.countDocuments({ status: 'blocked' });
     const members = await User.countDocuments({ $or: [{ role: 'Member' }, { isMember: true }] });
     const volunteers = await User.countDocuments({ $or: [{ role: 'Volunteer' }, { isVolunteer: true }] });
+    const coordinators = await User.countDocuments({ $or: [{ role: 'Coordinator' }, { isCoordinator: true }] });
     const donors = await User.countDocuments({ role: 'Donor' });
 
     return res.json({
@@ -152,6 +155,7 @@ const getUserStats = async (req, res) => {
         blockedUsers,
         members,
         volunteers,
+        coordinators,
         donors
       }
     });

@@ -806,12 +806,149 @@ const sendGuestApplicationCredentialsEmail = async ({ to, name, temporaryPasswor
   });
 };
 
+// 5. Coordinator Approved -> Appointment Letter & ID Card Email with PDFs Attached
+const sendCoordinatorApprovalEmail = async (param) => {
+  const coordObj = param.toObject ? param.toObject() : param;
+  const to = coordObj.to || coordObj.email || coordObj.user?.email;
+  const coordName = coordObj.coordinatorName || coordObj.name || coordObj.user?.name || 'Valued Coordinator';
+  const coordinatorId = coordObj.coordinatorId || coordObj.user?.coordinatorId || coordObj.memberId || 'APVAF-CRD-2026-PENDING';
+  const role = coordObj.role || coordObj.user?.role || 'Coordinator';
+  const designation = coordObj.designation || coordObj.user?.designation || 'District / Field Coordinator';
+  const area = coordObj.coordinatorArea || coordObj.areaOfOperation || coordObj.user?.coordinatorArea || coordObj.district || 'Regional Operations';
+
+  const temporaryPassword = coordObj.temporaryPassword || param.temporaryPassword || '';
+  const clientBase = (process.env.CLIENT_URL || 'http://localhost:3000').replace(/\/+$/, '');
+
+  if (!to) {
+    console.warn('⚠️ [EMAIL NOTICE] No recipient email found for coordinator approval notification.');
+    return null;
+  }
+
+  // Generate Coordinator Appointment Letter PDF & Coordinator ID Card PDF
+  let attachments = [];
+  try {
+    const [apptPdf, idCardPdf] = await Promise.all([
+      pdfService.generateCoordinatorAppointmentLetterPdf({ ...coordObj, coordinatorId, name: coordName, designation }),
+      pdfService.generateCoordinatorIdCardPdf({ ...coordObj, coordinatorId, name: coordName, designation, role })
+    ]);
+
+    attachments.push(
+      {
+        filename: `Coordinator_Appointment_Letter_${coordinatorId}.pdf`,
+        content: apptPdf,
+        contentType: 'application/pdf'
+      },
+      {
+        filename: `Coordinator_ID_Card_${coordinatorId}.pdf`,
+        content: idCardPdf,
+        contentType: 'application/pdf'
+      }
+    );
+  } catch (err) {
+    console.error('Error generating coordinator PDFs:', err);
+  }
+
+  const subject = `Official Appointment Letter & Coordinator ID Card Attached (${coordinatorId}) - Apna Parivar Vriddh Aashram Foundation`;
+  const htmlText = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 14px; background-color: #ffffff;">
+      <div style="background: linear-gradient(135deg, #b45309, #d97706); padding: 18px; border-radius: 10px; text-align: center; color: white;">
+        <h2 style="margin: 0; font-size: 22px; letter-spacing: 0.5px;">APNA PARIVAR VRIDDH AASHRAM FOUNDATION</h2>
+        <p style="margin: 4px 0 0; font-size: 12px; opacity: 0.95;">Regional Coordination & Social Welfare Council</p>
+      </div>
+
+      <div style="padding: 20px 0; color: #1e293b;">
+        <div style="display: inline-block; background-color: #fef3c7; border: 1px solid #fde68a; color: #92400e; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 12px;">
+          ⭐ Official Appointment Approved by Board of Trustees
+        </div>
+
+        <p style="font-size: 15px; margin: 8px 0;">Dear <strong>${coordName}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #334155;">
+          We are pleased to inform you that your appointment as an <strong>Official Coordinator</strong> of <strong>Apna Parivar Vriddh Aashram Foundation</strong> has been ratified and approved by the Board of Trustees.
+        </p>
+        
+        <div style="background-color: #fffdf5; border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin: 18px 0; font-size: 13px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 4px 0; color: #64748b; width: 45%;"><strong>Official Coordinator ID:</strong></td>
+              <td style="padding: 4px 0; font-family: monospace; color: #b45309; font-weight: bold;">${coordinatorId}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #64748b;"><strong>Assigned Role:</strong></td>
+              <td style="padding: 4px 0; font-weight: bold; color: #0f172a;">Coordinator</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #64748b;"><strong>Designation:</strong></td>
+              <td style="padding: 4px 0; color: #0f172a;">${designation}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #64748b;"><strong>Operational Area:</strong></td>
+              <td style="padding: 4px 0; color: #0f172a;">${area}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #64748b;"><strong>Appointment Status:</strong></td>
+              <td style="padding: 4px 0; color: #059669; font-weight: bold;">Active, Verified & Sealed</td>
+            </tr>
+          </table>
+        </div>
+
+        ${temporaryPassword ? `
+        <div style="background-color: #fefce8; border: 2px dashed #ca8a04; border-radius: 10px; padding: 16px; margin: 18px 0; font-size: 13px;">
+          <h4 style="margin: 0 0 8px; color: #854d0e; font-size: 14px;">🔑 Your Coordinator Portal Login Credentials</h4>
+          <p style="margin: 4px 0; color: #475569;">Your authenticated portal account has been prepared. Use these credentials to sign in:</p>
+          <div style="background: white; border: 1px solid #fef08a; padding: 10px 14px; border-radius: 6px; margin: 8px 0;">
+            <p style="margin: 4px 0;"><strong>Login Email / Identifier:</strong> <span style="font-family: monospace; color: #0f172a; font-weight: bold;">${to}</span></p>
+            <p style="margin: 4px 0;"><strong>Password:</strong> <span style="font-family: monospace; background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 0.5px;">${temporaryPassword}</span></p>
+          </div>
+          <p style="margin: 6px 0 0; font-size: 12px; color: #854d0e;">
+            🔒 Please sign in and update your password in Profile Settings upon first login.
+          </p>
+        </div>
+        ` : `
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; margin: 14px 0; font-size: 12.5px; color: #334155;">
+          🔐 Sign in with your registered email (<strong>${to}</strong>) and password to access your Coordinator Portal.
+        </div>
+        `}
+
+        <div style="background-color: #fffbeb; border-left: 4px solid #b45309; padding: 12px 14px; margin: 16px 0; font-size: 12.5px; color: #92400e; border-radius: 4px;">
+          📄 <strong>PDF Credentials Attached to this Email:</strong><br/>
+          • <strong>Coordinator_Appointment_Letter_${coordinatorId}.pdf</strong> (Official Letter of Appointment)<br/>
+          • <strong>Coordinator_ID_Card_${coordinatorId}.pdf</strong> (Official Dual-Sided ID Card with QR Verification)
+        </div>
+
+        <div style="background-color: #f0fdf4; border-radius: 8px; padding: 12px 14px; margin: 16px 0; font-size: 12.5px; color: #166534;">
+          ✨ <strong>Coordinator Privileges:</strong> As an official Coordinator, you can now register and enroll new members into the Foundation through your portal, and monitor their approval status in real-time.
+        </div>
+
+        <div style="text-align: center; margin: 26px 0 16px;">
+          <a href="${clientBase}/login" style="background: #b45309; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; display: inline-block;">
+            Sign In to Coordinator Portal
+          </a>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid #e2e8f0; padding-top: 14px; font-size: 11px; color: #94a3b8; text-align: center; line-height: 1.5;">
+        Head Office: Behind Adhartal Railway Station, Jabalpur, Madhya Pradesh - 482001 | Helpline: +91 8959055269<br/>
+        Email: info@apnaparivarvriddhaashram.org | Website: apnaparivarvriddhaashram.org
+      </div>
+    </div>
+  `;
+
+  return await sendEmail({
+    to,
+    subject,
+    htmlText,
+    template: 'coordinator_approved',
+    attachments
+  });
+};
+
 module.exports = {
   sendEmail,
   testSmtpConnection,
   sendDonationApprovalEmail,
   sendMembershipApprovalEmail,
   sendVolunteerApprovalEmail,
+  sendCoordinatorApprovalEmail,
   sendCertificateEmail,
   sendPasswordResetEmail,
   sendGuestApplicationCredentialsEmail

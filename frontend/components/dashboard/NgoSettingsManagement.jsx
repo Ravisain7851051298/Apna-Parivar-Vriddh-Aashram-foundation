@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCheck,
@@ -15,7 +16,8 @@ import {
   FiShield,
   FiTrash2,
   FiUploadCloud,
-  FiUser
+  FiUser,
+  FiSettings
 } from "react-icons/fi";
 import api from "@/services/api";
 import { getContentImageUrl } from "@/lib/authApi";
@@ -177,25 +179,37 @@ export default function NgoSettingsManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1.5 border border-amber-300">
-            <span>Global Foundation Configuration</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiSettings className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">NGO Master Settings</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Global Foundation Configuration
+              </p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">NGO Master Settings</h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-1">
-            Configure legal trust credentials, 12A/80G statutory orders, official logo, signatures, and contact details.
-          </p>
         </div>
 
-        <button
-          onClick={loadSettings}
-          className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer self-start md:self-auto shadow-2xs"
-          title="Refresh"
-        >
-          <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={loadSettings}
+            className="p-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
+            title="Refresh"
+          >
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
+          </button>
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
+        </div>
       </div>
 
       {/* Tabs */}

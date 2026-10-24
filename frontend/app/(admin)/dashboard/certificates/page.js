@@ -257,18 +257,24 @@ export default function AdminOrganizationCertificatesPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight flex items-center gap-2">
-            <FiAward className="text-amber-800 w-5 h-5" />
-            <span>Organization Statutory Certificates &amp; Legal Documents CMS</span>
-          </h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
-            Upload, audit, and showcase the NGO&apos;s verified government registrations (12A, 80G, NITI Aayog, Trust Deed, CSR-1) in PDF or Image format.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiAward className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">
+                Organization Statutory Certificates &amp; Legal Documents CMS
+              </h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Verified Registrations &amp; Charters
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={openCreateModal}
@@ -288,7 +294,7 @@ export default function AdminOrganizationCertificatesPage() {
 
           <Link
             href="/dashboard"
-            className="text-xs font-bold text-slate-500 hover:text-emerald-700 transition px-2 py-1"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
           >
             ← Overview
           </Link>

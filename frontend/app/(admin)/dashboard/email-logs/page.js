@@ -31,28 +31,34 @@ export default function EmailLogsPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight flex items-center gap-2">
-            <FiMail className="text-amber-800 w-5 h-5" />
-            Automated Email Dispatch Audit Trail
-          </h2>
-          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
-            Real-time audit log of all 80G tax receipts, appointment letters, and certificates delivered to users.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiMail className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">
+                Automated Email Dispatch Audit Trail
+              </h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Real-Time SMTP Delivery Logs
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => dispatch(fetchEmailLogs())}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-stone-700 border border-amber-200 text-xs font-bold transition shadow-2xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-amber-50 text-stone-700 border border-amber-200 text-xs font-bold transition shadow-2xs cursor-pointer"
           >
             <FiRefreshCw className="w-3.5 h-3.5 text-amber-800" />
             <span>Refresh</span>
           </button>
           <Link
             href="/dashboard"
-            className="text-xs font-bold text-slate-500 hover:text-red-600 transition px-2 py-1"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
           >
             ← Overview
           </Link>

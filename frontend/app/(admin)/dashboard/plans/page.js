@@ -96,24 +96,38 @@ export default function MembershipPlansPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight flex items-center gap-2">
-            <FiLayers className="text-amber-800 w-5 h-5" />
-            Membership Plans CMS
-          </h2>
-          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
-            Configure dynamic plans that applicants select when enrolling. Changes sync immediately with the public portal.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiLayers className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">
+                Membership Plans CMS
+              </h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Subscription &amp; Seva Tiers
+              </p>
+            </div>
+          </div>
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer self-start sm:self-auto"
-        >
-          <FiPlus className="w-4 h-4" />
-          <span>Create New Plan</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+          >
+            <FiPlus className="w-4 h-4" />
+            <span>Create New Plan</span>
+          </button>
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
+        </div>
       </div>
 
       {/* Success Alert */}

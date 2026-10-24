@@ -75,11 +75,53 @@ export default function ProfileOverviewPage() {
     (currentUser?.volunteerId && !currentUser?.volunteerId?.startsWith('APVAF-DON-') && !currentUser?.volunteerId?.startsWith('BYK-DON-'))
   );
 
+  // Coordinator status detection
+  const coordinatorApp = currentUser?.coordinatorApplication;
+  const isCoordinatorPending = coordinatorApp?.status === 'pending';
+  const isCoordinator = Boolean(
+    currentUser?.role === 'Coordinator' ||
+    currentUser?.isCoordinator ||
+    coordinatorApp?.status === 'approved' ||
+    (currentUser?.coordinatorId && !currentUser?.coordinatorId?.startsWith('APVAF-DON-'))
+  );
+
   return (
     <div className="space-y-8">
       {/* ----------------- TOP STATUS HERO BANNER ----------------- */}
       {isPending ? (
-        isVolunteerPending && !isMemberPending ? (
+        isCoordinatorPending ? (
+          /* Coordinator Application Pending Banner */
+          <div className="bg-amber-50/80 border-2 border-amber-400 rounded-3xl p-6 sm:p-8 shadow-xs">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center font-bold text-2xl shrink-0 shadow-md">
+                  <FiClock className="w-7 h-7" />
+                </div>
+                <div className="space-y-1">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 inline-block border border-amber-300">
+                    Coordinator Review Desk
+                  </span>
+                  <h2 className="text-lg sm:text-xl font-black text-black">
+                    Coordinator Application Under Review
+                  </h2>
+                  <p className="text-xs text-slate-800 leading-relaxed max-w-2xl font-medium">
+                    Your appointment application for <strong>Official District / Field Coordinator</strong> is being reviewed by the Board of Trustees. Once approved, your Coordinator credentials, dual-sided ID card, and appointment letter will be issued and emailed.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
+                <Link
+                  href="/profile/apply-coordinator"
+                  className="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md shadow-amber-600/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <FiShield className="w-4 h-4" />
+                  <span>Review Application</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        ) : isVolunteerPending && !isMemberPending ? (
           /* Volunteer Application Pending Banner */
           <div className="bg-indigo-50/70 border-2 border-indigo-300 rounded-3xl p-6 sm:p-8 shadow-xs">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -149,38 +191,112 @@ export default function ProfileOverviewPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start gap-4">
               <div className="space-y-1">
-                <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-amber-950">
-                  Welcome, {currentUser?.name}!
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-amber-950">
+                    Welcome, {currentUser?.name}!
+                  </h2>
+                  {isCoordinator && (
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500 text-stone-950 border border-amber-600 shadow-2xs">
+                      ⭐ Field Coordinator
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-stone-700 leading-relaxed max-w-2xl font-medium">
-                  Your appointment as <strong>{currentUser?.designation || 'Active Social Worker'}</strong> has been officially approved by the National Executive Council.
+                  Your appointment as <strong>{currentUser?.designation || (isCoordinator ? 'District / Field Coordinator' : 'Active Social Worker')}</strong> has been officially approved by the National Executive Council.
                   Your digital ID card, appointment letter, and awarded certificates are active and verified.
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
-              <Link
-                href="/profile/id-card"
-                className="px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <FiShield className="w-4 h-4" />
-                <span>Open Digital ID Card</span>
-              </Link>
-              <Link
-                href="/profile/certificates"
-                className="px-5 py-2.5 rounded-2xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-bold border border-amber-300 text-xs text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <FiAward className="w-4 h-4 text-amber-800" />
-                <span>My Certificates ({certificates.length})</span>
-              </Link>
+              {isCoordinator ? (
+                <>
+                  <Link
+                    href="/profile/coordinator/members"
+                    className="px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <FiShield className="w-4 h-4" />
+                    <span>Coordinator Desk (Members)</span>
+                  </Link>
+                  <Link
+                    href="/profile/coordinator/add-member"
+                    className="px-5 py-2.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <FiUserPlus className="w-4 h-4 text-amber-400" />
+                    <span>+ Enroll New Member</span>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/profile/id-card"
+                    className="px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:via-yellow-500 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <FiShield className="w-4 h-4" />
+                    <span>Open Digital ID Card</span>
+                  </Link>
+                  <Link
+                    href="/profile/certificates"
+                    className="px-5 py-2.5 rounded-2xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-bold border border-amber-300 text-xs text-center transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <FiAward className="w-4 h-4 text-amber-800" />
+                    <span>My Certificates ({certificates.length})</span>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* ----------------- 4 QUICK ACCESS ACTION CARDS ----------------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ----------------- QUICK ACCESS ACTION CARDS ----------------- */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        {/* Card: Coordinator Desk or Apply as Coordinator */}
+        {isCoordinator ? (
+          <Link
+            href="/profile/coordinator/members"
+            className="bg-white p-5 rounded-3xl border-2 border-amber-300 hover:border-amber-500 shadow-xs hover:shadow-md transition group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-110 transition border border-amber-200">
+              <FiShield className="w-5 h-5 text-amber-700" />
+            </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-black text-black text-sm">Coordinator Desk</h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
+                Active Lead
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-700 font-medium mt-1">
+              View members enrolled under you and add new registrations.
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-xs font-bold text-amber-700">
+              <span>Open Desk</span>
+              <FiArrowRight className="w-3.5 h-3.5" />
+            </div>
+          </Link>
+        ) : (
+          <Link
+            href="/profile/apply-coordinator"
+            className="bg-white p-5 rounded-3xl border border-slate-200 hover:border-amber-400 shadow-xs hover:shadow-md transition group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-110 transition border border-amber-200">
+              <FiShield className="w-5 h-5 text-amber-700" />
+            </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-black text-black text-sm">Coordinator Role</h3>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900">
+                Apply
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-700 font-medium mt-1">
+              Lead regional outreach, enroll members &amp; coordinate elder care.
+            </p>
+            <div className="mt-4 flex items-center gap-1 text-xs font-bold text-amber-700">
+              <span>Apply Now</span>
+              <FiArrowRight className="w-3.5 h-3.5" />
+            </div>
+          </Link>
+        )}
         {/* Card 1: My Certificates */}
         <Link
           href="/profile/certificates"

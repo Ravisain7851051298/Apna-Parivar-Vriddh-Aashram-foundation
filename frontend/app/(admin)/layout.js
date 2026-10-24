@@ -108,6 +108,7 @@ export default function AdminLayout({ children }) {
         { label: 'Approvals Center', href: '/dashboard/approvals', icon: FiCheckSquare, badge: totalApprovalsPending },
         { label: 'Members Directory', href: '/dashboard/members', icon: FiUsers },
         { label: 'Volunteer Wing', href: '/dashboard/volunteers', icon: FiUserCheck },
+        { label: 'Coordinators Wing', href: '/dashboard/coordinators', icon: FiShield },
         { label: 'Executive Team', href: '/dashboard/team-members', icon: FiUsers },
         { label: 'Membership Plans', href: '/dashboard/plans', icon: FiLayers },
       ]
@@ -243,16 +244,29 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-[#fffdfa] text-stone-900 flex flex-col md:flex-row antialiased">
       {/* ----------------- FIXED DESKTOP SIDEBAR (COLLAPSIBLE WITH NESTED ITEMS) ----------------- */}
       <aside
-        className={`hidden md:flex flex-col justify-between fixed inset-y-0 left-0 z-30 bg-[#fefce8] border-r border-amber-200/90 transition-all duration-300 ease-in-out shadow-xs select-none ${
-          collapsed ? 'w-20' : 'w-64'
-        }`}
+        className={`hidden md:flex flex-col justify-between fixed inset-y-0 left-0 z-30 bg-[#fefce8] border-r border-amber-200/90 transition-all duration-300 ease-in-out shadow-xs select-none relative ${collapsed ? 'w-20' : 'w-64'
+          }`}
       >
+        {/* Collapse Toggle Button - Centered on X-axis Divider & Y-axis Sidebar Border */}
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          className="absolute top-[64px] -right-3.5 -translate-y-1/2 z-40 w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 border-2 border-white shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+          title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          {collapsed ? (
+            <FiChevronRight className="w-4 h-4 stroke-[2.5]" />
+          ) : (
+            <FiChevronLeft className="w-4 h-4 stroke-[2.5]" />
+          )}
+        </button>
+
         <div className="flex flex-col h-full overflow-hidden">
           {/* Brand Header */}
           <div
-            className={`px-4 py-3.5 border-b border-amber-200/90 flex items-center transition-all bg-linear-to-r from-amber-100/80 via-[#fefce8] to-amber-50/60 ${
-              collapsed ? 'justify-center flex-col gap-2' : 'justify-between'
-            }`}
+            className={`px-4 py-3 border-b border-amber-200/90 flex items-center transition-all bg-linear-to-r from-amber-100/80 via-[#fefce8] to-amber-50/60 ${collapsed ? 'justify-center flex-col gap-2' : 'justify-between'
+              }`}
           >
             {!collapsed ? (
               <div className="flex items-center gap-3 overflow-hidden">
@@ -318,11 +332,10 @@ export default function AdminLayout({ children }) {
                       key={group.singleItem.href}
                       href={group.singleItem.href}
                       title={group.singleItem.label}
-                      className={`group relative flex items-center justify-center w-11 h-11 mx-auto rounded-xl transition-all ${
-                        active
-                          ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
-                          : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/70'
-                      }`}
+                      className={`group relative flex items-center justify-center w-11 h-11 mx-auto rounded-xl transition-all ${active
+                        ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
+                        : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/70'
+                        }`}
                     >
                       <Icon className="w-5 h-5 shrink-0" />
                       <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-stone-900 text-white text-[11px] font-bold rounded-lg shadow-xl whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-50">
@@ -337,11 +350,10 @@ export default function AdminLayout({ children }) {
                   <Link
                     key={group.singleItem.href}
                     href={group.singleItem.href}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                      active
-                        ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
-                        : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-                    }`}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${active
+                      ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
+                      : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
+                      }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -370,11 +382,10 @@ export default function AdminLayout({ children }) {
                           key={item.href}
                           href={item.href}
                           title={item.label}
-                          className={`group relative flex items-center justify-center w-11 h-11 mx-auto rounded-xl transition-all ${
-                            active
-                              ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
-                              : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/70'
-                          }`}
+                          className={`group relative flex items-center justify-center w-11 h-11 mx-auto rounded-xl transition-all ${active
+                            ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
+                            : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/70'
+                            }`}
                         >
                           <Icon className="w-5 h-5 shrink-0" />
                           {badge > 0 && (
@@ -402,9 +413,8 @@ export default function AdminLayout({ children }) {
                   <button
                     type="button"
                     onClick={() => toggleGroup(group.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-black transition-colors ${
-                      hasActiveChild ? 'text-amber-950 bg-amber-100/50' : 'text-stone-700 hover:bg-amber-50/80'
-                    }`}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs font-black transition-colors ${hasActiveChild ? 'text-amber-950 bg-amber-100/50' : 'text-stone-700 hover:bg-amber-50/80'
+                      }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <GroupIcon className="w-3.5 h-3.5 text-amber-700 shrink-0" />
@@ -419,9 +429,8 @@ export default function AdminLayout({ children }) {
                         </span>
                       )}
                       <FiChevronDown
-                        className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${
-                          isGroupOpen ? 'rotate-180' : ''
-                        }`}
+                        className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${isGroupOpen ? 'rotate-180' : ''
+                          }`}
                       />
                     </div>
                   </button>
@@ -437,11 +446,10 @@ export default function AdminLayout({ children }) {
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center justify-between pl-3 pr-2.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                              active
-                                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
-                                : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
-                            }`}
+                            className={`flex items-center justify-between pl-3 pr-2.5 py-2 rounded-xl text-xs font-bold transition-all ${active
+                              ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
+                              : 'text-stone-700 hover:text-amber-950 hover:bg-amber-100/60'
+                              }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <Icon className={`w-3.5 h-3.5 shrink-0 ${active ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -449,11 +457,10 @@ export default function AdminLayout({ children }) {
                             </div>
                             {badge > 0 && (
                               <span
-                                className={`px-1.5 py-0.5 rounded-full text-[9px] font-black shrink-0 ${
-                                  active
-                                    ? 'bg-stone-950 text-amber-300'
-                                    : 'bg-amber-100 text-amber-900 border border-amber-300'
-                                }`}
+                                className={`px-1.5 py-0.5 rounded-full text-[9px] font-black shrink-0 ${active
+                                  ? 'bg-stone-950 text-amber-300'
+                                  : 'bg-amber-100 text-amber-900 border border-amber-300'
+                                  }`}
                               >
                                 {badge}
                               </span>
@@ -512,11 +519,10 @@ export default function AdminLayout({ children }) {
                         key={group.singleItem.href}
                         href={group.singleItem.href}
                         onClick={() => setMobileOpen(false)}
-                        className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition ${
-                          active
-                            ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
-                            : 'text-stone-700 hover:bg-amber-100/60'
-                        }`}
+                        className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition ${active
+                          ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
+                          : 'text-stone-700 hover:bg-amber-100/60'
+                          }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <Icon className={`w-4 h-4 ${active ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -556,11 +562,10 @@ export default function AdminLayout({ children }) {
                                 key={item.href}
                                 href={item.href}
                                 onClick={() => setMobileOpen(false)}
-                                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition ${
-                                  active
-                                    ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
-                                    : 'text-stone-700 hover:bg-amber-100/60'
-                                }`}
+                                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition ${active
+                                  ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
+                                  : 'text-stone-700 hover:bg-amber-100/60'
+                                  }`}
                               >
                                 <div className="flex items-center gap-2">
                                   <Icon className={`w-3.5 h-3.5 ${active ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -615,9 +620,8 @@ export default function AdminLayout({ children }) {
 
       {/* ----------------- MAIN ADMIN WORKSPACE WITH HEADER ----------------- */}
       <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
-          collapsed ? 'md:pl-20' : 'md:pl-64'
-        }`}
+        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${collapsed ? 'md:pl-20' : 'md:pl-64'
+          }`}
       >
         {/* TOP HEADER FOR ADMIN DASHBOARD */}
         <header className="sticky top-0 z-20 bg-[#fefce8]/95 backdrop-blur-md border-b border-amber-200/90 px-4 py-3 flex items-center justify-between gap-4 shadow-2xs">

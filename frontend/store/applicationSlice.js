@@ -129,11 +129,76 @@ export const rejectVolunteerApplication = createAsyncThunk(
   }
 );
 
+// 9. Submit Coordinator Application
+export const submitCoordinatorApplication = createAsyncThunk(
+  'applications/submitCoordinatorApplication',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await api.post('/coordinators/apply', formData);
+      if (res.data.success) {
+        return res.data;
+      }
+      return rejectWithValue(res.data.message || 'Submission failed');
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Error submitting coordinator application');
+    }
+  }
+);
+
+// 10. Admin: Fetch Coordinator Applications
+export const fetchCoordinatorApplications = createAsyncThunk(
+  'applications/fetchCoordinatorApplications',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get('/applications/coordinators');
+      if (res.data.success) {
+        return res.data.applications;
+      }
+      return rejectWithValue('Failed to load coordinator applications');
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Error loading coordinator applications');
+    }
+  }
+);
+
+// 11. Admin: Approve Coordinator Application
+export const approveCoordinatorApplication = createAsyncThunk(
+  'applications/approveCoordinatorApplication',
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await api.put(`/applications/coordinators/${id}/approve`);
+      if (res.data.success) {
+        return res.data;
+      }
+      return rejectWithValue(res.data.message || 'Coordinator approval failed');
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Error approving coordinator');
+    }
+  }
+);
+
+// 12. Admin: Reject Coordinator Application
+export const rejectCoordinatorApplication = createAsyncThunk(
+  'applications/rejectCoordinatorApplication',
+  async ({ id, reason }, { rejectWithValue }) => {
+    try {
+      const res = await api.put(`/applications/coordinators/${id}/reject`, { reason });
+      if (res.data.success) {
+        return res.data.application;
+      }
+      return rejectWithValue(res.data.message || 'Rejection failed');
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Error rejecting coordinator');
+    }
+  }
+);
+
 const applicationSlice = createSlice({
   name: 'applications',
   initialState: {
     memberApplications: [],
     volunteerApplications: [],
+    coordinatorApplications: [],
     loading: false,
     error: null,
     successMessage: null
@@ -216,6 +281,42 @@ const applicationSlice = createSlice({
         const index = state.volunteerApplications.findIndex(a => a._id === action.payload._id);
         if (index !== -1) {
           state.volunteerApplications[index] = action.payload;
+        }
+      })
+      // Fetch Coordinator Applications
+      .addCase(fetchCoordinatorApplications.fulfilled, (state, action) => {
+        state.coordinatorApplications = action.payload;
+      })
+      // Submit Coordinator Application
+      .addCase(submitCoordinatorApplication.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitCoordinatorApplication.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message || 'Coordinator application submitted!';
+        if (action.payload.application) {
+          state.coordinatorApplications.unshift(action.payload.application);
+        }
+      })
+      .addCase(submitCoordinatorApplication.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Approve Coordinator Application
+      .addCase(approveCoordinatorApplication.fulfilled, (state, action) => {
+        const app = action.payload.application;
+        const index = state.coordinatorApplications.findIndex(a => a._id === app._id);
+        if (index !== -1) {
+          state.coordinatorApplications[index] = app;
+        }
+        state.successMessage = action.payload.message;
+      })
+      // Reject Coordinator Application
+      .addCase(rejectCoordinatorApplication.fulfilled, (state, action) => {
+        const index = state.coordinatorApplications.findIndex(a => a._id === action.payload._id);
+        if (index !== -1) {
+          state.coordinatorApplications[index] = action.payload;
         }
       });
   }

@@ -75,17 +75,23 @@ export function NGOProvider({ children }) {
   const refreshSponsorships = useCallback(async () => {
     try {
       const res = await api.get('/sponsorships');
+      console.log('Res data sponsorships', res);
       const list = res.data?.data || res.data?.sponsorships || [];
       setSponsorships(Array.isArray(list) ? list : []);
-    } catch (e) {}
+    } catch (e) {
+      console.log('Error fetching sponsorships', e);
+    }
   }, []);
 
   const refreshAwards = useCallback(async () => {
     try {
       const res = await api.get('/awards');
+      console.log('Res data awards', res);
       const list = res.data?.data || res.data?.awards || [];
       setAwards(Array.isArray(list) ? list : []);
-    } catch (e) {}
+    } catch (e) {
+      console.log('Error fetching awards', e);
+    }
   }, []);
 
   // On mount, load initial data into Redux store

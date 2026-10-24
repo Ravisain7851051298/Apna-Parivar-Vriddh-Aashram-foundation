@@ -46,6 +46,38 @@ class ApplicationRepository {
     return VolunteerApplication.countDocuments(query);
   }
 
+  // Coordinator Applications
+  async createCoordinatorApp(data) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    const app = new CoordinatorApplication(data);
+    return app.save();
+  }
+
+  async findCoordinatorAppById(id) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    return CoordinatorApplication.findById(id).populate('user');
+  }
+
+  async findCoordinatorApps(query = {}, sort = { createdAt: -1 }) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    return CoordinatorApplication.find(query).populate('user').sort(sort);
+  }
+
+  async updateCoordinatorApp(id, updateData) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    return CoordinatorApplication.findByIdAndUpdate(id, updateData, { returnDocument: 'after' });
+  }
+
+  async countCoordinatorApps(query = {}) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    return CoordinatorApplication.countDocuments(query);
+  }
+
+  async deleteCoordinatorApp(id) {
+    const CoordinatorApplication = require('../models/CoordinatorApplication');
+    return CoordinatorApplication.findByIdAndDelete(id);
+  }
+
   async deleteMembershipApp(id) {
     return MembershipApplication.findByIdAndDelete(id);
   }

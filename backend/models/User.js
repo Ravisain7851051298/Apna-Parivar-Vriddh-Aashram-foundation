@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { 
     type: String, 
-    enum: ['Admin', 'Member', 'Volunteer', 'TeamMember', 'Donor'], 
+    enum: ['Admin', 'Member', 'Volunteer', 'Coordinator', 'TeamMember', 'Donor'], 
     default: 'Donor' 
   },
   status: { 
@@ -17,8 +17,18 @@ const userSchema = new mongoose.Schema({
   },
   memberId: { type: String, unique: true, sparse: true },
   volunteerId: { type: String, sparse: true },
+  coordinatorId: { type: String, sparse: true },
   isMember: { type: Boolean, default: false },
   isVolunteer: { type: Boolean, default: false },
+  isCoordinator: { type: Boolean, default: false },
+  coordinatorStatus: { 
+    type: String, 
+    enum: ['active', 'blocked', 'deactivated', 'pending'], 
+    default: 'active' 
+  },
+  coordinatorArea: { type: String, default: '' },
+  addedByCoordinator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  coordinatorName: { type: String, default: null },
   volunteerWing: { type: String, default: 'Grassroots Social Welfare' },
   volunteerStatus: { type: String, default: 'active' },
   designation: { type: String, default: 'Applicant - Member Wing' },

@@ -1,6 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
+
+const emptySubscribe = () => () => {};
+function useIsMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -47,12 +56,8 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileExpanded, setMobileExpanded] = useState({});
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
   const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -65,11 +70,13 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close drawer and dropdowns on route changes
-  useEffect(() => {
+  // Close drawer and dropdowns on route changes without cascading render
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setMobileMenuOpen(false);
     setActiveDropdown(null);
-  }, [pathname]);
+  }
 
   const toggleDropdown = (id) => {
     setActiveDropdown((prev) => (prev === id ? null : id));
@@ -103,6 +110,14 @@ export default function Navbar() {
   const isAdmin = Boolean(
     activeUser?.role === 'Admin' ||
     activeUser?.role === 'admin'
+  );
+
+  const isCoordinator = Boolean(
+    activeUser?.role === 'Coordinator' ||
+    activeUser?.isCoordinator ||
+    activeUser?.coordinatorStatus === 'approved' ||
+    activeUser?.coordinatorApplication?.status === 'approved' ||
+    activeUser?.coordinatorId
   );
 
   // Modern navigation structured into clean, concise dropdowns
@@ -143,6 +158,7 @@ export default function Navbar() {
       links: [
         { label: isMember ? 'Member Profile' : 'Apply for Membership', href: isMember ? '/profile/member' : '/apply-member', icon: FiUserPlus, desc: 'Official digital ID card & appointment' },
         { label: isVolunteer ? 'Volunteer Profile' : 'Join as Volunteer', href: isVolunteer ? '/profile/volunteer' : '/apply-volunteer', icon: FiUsers, desc: 'Spend time with elders & assist programs' },
+        { label: isCoordinator ? 'Coordinator Desk' : 'Join as Coordinator', href: isCoordinator ? '/profile/coordinator/members' : '/apply-coordinator', icon: FiShield, desc: 'Enroll members & lead community seva wing' },
         { label: 'Trustees & Team', href: '/team-members', icon: FiShield, desc: 'Leadership & caregiving staff' },
         { label: 'Verified Members', href: '/members', icon: FiUserCheck, desc: 'Directory of registered members' },
         { label: 'Legal Certifications', href: '/certificates', icon: FiAward, desc: '12A, 80G & NITI Aayog Darpan credentials' },
@@ -268,7 +284,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links with Modern Dropdowns */}
-            <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5" ref={dropdownRef}>
+            <nav className="hidden lg:flex items-center gap-0.5 2xl:gap-1.5" ref={dropdownRef}>
               {/* Home link */}
               {/* <Link
                 href="/"
@@ -482,6 +498,25 @@ export default function Navbar() {
                             <FiUsers className="w-4 h-4 text-amber-700" />
                             <span>{isVolunteer ? 'Volunteer Portal' : 'Apply as Volunteer'}</span>
                           </Link>
+                          {isCoordinator ? (
+                            <Link
+                              href="/profile/coordinator/members"
+                              onClick={() => setActiveDropdown(null)}
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-amber-500/10 text-amber-950 font-bold hover:bg-amber-100 transition"
+                            >
+                              <FiShield className="w-4 h-4 text-amber-700" />
+                              <span>Coordinator Desk</span>
+                            </Link>
+                          ) : (
+                            <Link
+                              href="/apply-coordinator"
+                              onClick={() => setActiveDropdown(null)}
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
+                            >
+                              <FiShield className="w-4 h-4 text-amber-700" />
+                              <span>Join as Coordinator</span>
+                            </Link>
+                          )}
                           <Link
                             href="/profile/id-card"
                             onClick={() => setActiveDropdown(null)}
@@ -540,9 +575,17 @@ export default function Navbar() {
                   {activeDropdown === 'login_menu_box' && (
                     <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-amber-200 p-2 z-50 ring-1 ring-amber-500/10 animate-in fade-in slide-in-from-top-1 duration-150 text-xs font-semibold">
                       <Link
+                        href="/login?role=coordinator"
+                        onClick={() => setActiveDropdown(null)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-100/70 text-stone-700 hover:text-amber-950 transition"
+                      >
+                        <FiShield className="w-4 h-4 text-amber-600" />
+                        <span>Coordinator Login</span>
+                      </Link>
+                      <Link
                         href="/login?role=member"
                         onClick={() => setActiveDropdown(null)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-50 text-stone-700 hover:text-amber-900"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-50 text-stone-700 hover:text-amber-900 transition"
                       >
                         <FiUserCheck className="w-4 h-4 text-amber-600" />
                         <span>Member Login</span>
@@ -550,7 +593,7 @@ export default function Navbar() {
                       <Link
                         href="/login?role=volunteer"
                         onClick={() => setActiveDropdown(null)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-50 text-stone-700 hover:text-emerald-800"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-50 text-stone-700 hover:text-emerald-800 transition"
                       >
                         <FiUsers className="w-4 h-4 text-emerald-600" />
                         <span>Volunteer Login</span>
@@ -558,12 +601,12 @@ export default function Navbar() {
                       <Link
                         href="/login?role=admin"
                         onClick={() => setActiveDropdown(null)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-stone-50 text-stone-700 hover:text-stone-900"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-stone-50 text-stone-700 hover:text-stone-900 transition"
                       >
                         <FiShield className="w-4 h-4 text-amber-800" />
                         <span>Admin Desk Login</span>
                       </Link>
-                      <div className="pt-1 mt-1 border-t border-stone-100">
+                      <div className="pt-1 mt-1 border-t border-stone-100 space-y-1">
                         <Link
                           href="/apply-member"
                           onClick={() => setActiveDropdown(null)}
@@ -571,6 +614,14 @@ export default function Navbar() {
                         >
                           <FiUserPlus className="w-4 h-4 text-amber-800" />
                           <span>Apply for Membership</span>
+                        </Link>
+                        <Link
+                          href="/apply-coordinator"
+                          onClick={() => setActiveDropdown(null)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-100/70 text-amber-950 font-bold hover:bg-yellow-200"
+                        >
+                          <FiShield className="w-4 h-4 text-amber-800" />
+                          <span>Apply as Coordinator</span>
                         </Link>
                       </div>
                     </div>
@@ -582,7 +633,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 hover:bg-amber-100 text-stone-800 hover:text-amber-900 flex items-center justify-center transition border border-amber-300 cursor-pointer shrink-0"
+                className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 hover:bg-amber-100 text-stone-800 hover:text-amber-900 flex items-center justify-center transition border border-amber-300 cursor-pointer shrink-0"
                 aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
               >
                 {mobileMenuOpen ? <FiX className="w-5 h-5 text-red-600" /> : <FiMenu className="w-5 h-5 text-amber-900" />}
@@ -754,6 +805,24 @@ export default function Navbar() {
                     View Full Profile &amp; ID Card
                   </Link>
 
+                  {isCoordinator ? (
+                    <Link
+                      href="/profile/coordinator/members"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2 rounded-lg text-xs font-bold bg-amber-100 text-amber-950"
+                    >
+                      Coordinator Desk (+ Enroll Members)
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/apply-coordinator"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block px-3 py-2 rounded-lg text-xs font-bold text-amber-900 hover:bg-amber-100/70"
+                    >
+                      Join as Coordinator
+                    </Link>
+                  )}
+
                   <button
                     type="button"
                     onClick={async () => {
@@ -771,18 +840,34 @@ export default function Navbar() {
                   <Link
                     href="/login?role=member"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-amber-300 text-stone-800 text-xs font-bold hover:bg-amber-100"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-amber-300 text-stone-800 text-xs font-bold hover:bg-amber-100 transition"
                   >
                     <FiLogIn className="w-3.5 h-3.5 text-amber-700" />
                     <span>Member Login</span>
                   </Link>
                   <Link
+                    href="/login?role=coordinator"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-amber-300 text-stone-800 text-xs font-bold hover:bg-amber-100 transition"
+                  >
+                    <FiShield className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Coordinator Login</span>
+                  </Link>
+                  <Link
                     href="/apply-member"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 shadow-sm"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-amber-600 text-white text-xs font-bold hover:bg-amber-700 shadow-sm transition"
                   >
                     <FiUserPlus className="w-3.5 h-3.5 text-yellow-200" />
                     <span>Apply Member</span>
+                  </Link>
+                  <Link
+                    href="/apply-coordinator"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-yellow-500 text-stone-950 text-xs font-bold hover:bg-yellow-600 shadow-sm transition"
+                  >
+                    <FiShield className="w-3.5 h-3.5 text-stone-950" />
+                    <span>Apply Coordinator</span>
                   </Link>
                 </div>
               )}

@@ -192,7 +192,7 @@ async function generateDonationReceiptPdf(donation = {}) {
       doc.font('Helvetica-Bold').fontSize(18).fillColor('#c2410c');
       doc.text('APNA PARIVAR VRIDDH AASHRAM FOUNDATION', 40, 45, { align: 'center' });
       doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a');
-      doc.text('SEVA � SAMMAN � PARIVAR', 40, 68, { align: 'center' });
+      doc.text('SEVA • SAMMAN • PARIVAR', 40, 68, { align: 'center' });
       doc.font('Helvetica').fontSize(8.5).fillColor('#475569');
       doc.text('Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • Section 12A & 80G Certified', 40, 83, { align: 'center' });
       doc.text('Head Office: Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001 | Phone: +91 8959055269', 40, 95, { align: 'center' });
@@ -325,7 +325,7 @@ async function generateVolunteerOfferLetterPdf(user = {}) {
       doc.font('Helvetica-Bold').fontSize(18).fillColor('#059669');
       doc.text('APNA PARIVAR VRIDDH AASHRAM FOUNDATION', 40, 45, { align: 'center' });
       doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a');
-      doc.text('SEVA � SAMMAN � PARIVAR • VOLUNTEER WING', 40, 68, { align: 'center' });
+      doc.text('SEVA • SAMMAN • PARIVAR • VOLUNTEER WING', 40, 68, { align: 'center' });
       doc.font('Helvetica').fontSize(8.5).fillColor('#475569');
       doc.text('Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • Dedicated to National Youth Service', 40, 83, { align: 'center' });
       doc.text('Head Office: Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001 | Email: apnaparivarvriddhaashramfounda@gmail.com', 40, 95, { align: 'center' });
@@ -451,7 +451,7 @@ async function generateAppointmentLetterPdf(user = {}) {
       doc.font('Helvetica-Bold').fontSize(18).fillColor('#b91c1c');
       doc.text('APNA PARIVAR VRIDDH AASHRAM FOUNDATION', 40, 45, { align: 'center' });
       doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a');
-      doc.text('SEVA � SAMMAN � PARIVAR • NATIONAL EXECUTIVE COUNCIL', 40, 68, { align: 'center' });
+      doc.text('SEVA • SAMMAN • PARIVAR • NATIONAL EXECUTIVE COUNCIL', 40, 68, { align: 'center' });
       doc.font('Helvetica').fontSize(8.5).fillColor('#475569');
       doc.text('Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • NITI Aayog Verified NGO', 40, 83, { align: 'center' });
       doc.text('Head Office: Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001 | Phone: +91 8959055269', 40, 95, { align: 'center' });
@@ -566,13 +566,20 @@ async function generateIdCardPdf(user = {}, roleType = 'volunteer') {
         dbSettings = await Setting.findOne();
       } catch (e) {}
 
-      const isVolunteer = (roleType || user.role || '').toLowerCase().includes('volunteer');
-      const themeColor = isVolunteer ? '#059669' : '#b91c1c';
-      const cardTitle = isVolunteer ? 'VOLUNTEER IDENTITY CARD' : 'EXECUTIVE MEMBER IDENTITY CARD';
-      const defaultDesignation = isVolunteer ? 'Active Youth Volunteer' : 'Active Social Worker';
+      const isCoordinator = (roleType || user.role || '').toLowerCase().includes('coordinator') || Boolean(user.isCoordinator);
+      const isVolunteer = !isCoordinator && (roleType || user.role || '').toLowerCase().includes('volunteer');
+      const themeColor = isCoordinator ? '#b45309' : (isVolunteer ? '#059669' : '#b91c1c');
+      const cardTitle = isCoordinator ? 'COORDINATOR IDENTITY CARD' : (isVolunteer ? 'VOLUNTEER IDENTITY CARD' : 'EXECUTIVE MEMBER IDENTITY CARD');
+      const defaultDesignation = isCoordinator ? 'Official Field Coordinator' : (isVolunteer ? 'Active Youth Volunteer' : 'Active Social Worker');
 
-      const id = sanitize(isVolunteer ? (user.volunteerId || (user.memberId && user.memberId.startsWith('APVAF-VOL-') ? user.memberId : 'APVAF-VOL-2026-0501')) : (user.memberId || 'APVAF-MEM-2026-0001'));
-      const name = sanitize(user.name || 'Registered Social Worker');
+      const id = sanitize(
+        isCoordinator
+          ? (user.coordinatorId || (user.memberId && user.memberId.startsWith('APVAF-CRD-') ? user.memberId : 'APVAF-CRD-2026-0101'))
+          : (isVolunteer
+              ? (user.volunteerId || (user.memberId && user.memberId.startsWith('APVAF-VOL-') ? user.memberId : 'APVAF-VOL-2026-0501'))
+              : (user.memberId || 'APVAF-MEM-2026-0001'))
+      );
+      const name = sanitize(user.name || (isCoordinator ? 'Registered Coordinator' : 'Registered Social Worker'));
       const designation = sanitize(user.designation || defaultDesignation);
       const bloodGroup = sanitize(user.bloodGroup || 'O+');
       const phone = sanitize(user.phone || 'N/A');
@@ -580,7 +587,7 @@ async function generateIdCardPdf(user = {}, roleType = 'volunteer') {
       const location = sanitize(`${user.district || 'Aligarh'}, ${user.state || 'UP'}`);
 
       // QR Code
-      const verifyUrl = `https://apnaparivarvriddhaashram.org/verify/${isVolunteer ? 'volunteer' : 'member'}/${id}`;
+      const verifyUrl = `https://apnaparivarvriddhaashram.org/verify/${isCoordinator ? 'coordinator' : (isVolunteer ? 'volunteer' : 'member')}/${id}`;
       const qrBuffer = await QRCode.toBuffer(verifyUrl, { width: 95, margin: 1 });
 
       // Title & Instruction at top
@@ -720,6 +727,149 @@ async function generateMemberIdCardPdf(user = {}) {
   return generateIdCardPdf(user, 'member');
 }
 
+async function generateCoordinatorIdCardPdf(user = {}) {
+  return generateIdCardPdf(user, 'coordinator');
+}
+
+/**
+ * 4B. GENERATE OFFICIAL COORDINATOR APPOINTMENT LETTER PDF
+ */
+async function generateCoordinatorAppointmentLetterPdf(user = {}) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ size: 'A4', margin: 40 });
+      const buffers = [];
+      doc.on('data', b => buffers.push(b));
+      doc.on('end', () => resolve(Buffer.concat(buffers)));
+
+      let dbSettings = null;
+      try {
+        dbSettings = await Setting.findOne();
+      } catch (e) {}
+
+      const coordinatorId = sanitize(user.coordinatorId || (user.memberId && user.memberId.startsWith('APVAF-CRD-') ? user.memberId : 'APVAF-CRD-2026-0101'));
+      const name = sanitize(user.name || 'Official Coordinator');
+      const email = sanitize(user.email || 'N/A');
+      const phone = sanitize(user.phone || 'N/A');
+      const designation = sanitize(user.designation || 'District / Field Coordinator');
+      const city = sanitize(user.district || user.city || 'Aligarh');
+      const state = sanitize(user.state || 'Uttar Pradesh');
+      const dateStr = formatDate(user.verifiedAt || new Date());
+      const approvedBy = sanitize(user.verifiedBy || dbSettings?.presidentName || 'Ravi Saini (National President & Trustee)');
+
+      // QR Code
+      const qrData = `https://apnaparivarvriddhaashram.org/verify/coordinator/${coordinatorId}`;
+      const qrBuffer = await QRCode.toBuffer(qrData, { width: 80, margin: 1 });
+
+      // Outer Border - Rich Amber / Gold
+      doc.rect(25, 25, 545, 792).lineWidth(2).strokeColor('#b45309').stroke();
+      doc.rect(29, 29, 537, 784).lineWidth(0.8).strokeColor('#fde68a').stroke();
+
+      // Header
+      doc.font('Helvetica-Bold').fontSize(18).fillColor('#b45309');
+      doc.text('APNA PARIVAR VRIDDH AASHRAM FOUNDATION', 40, 45, { align: 'center' });
+      doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a');
+      doc.text('SEVA • SAMMAN • PARIVAR • REGIONAL COORDINATION COUNCIL', 40, 68, { align: 'center' });
+      doc.font('Helvetica').fontSize(8.5).fillColor('#475569');
+      doc.text('Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • NITI Aayog Verified NGO', 40, 83, { align: 'center' });
+      doc.text('Head Office: Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001 | Phone: +91 8959055269', 40, 95, { align: 'center' });
+
+      doc.moveTo(40, 110).lineTo(555, 110).lineWidth(1.5).strokeColor('#b45309').stroke();
+
+      // Ref & Date
+      doc.font('Helvetica-Bold').fontSize(8.5).fillColor('#0f172a');
+      doc.text(`Ref No: BYK/CRD-APPT/2026/${coordinatorId}`, 45, 120);
+      doc.text(`Date: ${dateStr}`, 440, 120);
+
+      // Recipient Box
+      doc.rect(40, 138, 515, 55).fillColor('#fffbeb').strokeColor('#fde68a').lineWidth(1).fillAndStroke();
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#0f172a');
+      doc.text('TO:', 50, 145);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor('#b45309').text(name, 75, 145);
+      doc.font('Helvetica').fontSize(8.5).fillColor('#334155');
+      doc.text(`Designation: ${designation} | Coordinator ID: ${coordinatorId}`, 50, 160);
+      doc.text(`Email: ${email} | Mobile: ${phone} | Area / District: ${city}, ${state}`, 50, 174);
+
+      // Subject
+      doc.font('Helvetica-Bold').fontSize(10).fillColor('#0f172a');
+      doc.text('SUBJECT: STATUTORY LETTER OF APPOINTMENT AS OFFICIAL REGIONAL / FIELD COORDINATOR', 40, 206, { underline: true });
+
+      // Body Text
+      let textY = 226;
+      doc.font('Helvetica').fontSize(9).fillColor('#1e293b').lineGap(4);
+      doc.text(`Dear ${name},`, 40, textY);
+
+      textY += 18;
+      const p1 = 'The Board of Trustees and the National Executive Committee of APNA PARIVAR VRIDDH AASHRAM FOUNDATION are pleased to officially ratify and confirm your appointment as an Official Regional & Field Coordinator of the Foundation.';
+      doc.text(p1, 40, textY, { width: 515, align: 'justify' });
+
+      textY += 38;
+      const p2 = `In recognition of your community leadership, organizational capabilities, and dedicated commitment towards elderly welfare and societal empowerment, you have been enrolled in the Official Trust Register under Coordinator ID: ${coordinatorId} with the designation of "${designation}".`;
+      doc.text(p2, 40, textY, { width: 515, align: 'justify' });
+
+      textY += 40;
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor('#b45309');
+      doc.text('DELEGATED AUTHORITIES & OPERATIONAL CHARTER:', 40, textY);
+
+      textY += 16;
+      const duties = [
+        '1. Member Outreach & Enrollment: Authorized to nominate and register new members into the Foundation through the verified Coordinator Portal.',
+        '2. Verification & Liaison: Assisting local applicants in submitting KYC identity documents and facilitating field coordination with the Central Trustee Office.',
+        '3. Elder Care Initiatives: Leading regional seva drives, medical aid distribution, and old-age home assistance under national directives.',
+        '4. Portal Access: Authorized authenticated access to coordinator dashboard to review members enrolled under your leadership.'
+      ];
+      doc.font('Helvetica').fontSize(8.5).fillColor('#334155').lineGap(3);
+      duties.forEach(d => {
+        doc.text(d, 50, textY, { width: 505 });
+        textY += 18;
+      });
+
+      textY += 6;
+      const p3 = 'Please note that while Coordinators register and submit membership enrollments, final statutory verification and ID card minting remain under the jurisdiction of the National Executive Council & Board of Trustees.';
+      doc.font('Helvetica-Oblique').fontSize(8.5).fillColor('#64748b').text(p3, 40, textY, { width: 515, align: 'justify' });
+
+      // Signatures & Seal section
+      const bottomY = 650;
+      doc.moveTo(40, bottomY - 10).lineTo(555, bottomY - 10).lineWidth(0.8).strokeColor('#e2e8f0').stroke();
+
+      // Left: QR Code
+      doc.image(qrBuffer, 50, bottomY, { width: 70 });
+      doc.font('Helvetica-Bold').fontSize(7).fillColor('#0f172a');
+      doc.text('VERIFY CREDENTIALS', 45, bottomY + 74, { width: 80, align: 'center' });
+      doc.font('Helvetica').fontSize(6).fillColor('#64748b');
+      doc.text('Scan with camera', 45, bottomY + 84, { width: 80, align: 'center' });
+
+      // Center: Seal
+      const sealBuf = await resolveImageBuffer(dbSettings?.officialSealUrl);
+      if (sealBuf) {
+        doc.image(sealBuf, 240, bottomY, { width: 68, height: 68 });
+      } else {
+        drawVectorSeal(doc, 275, bottomY + 35, 34, '#b45309');
+      }
+      doc.font('Helvetica-Bold').fontSize(7).fillColor('#b45309');
+      doc.text('NATIONAL TRUST SEAL', 225, bottomY + 74, { width: 100, align: 'center' });
+
+      // Right: Authorized Signatory
+      const sigBuf = await resolveImageBuffer(dbSettings?.presidentSignatureUrl);
+      if (sigBuf) {
+        doc.image(sigBuf, 400, bottomY + 8, { width: 100, height: 32 });
+      }
+      doc.font('Helvetica-Bold').fontSize(9).fillColor('#0f172a');
+      doc.text(approvedBy, 375, bottomY + 54, { width: 155, align: 'center' });
+      doc.font('Helvetica').fontSize(7.5).fillColor('#64748b');
+      doc.text('National President & Board of Trustees', 375, bottomY + 67, { width: 155, align: 'center' });
+
+      // Security footer
+      doc.font('Helvetica').fontSize(7).fillColor('#94a3b8');
+      doc.text('Statutory Document issued under the Seal of Apna Parivar Vriddh Aashram Foundation • Tamper-Evident Digital Appointment Record.', 40, 780, { align: 'center' });
+
+      doc.end();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 /**
  * 5. GENERATE CERTIFICATE OF APPRECIATION PDF
  */
@@ -785,7 +935,7 @@ async function generateCertificatePdf(cert = {}) {
       doc.font('Helvetica-Bold').fontSize(22).fillColor('#7f1d1d');
       doc.text('APNA PARIVAR VRIDDH AASHRAM FOUNDATION', 110, 44, { align: 'center', width: w - 220 });
       doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a');
-      doc.text('SEVA � SAMMAN � PARIVAR • NATIONAL HONOURS & MERIT COUNCIL', 110, 70, { align: 'center', width: w - 220 });
+      doc.text('SEVA • SAMMAN • PARIVAR • NATIONAL HONOURS & MERIT COUNCIL', 110, 70, { align: 'center', width: w - 220 });
       doc.font('Helvetica').fontSize(8).fillColor('#475569');
       doc.text('A Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • Section 12A & 80G Compliant NGO', 110, 84, { align: 'center', width: w - 220 });
 
@@ -877,6 +1027,8 @@ module.exports = {
   generateVolunteerIdCardPdf,
   generateAppointmentLetterPdf,
   generateMemberIdCardPdf,
+  generateCoordinatorAppointmentLetterPdf,
+  generateCoordinatorIdCardPdf,
   generateCertificatePdf
 };
 

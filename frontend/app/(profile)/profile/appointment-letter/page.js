@@ -13,6 +13,7 @@ import {
   FiArrowRight,
   FiShield
 } from 'react-icons/fi';
+import { QRCodeSVG } from 'qrcode.react';
 import { useSelector } from 'react-redux';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
@@ -44,19 +45,21 @@ export default function AppointmentLetterPage() {
     (effectiveUser?.volunteerId && !effectiveUser?.volunteerId?.startsWith('APVAF-DON-') && !effectiveUser?.volunteerId?.startsWith('BYK-DON-'))
   );
 
+  const isCoordinatorVerified = Boolean(
+    effectiveUser?.role === 'Coordinator' || 
+    effectiveUser?.isCoordinator || 
+    effectiveUser?.coordinatorApplication?.status === 'approved' ||
+    (effectiveUser?.coordinatorId && !effectiveUser?.coordinatorId?.startsWith('APVAF-DON-'))
+  );
+
   const paramType = searchParams.get('type');
   const defaultTab = paramType 
     ? paramType 
-    : (isVolunteerVerified && !isMemberVerified ? 'volunteer' : 'member');
-  const [activeTab, setActiveTab] = useState(defaultTab);
-
-  useEffect(() => {
-    if (paramType) {
-      setActiveTab(paramType);
-    } else if (isVolunteerVerified && !isMemberVerified) {
-      setActiveTab('volunteer');
-    }
-  }, [paramType, isVolunteerVerified, isMemberVerified]);
+    : (isCoordinatorVerified ? 'coordinator' : (isVolunteerVerified && !isMemberVerified ? 'volunteer' : 'member'));
+  const [selectedTab, setSelectedTab] = useState(null);
+  const activeTab = selectedTab || defaultTab;
+  const setActiveTab = setSelectedTab;
+  const [origin] = useState(() => (typeof window !== 'undefined' ? window.location.origin : ''));
 
   const rawMemberId = effectiveUser?.memberId;
   const memberId = (rawMemberId && !rawMemberId.startsWith('APVAF-DON-') && !rawMemberId.startsWith('BYK-DON-'))
@@ -70,7 +73,16 @@ export default function AppointmentLetterPage() {
         ? rawMemberId
         : `APVAF-VOL-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`);
 
-  const isCurrentLetterVerified = activeTab === 'member' ? isMemberVerified : isVolunteerVerified;
+  const rawCoordId = effectiveUser?.coordinatorId || effectiveUser?.coordinatorApplication?.assignedCoordinatorId;
+  const coordinatorId = (rawCoordId && !rawCoordId.startsWith('APVAF-DON-'))
+    ? rawCoordId
+    : `APVAF-CRD-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`;
+
+  const coordinatorVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/coordinator/${coordinatorId}`;
+
+  const isCurrentLetterVerified = activeTab === 'coordinator'
+    ? isCoordinatorVerified
+    : (activeTab === 'member' ? isMemberVerified : isVolunteerVerified);
 
   const handlePrint = () => {
     window.print();
@@ -99,32 +111,50 @@ export default function AppointmentLetterPage() {
             className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition self-start sm:self-auto cursor-pointer"
           >
             <FiPrinter className="w-4 h-4" />
-            <span>Print {activeTab === 'member' ? 'Member Appointment Letter' : 'Volunteer Offer Letter'}</span>
+            <span>Print {activeTab === 'coordinator' ? 'Coordinator Appointment Letter' : (activeTab === 'member' ? 'Member Appointment Letter' : 'Volunteer Offer Letter')}</span>
           </button>
         )}
       </div>
 
-      {/* ----------------- DUAL APPOINTMENT LETTER SWITCHER TABS (CENTERED) ----------------- */}
+      {/* ----------------- TRIPLE APPOINTMENT LETTER SWITCHER TABS (CENTERED) ----------------- */}
       <div className="flex justify-center w-full">
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-3xl mx-auto">
+          {/* Coordinator Appointment Tab */}
+          <button
+            onClick={() => setActiveTab('coordinator')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'coordinator'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiShield className="w-4 h-4 text-amber-800" />
+            <span>Coordinator Appointment</span>
+            {isCoordinatorVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'coordinator' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
+
+          {/* Member Appointment Tab */}
           <button
             onClick={() => setActiveTab('member')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
               activeTab === 'member'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
             }`}
           >
             <FiCreditCard className="w-4 h-4" />
-            <span>Member Appointment Letter</span>
+            <span>Member Appointment</span>
             {isMemberVerified && (
               <span className={`w-2 h-2 rounded-full ${activeTab === 'member' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
             )}
           </button>
 
+          {/* Volunteer Offer Tab */}
           <button
             onClick={() => setActiveTab('volunteer')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
               activeTab === 'volunteer'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
@@ -489,6 +519,168 @@ export default function AppointmentLetterPage() {
                         {settings?.presidentName || 'Ravi Saini (National President & Trustee)'}
                       </h4>
                       <p className="text-[10px] text-amber-800 font-bold">National President &amp; Trustee</p>
+                      <p className="text-[9px] text-stone-600 font-medium">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ==================== TAB 3: COORDINATOR APPOINTMENT LETTER ==================== */}
+      {activeTab === 'coordinator' && (
+        <>
+          {!isCoordinatorVerified ? (
+            <div className="space-y-6">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-2xl mx-auto shadow-md shadow-amber-500/20">
+                  <FiLock className="w-8 h-8" />
+                </div>
+                <div>
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 inline-block mb-1">
+                    Coordinator Desk Notice
+                  </span>
+                  <h3 className="text-lg font-black text-stone-900">
+                    Official Coordinator Appointment Letter Not Issued
+                  </h3>
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                    Statutory Coordinator Appointment Letters are formally ratified by the Board of Trustees to confer regional operational authorities and official credentials.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/profile/apply-coordinator"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
+                  >
+                    <span>Apply for Official Coordinator</span>
+                    <FiArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* ================= VERIFIED COORDINATOR APPOINTMENT LETTER ================= */
+            <div
+              ref={letterRef}
+              className="bg-white rounded-3xl border-2 border-amber-400 p-8 sm:p-12 max-w-4xl mx-auto shadow-xl print:p-0 print:border-none print:shadow-none print:max-w-none text-stone-900"
+            >
+              <div className="border-4 border-amber-500/40 p-6 sm:p-8 rounded-2xl relative space-y-6 bg-[#fffefb]">
+                {/* Letterhead Header */}
+                <div className="text-center pb-6 border-b-2 border-amber-600/60 space-y-2">
+                  <h2 className="text-xl sm:text-2xl font-black text-amber-900 tracking-tight uppercase">
+                    Apna Parivar Vriddh Aashram Foundation
+                  </h2>
+                  <p className="text-xs font-black uppercase tracking-wider text-amber-950">
+                    Seva • Samman • Parivar • Regional Coordination Council
+                  </p>
+                  <p className="text-[10px] text-stone-600 font-medium">
+                    Registered Public Charitable Trust • Reg. No: MP/JBP/VRIDDH/2024/0912 • NITI Aayog Verified NGO<br />
+                    Head Office: Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001 | Phone: +91 8959055269
+                  </p>
+                </div>
+
+                {/* Reference & Date */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs font-bold text-stone-700 gap-2 pt-2">
+                  <span>Ref No: <strong className="font-mono text-amber-900">BYK/CRD-APPT/2026/{coordinatorId}</strong></span>
+                  <span>Date of Ratification: <strong className="text-black">{new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</strong></span>
+                </div>
+
+                {/* Recipient Details */}
+                <div className="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs space-y-1">
+                  <p className="font-black text-amber-950 text-sm">{effectiveUser?.name}</p>
+                  <p className="text-stone-700 font-bold">Designation: {effectiveUser?.designation || 'District / Field Coordinator'} | Coordinator ID: <span className="font-mono font-bold text-amber-900">{coordinatorId}</span></p>
+                  <p className="text-stone-600 font-medium">Area of Jurisdiction: {effectiveUser?.coordinatorArea || effectiveUser?.district || 'Aligarh District'}, {effectiveUser?.state || 'Uttar Pradesh'}</p>
+                  <p className="text-stone-600 font-medium">Mobile: {effectiveUser?.phone || 'N/A'} | Email: {effectiveUser?.email}</p>
+                </div>
+
+                {/* Subject */}
+                <div className="text-center py-2">
+                  <h3 className="text-sm font-black text-amber-950 uppercase tracking-wide underline decoration-amber-500 decoration-2 underline-offset-4">
+                    Subject: Formal Statutory Appointment as Official Regional &amp; Field Coordinator
+                  </h3>
+                </div>
+
+                {/* Body Content */}
+                <div className="space-y-4 text-xs sm:text-sm text-stone-800 leading-relaxed text-justify">
+                  <p>
+                    Dear <strong>{effectiveUser?.name}</strong>,
+                  </p>
+                  <p>
+                    The Board of Trustees and the National Executive Committee of <strong>Apna Parivar Vriddh Aashram Foundation</strong> are pleased to officially ratify and confirm your appointment as an <strong>Official Regional &amp; Field Coordinator</strong> of the Foundation.
+                  </p>
+                  <p>
+                    In recognition of your community leadership, organizational capabilities, and dedicated commitment towards elderly welfare and societal empowerment, you have been enrolled in the Official Trust Register under Coordinator ID: <strong className="font-mono text-amber-900">{coordinatorId}</strong> with the designation of <strong>&ldquo;{effectiveUser?.designation || 'District / Field Coordinator'}&rdquo;</strong>.
+                  </p>
+
+                  <div className="bg-white rounded-xl p-4 border border-amber-200 space-y-2 text-xs">
+                    <h4 className="font-black text-amber-900 uppercase tracking-wide">
+                      Delegated Authorities &amp; Operational Charter:
+                    </h4>
+                    <p>1. <strong>Member Outreach &amp; Enrollment:</strong> Authorized to nominate and register new members into the Foundation through the verified Coordinator Portal.</p>
+                    <p>2. <strong>Verification &amp; Liaison:</strong> Assisting local applicants in submitting KYC identity documents and facilitating field coordination with the Central Trustee Office.</p>
+                    <p>3. <strong>Elder Care Initiatives:</strong> Leading regional seva drives, medical aid distribution, and old-age home assistance under national directives.</p>
+                    <p>4. <strong>Authenticated Portal Access:</strong> Authorized access to coordinator dashboard to review members enrolled under your leadership.</p>
+                  </div>
+
+                  <p className="text-xs text-stone-600 italic">
+                    Please note that while Coordinators register and submit membership enrollments, final statutory verification and ID card minting remain under the jurisdiction of the National Executive Council &amp; Board of Trustees.
+                  </p>
+                </div>
+
+                {/* Signatures, Seal & QR Code */}
+                <div className="pt-8 border-t border-amber-200 flex flex-wrap items-end justify-between gap-6">
+                  {/* Left: Anti-Tamper QR Code */}
+                  <div className="text-center">
+                    <div className="p-2 bg-white rounded-xl border border-amber-300 inline-block shadow-2xs">
+                      <QRCodeSVG
+                        value={coordinatorVerificationUrl}
+                        size={80}
+                        level="H"
+                        includeMargin={false}
+                      />
+                    </div>
+                    <span className="text-[9px] font-bold text-amber-900 uppercase tracking-wider mt-1 block">
+                      Scan to Verify Online
+                    </span>
+                  </div>
+
+                  {/* Center: Trust Seal */}
+                  <div className="text-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getContentImageUrl(settings?.officialSealUrl) || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200'}
+                      alt="Official Seal"
+                      className="w-16 h-16 object-contain mx-auto"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200';
+                      }}
+                    />
+                    <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wider mt-1 block">
+                      Official Trust Seal
+                    </span>
+                  </div>
+
+                  {/* Right: President Signature */}
+                  <div className="text-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getContentImageUrl(settings?.presidentSignatureUrl) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
+                      alt="President Signature"
+                      className="h-10 object-contain mx-auto"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+                      }}
+                    />
+                    <div className="mt-1">
+                      <h4 className="text-xs font-black text-stone-900">
+                        {settings?.presidentName || 'Ravi Saini (National President & Trustee)'}
+                      </h4>
+                      <p className="text-[10px] text-amber-800 font-bold">National President &amp; Board of Trustees</p>
                       <p className="text-[9px] text-stone-600 font-medium">{settings?.ngoName || 'Apna Parivar Vriddh Aashram Foundation'}</p>
                     </div>
                   </div>

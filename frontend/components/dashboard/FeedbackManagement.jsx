@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCheckCircle,
@@ -155,36 +156,49 @@ export default function FeedbackManagement() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Top Header Card */}
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1.5 border border-amber-300">
-            <span>Public Testimonials &amp; Reviews</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiMessageSquare className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">Reviews &amp; Feedback</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Public Testimonials &amp; Reviews
+              </p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Reviews &amp; Feedback</h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-1">
-            Moderate community reviews, approve supporter testimonials, and curate donor stories.
-          </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={loadData}
-            className="p-2.5 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 transition cursor-pointer shadow-2xs"
-            title="Refresh"
-          >
-            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
-          </button>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
           >
             <FiPlus className="w-4 h-4" />
             <span>Add Testimonial</span>
           </button>
+          <button
+            onClick={loadData}
+            className="p-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
+            title="Refresh"
+          >
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
+          </button>
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
         </div>
       </div>
+
+      {/* Content wrapper with px-3 space-y-4 */}
+      <div className="px-3 space-y-4 pb-12">
 
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -442,6 +456,7 @@ export default function FeedbackManagement() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

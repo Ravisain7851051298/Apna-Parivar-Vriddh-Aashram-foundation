@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCheck,
@@ -10,6 +11,7 @@ import {
   FiDollarSign,
   FiDownload,
   FiEye,
+  FiHeart,
   FiMail,
   FiPhone,
   FiRefreshCw,
@@ -204,34 +206,59 @@ export default function DonationManagement() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">80G Donation Management</h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-1">
-            Audit contributor payment proofs, verify bank transfers, and issue automated 80G tax receipts.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiHeart className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">80G Donation Management</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Tax-Exempt Contribution Desk
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex bg-white/80 p-1 rounded-2xl border border-amber-200 self-start md:self-auto shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Tab Switcher */}
+          <div className="flex bg-white/80 p-1 rounded-2xl border border-amber-200 shadow-2xs">
+            <button
+              onClick={() => setActiveTab("donations")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "donations"
+                ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
+                : "text-stone-700 hover:text-stone-950"
+                }`}
+            >
+              Donations List
+            </button>
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "settings"
+                ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
+                : "text-stone-700 hover:text-stone-950"
+                }`}
+            >
+              UPI &amp; Bank Settings
+            </button>
+          </div>
+
           <button
-            onClick={() => setActiveTab("donations")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "donations"
-              ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
-              : "text-stone-700 hover:text-stone-950"
-              }`}
+            onClick={loadDonations}
+            disabled={loading}
+            className="p-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
+            title="Refresh Donations"
           >
-            Donations List
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
           </button>
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${activeTab === "settings"
-              ? "bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20"
-              : "text-stone-700 hover:text-stone-950"
-              }`}
+
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
           >
-            UPI &amp; Bank Settings
-          </button>
+            ← Overview
+          </Link>
         </div>
       </div>
 

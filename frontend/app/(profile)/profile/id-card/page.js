@@ -27,7 +27,7 @@ export default function IdCardPage() {
 
   // Allow tab query: /profile/id-card?type=volunteer or ?type=member
   const paramType = searchParams.get('type');
-  const [origin, setOrigin] = useState('');
+  const [origin] = useState(() => (typeof window !== 'undefined' ? window.location.origin : ''));
 
   // Membership & Volunteer eligibility checks (strictly prevent donor ID APVAF-DON- / BYK-DON- from being treated as member)
   const isMemberVerified = Boolean(
@@ -38,6 +38,8 @@ export default function IdCardPage() {
     (effectiveUser?.memberId && (effectiveUser.memberId.startsWith('APVAF-MEM-') || effectiveUser.memberId.startsWith('BYK-MEM-') || effectiveUser.memberId.startsWith('MEM-')))
   );
 
+  const [mountTime] = useState(() => Date.now());
+
   // Expired Member Plan Check
   const isPlanExpired = Boolean(
     effectiveUser?.role !== 'Admin' && (
@@ -46,8 +48,8 @@ export default function IdCardPage() {
       effectiveUser?.status === 'expired' ||
       effectiveUser?.membershipApplication?.status === 'expired' ||
       effectiveUser?.membershipApplication?.membershipStatus === 'expired' ||
-      (effectiveUser?.membershipExpiresAt && new Date(effectiveUser.membershipExpiresAt).getTime() < Date.now()) ||
-      (effectiveUser?.membershipApplication?.expiresAt && new Date(effectiveUser.membershipApplication.expiresAt).getTime() < Date.now())
+      (effectiveUser?.membershipExpiresAt && new Date(effectiveUser.membershipExpiresAt).getTime() < mountTime) ||
+      (effectiveUser?.membershipApplication?.expiresAt && new Date(effectiveUser.membershipApplication.expiresAt).getTime() < mountTime)
     )
   );
 
@@ -60,24 +62,22 @@ export default function IdCardPage() {
     (effectiveUser?.volunteerId && !effectiveUser?.volunteerId?.startsWith('APVAF-DON-') && !effectiveUser?.volunteerId?.startsWith('BYK-DON-'))
   );
 
-  // Default tab: if user is volunteer and NOT verified member, default directly to volunteer
+  const isCoordinatorVerified = Boolean(
+    effectiveUser?.role === 'Coordinator' || 
+    effectiveUser?.isCoordinator || 
+    effectiveUser?.coordinatorApplication?.status === 'approved' ||
+    (effectiveUser?.coordinatorId && !effectiveUser?.coordinatorId?.startsWith('APVAF-DON-'))
+  );
+
+  // Default tab: if user is coordinator, default directly to coordinator; if volunteer, volunteer; else member
   const defaultTab = paramType 
     ? paramType 
-    : (isVolunteerVerified && !isMemberUnlocked ? 'volunteer' : 'member');
-  const [activeTab, setActiveTab] = useState(defaultTab);
+    : (isCoordinatorVerified ? 'coordinator' : (isVolunteerVerified && !isMemberUnlocked ? 'volunteer' : 'member'));
+  const [selectedTab, setSelectedTab] = useState(null);
+  const activeTab = selectedTab || defaultTab;
+  const setActiveTab = setSelectedTab;
 
   useEffect(() => {
-    if (paramType) {
-      setActiveTab(paramType);
-    } else if (isVolunteerVerified && !isMemberUnlocked) {
-      setActiveTab('volunteer');
-    }
-  }, [paramType, isVolunteerVerified, isMemberUnlocked]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setOrigin(window.location.origin);
-    }
     if (refreshUser) refreshUser();
   }, [refreshUser]);
 
@@ -93,10 +93,18 @@ export default function IdCardPage() {
         ? rawMemberId
         : `APVAF-VOL-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`);
 
+  const rawCoordId = effectiveUser?.coordinatorId || effectiveUser?.coordinatorApplication?.assignedCoordinatorId;
+  const coordinatorId = (rawCoordId && !rawCoordId.startsWith('APVAF-DON-'))
+    ? rawCoordId
+    : `APVAF-CRD-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`;
+
   const memberVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/member/${memberId}`;
   const volunteerVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/volunteer/${volunteerId}`;
+  const coordinatorVerificationUrl = `${origin || 'https://apnaparivarvriddhaashram.org'}/verify/coordinator/${coordinatorId}`;
 
-  const isCurrentCardVerified = activeTab === 'member' ? isMemberUnlocked : isVolunteerVerified;
+  const isCurrentCardVerified = activeTab === 'coordinator'
+    ? isCoordinatorVerified
+    : (activeTab === 'member' ? isMemberUnlocked : isVolunteerVerified);
 
   const handlePrint = () => {
     window.print();
@@ -130,24 +138,41 @@ export default function IdCardPage() {
             className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition self-start sm:self-auto cursor-pointer"
           >
             <FiPrinter className="w-4 h-4" />
-            <span>Print {activeTab === 'member' ? 'Member ID Card' : 'Volunteer ID Card'}</span>
+            <span>Print {activeTab === 'coordinator' ? 'Coordinator ID Card' : (activeTab === 'member' ? 'Member ID Card' : 'Volunteer ID Card')}</span>
           </button>
         )}
       </div>
 
-      {/* ----------------- DUAL ID CARD SWITCHER TABS (CENTERED) ----------------- */}
+      {/* ----------------- TRIPLE ID CARD SWITCHER TABS (CENTERED) ----------------- */}
       <div className="flex justify-center w-full">
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 bg-amber-50/80 rounded-2xl border border-amber-200 shadow-xs w-full max-w-3xl mx-auto">
+          {/* Coordinator ID Tab */}
+          <button
+            onClick={() => setActiveTab('coordinator')}
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+              activeTab === 'coordinator'
+                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
+                : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
+            }`}
+          >
+            <FiShield className="w-4 h-4 text-amber-800" />
+            <span>Coordinator ID</span>
+            {isCoordinatorVerified && (
+              <span className={`w-2 h-2 rounded-full ${activeTab === 'coordinator' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
+            )}
+          </button>
+
+          {/* Member ID Tab */}
           <button
             onClick={() => setActiveTab('member')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
               activeTab === 'member'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
             }`}
           >
             <FiCreditCard className="w-4 h-4" />
-            <span>Official Member ID Card</span>
+            <span>Member ID Card</span>
             {isPlanExpired ? (
               <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-rose-600 text-white">
                 Expired
@@ -157,16 +182,17 @@ export default function IdCardPage() {
             ) : null}
           </button>
 
+          {/* Volunteer ID Tab */}
           <button
             onClick={() => setActiveTab('volunteer')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black transition cursor-pointer ${
+            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
               activeTab === 'volunteer'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
             }`}
           >
             <FiUserCheck className="w-4 h-4" />
-            <span>Grassroots Volunteer ID Card</span>
+            <span>Volunteer ID Card</span>
             {isVolunteerVerified && (
               <span className={`w-2 h-2 rounded-full ${activeTab === 'volunteer' ? 'bg-stone-950' : 'bg-emerald-500'}`}></span>
             )}
@@ -616,6 +642,215 @@ export default function IdCardPage() {
                         />
                         <span className="text-[9px] text-black font-bold block truncate max-w-30">
                           {settings?.presidentName || 'Trustee President'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-[9px] text-slate-700 text-center leading-tight font-medium">
+                      Head Office: {settings?.address || 'Behind Adhartal Railway Station, Jabalpur, Madhya Pradesh - 482001'}<br />
+                      Helpline: {settings?.phone || '+91 8959055269'} • {settings?.email || 'info@apnaparivarvriddhaashram.org'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ==================== TAB 3: COORDINATOR ID CARD ==================== */}
+      {activeTab === 'coordinator' && (
+        <>
+          {!isCoordinatorVerified ? (
+            /* Locked State for Coordinator ID Card */
+            <div className="space-y-6">
+              <div className="bg-linear-to-b from-amber-50/70 to-yellow-50/40 border-2 border-amber-300/80 rounded-3xl p-6 sm:p-8 text-center max-w-2xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-3xl bg-linear-to-tr from-amber-500 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl mx-auto shadow-md shadow-amber-500/20">
+                  <FiLock className="w-8 h-8" />
+                </div>
+                <div>
+                  <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300 inline-block mb-1">
+                    Coordinator Desk Notice
+                  </span>
+                  <h3 className="text-lg font-black text-stone-900">
+                    Official Coordinator ID Badge Not Unlocked
+                  </h3>
+                  <p className="text-xs text-stone-600 mt-2 leading-relaxed max-w-lg mx-auto font-medium">
+                    Coordinator badges are issued to authorized regional leaders responsible for member enrollment, seva outreach, and district administrative coordination.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/profile/apply-coordinator"
+                    className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
+                  >
+                    <span>Apply for Official Coordinator</span>
+                    <FiArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* ================= VERIFIED COORDINATOR BADGE ================= */
+            <div className="space-y-6" ref={cardRef}>
+              <div className="bg-amber-100/70 text-amber-950 p-4 rounded-2xl border border-amber-300 flex items-center justify-between text-xs font-bold max-w-3xl mx-auto shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <FiCheckCircle className="w-4 h-4 text-amber-800" />
+                  <span>Verified Regional Coordinator Badge • Anti-Tamper QR Verifiable</span>
+                </div>
+                <span className="font-mono bg-white px-2.5 py-1 rounded-lg border border-amber-300 text-amber-900 font-black">
+                  {coordinatorId}
+                </span>
+              </div>
+
+              {/* DUAL-SIDED ID BADGE PREVIEW */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto print:max-w-none print:w-full print:m-0 print:gap-4 print:p-0">
+                {/* ---------------- CARD FRONT ---------------- */}
+                <div className="bg-white rounded-3xl border-2 border-amber-400 overflow-hidden shadow-lg flex flex-col justify-between print:rounded-2xl print:border-amber-400">
+                  {/* Top Branding Banner */}
+                  <div className="bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 p-4 text-center text-white space-y-0.5 shadow-xs">
+                    <h2 className="text-xs font-black tracking-wider uppercase text-amber-950 drop-shadow-xs">
+                      Apna Parivar Vriddh Aashram Foundation
+                    </h2>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-amber-950">
+                      Official Coordinator Identity Badge
+                    </p>
+                    <p className="text-[8px] text-amber-950 font-medium">
+                      Reg. No: MP/JBP/VRIDDH/2024/0912 • NITI Aayog Verified NGO
+                    </p>
+                  </div>
+
+                  {/* Body with Photo and Key Details */}
+                  <div className="p-6 text-center space-y-4">
+                    <div className="relative inline-block mx-auto">
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-amber-400 mx-auto shadow-sm ring-4 ring-amber-100 bg-amber-50">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={
+                            getContentImageUrl(effectiveUser?.photoUrl) ||
+                            'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&auto=format&fit=crop&q=80'
+                          }
+                          alt={effectiveUser?.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src =
+                              'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&auto=format&fit=crop&q=80';
+                          }}
+                        />
+                      </div>
+                      <span className="absolute -bottom-1 -right-1 bg-amber-500 text-stone-950 p-1 rounded-full border border-white text-[10px] shadow-xs">
+                        <FiCheckCircle className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-black text-black">
+                        {effectiveUser?.name}
+                      </h3>
+                      <p className="text-xs font-extrabold text-amber-800">
+                        {effectiveUser?.designation || 'District / Field Coordinator'}
+                      </p>
+                      <p className="text-[11px] font-bold text-slate-700 mt-0.5">
+                        Area: {effectiveUser?.coordinatorArea || effectiveUser?.district || 'Aligarh District'}
+                      </p>
+                    </div>
+
+                    <div className="bg-amber-50/50 rounded-2xl p-3 border border-amber-200 text-left text-xs space-y-1.5">
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">Coordinator ID:</span>
+                        <strong className="font-mono text-amber-900 font-black">{coordinatorId}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">Mobile:</span>
+                        <strong className="text-black">{effectiveUser?.phone || 'N/A'}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">Blood Group:</span>
+                        <strong className="text-black">{effectiveUser?.bloodGroup || 'O+'}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">Status:</span>
+                        <strong className="text-emerald-700 font-black">Active &amp; Authorized</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Front Footer Strip */}
+                  <div className="bg-amber-100 p-2 text-center text-[9px] text-amber-950 font-bold border-t border-amber-200">
+                    REGIONAL COORDINATION COUNCIL • VERIFIABLE IDENTITY BADGE
+                  </div>
+                </div>
+
+                {/* ---------------- CARD BACK ---------------- */}
+                <div className="bg-white rounded-3xl border-2 border-amber-400 overflow-hidden shadow-lg flex flex-col justify-between p-6 print:rounded-2xl print:border-amber-400">
+                  <div className="space-y-4">
+                    <div className="text-center pb-2 border-b border-slate-100">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 block">
+                        Anti-Tamper Digital Security
+                      </span>
+                      <p className="text-[9px] text-slate-700">Scan with any smartphone camera to verify credentials</p>
+                    </div>
+
+                    {/* QR Code Block */}
+                    <div className="flex justify-center my-2">
+                      <div className="p-3 bg-white rounded-2xl border-2 border-amber-300 shadow-xs inline-block">
+                        <QRCodeSVG
+                          value={coordinatorVerificationUrl}
+                          size={120}
+                          level="H"
+                          includeMargin={false}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-amber-50/60 rounded-xl p-2.5 text-[10px] text-amber-950 border border-amber-200 text-center leading-snug font-medium">
+                      <strong>DELEGATED AUTHORITIES:</strong> Authorized to register and enroll members, assist elder seva initiatives, and liaise with the central trust administration.
+                    </div>
+
+                    <div className="bg-slate-50 rounded-xl p-2.5 text-[9px] text-slate-600 border border-slate-200 space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">Headquarters:</span>
+                        <strong className="text-black">Jay Prakash Nagar, Adhartal, Jabalpur (M.P.)</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600 font-semibold">State / Region:</span>
+                        <strong className="text-black">{effectiveUser?.district || 'Aligarh'}, {effectiveUser?.state || 'Uttar Pradesh'}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Head Office & Seal / Sign */}
+                  <div className="pt-3 border-t border-slate-100 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="text-left">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getContentImageUrl(settings?.officialSealUrl) || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200'}
+                          alt="Seal"
+                          className="w-10 h-10 object-contain mx-auto"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=200';
+                          }}
+                        />
+                        <span className="text-[9px] text-black font-bold block">Official Trust Seal</span>
+                      </div>
+
+                      <div className="text-right">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getContentImageUrl(settings?.presidentSignatureUrl) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
+                          alt="Signature"
+                          className="h-8 object-contain ml-auto"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+                          }}
+                        />
+                        <span className="text-[9px] text-black font-bold block truncate max-w-30">
+                          {settings?.presidentName || 'National President & Trustee'}
                         </span>
                       </div>
                     </div>

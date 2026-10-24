@@ -7,6 +7,7 @@ const donationRoutes = require('./donationRoutes');
 const planRoutes = require('./planRoutes');
 const memberRoutes = require('./memberRoutes');
 const volunteerRoutes = require('./volunteerRoutes');
+const coordinatorRoutes = require('./coordinatorRoutes');
 const certificateRoutes = require('./certificateRoutes');
 const campaignRoutes = require('./campaignRoutes');
 const eventRoutes = require('./eventRoutes');
@@ -51,6 +52,8 @@ router.use('/plans', planRoutes);
 router.use('/members', memberRoutes);
 router.use('/volunteers', volunteerRoutes);
 router.use('/volunteer', volunteerRoutes); // alias
+router.use('/coordinators', coordinatorRoutes);
+router.use('/coordinator', coordinatorRoutes); // alias
 router.use('/certificates', certificateRoutes);
 router.use('/campaigns', campaignRoutes);
 router.use('/events', eventRoutes);

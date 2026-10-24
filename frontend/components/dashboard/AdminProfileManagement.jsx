@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiCamera,
@@ -115,23 +116,36 @@ export default function AdminProfileManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-3xl border-b border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Top Header Card */}
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold mb-2">
-            <FiShield className="w-3.5 h-3.5" />
-            <span>Administrator Credentials</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiShield className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">Trustee Administrator Profile</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Personal Account Credentials
+              </p>
+            </div>
           </div>
-          <h1 className="text-2xl font-black text-black tracking-tight">Trustee Administrator Profile</h1>
-          <p className="text-xs text-slate-700 mt-1">
-            Manage your personal administrative contact details, profile photograph, and account security.
-          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
         </div>
       </div>
 
-      <div className="max-w-2xl bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-black">
-        <form onSubmit={handleSave} className="space-y-6 text-xs text-black">
+      <div className="px-3 pb-12">
+        <div className="max-w-2xl bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-black">
+          <form onSubmit={handleSave} className="space-y-6 text-xs text-black">
           {/* Avatar with Display Preview & Remove Image */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 pb-6 border-b border-slate-100">
             <div className="relative w-24 h-24 shrink-0">
@@ -228,6 +242,7 @@ export default function AdminProfileManagement() {
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

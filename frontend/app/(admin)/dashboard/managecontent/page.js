@@ -321,42 +321,47 @@ function ManageContentInner() {
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-4">
       {/* 1. Top Header Banner */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black border border-amber-300 mb-1.5">
-            <FiLayers className="w-3.5 h-3.5 text-amber-800" />
-            <span>Manage Content &amp; Media CMS</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiLayers className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">
+                National Content Management Hub
+              </h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Website Media &amp; Story CMS
+              </p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">
-            National Content Management Hub
-          </h1>
-          <p className="text-xs text-stone-600 mt-0.5">
-            Configure Hero Carousel, About Us story, Who We Are sanctuary, core objectives, and statutory policies.
-          </p>
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer disabled:opacity-50"
           >
             <FiSave className="w-4 h-4 text-stone-950" />
             <span>{isSaving ? 'Saving Changes...' : 'Save All Content'}</span>
           </button>
           <Link
             href="/dashboard"
-            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-stone-100 hover:bg-amber-50 px-3.5 py-2.5 rounded-2xl border border-stone-200 transition"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
           >
             ← Overview
           </Link>
         </div>
       </div>
 
-      {/* 2. Child Content Pages Quick Navigation Grid */}
+      {/* Content wrapper with px-3 space-y-4 */}
+      <div className="px-3 space-y-4 pb-12">
+        {/* 2. Child Content Pages Quick Navigation Grid */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
           <span className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
@@ -412,8 +417,8 @@ function ManageContentInner() {
             type="button"
             onClick={() => setActiveTab(t.id)}
             className={`px-4 py-2 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${activeTab === t.id
-                ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
-                : 'bg-stone-100/80 text-stone-700 hover:bg-amber-100 hover:text-amber-950'
+              ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-xs'
+              : 'bg-stone-100/80 text-stone-700 hover:bg-amber-100 hover:text-amber-950'
               }`}
           >
             {t.label}
@@ -1344,6 +1349,7 @@ function ManageContentInner() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

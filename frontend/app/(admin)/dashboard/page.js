@@ -40,7 +40,6 @@ export default function DashboardPage() {
     members = [],
     donations = [],
     campaigns = [],
-    complaints = [],
     settings,
     verifyMember,
     setMemberStatus
@@ -450,7 +449,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs">
@@ -1159,7 +1158,7 @@ export default function DashboardPage() {
       {/* ------------------------------------------------------------- */}
       {/* 18 Navigation Modules Quick Jump Hub */}
       {/* ------------------------------------------------------------- */}
-      <div className="mx-3 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      {/* <div className="mx-3 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
           <div>
             <h2 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
@@ -1192,12 +1191,12 @@ export default function DashboardPage() {
             );
           })}
         </div>
-      </div>
+      </div> */}
 
       {/* ------------------------------------------------------------- */}
       {/* Recent Operational Activity (Tabs: 80G Donations / Members) */}
       {/* ------------------------------------------------------------- */}
-      <div className="mx-3 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="mx-3 mb-3 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Card Header with Tabs */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">

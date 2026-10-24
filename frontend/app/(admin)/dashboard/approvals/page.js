@@ -21,10 +21,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchMemberApplications,
   fetchVolunteerApplications,
+  fetchCoordinatorApplications,
   approveMembershipApplication,
   rejectMembershipApplication,
   approveVolunteerApplication,
-  rejectVolunteerApplication
+  rejectVolunteerApplication,
+  approveCoordinatorApplication,
+  rejectCoordinatorApplication
 } from '@/store/applicationSlice';
 import {
   fetchDonations,
@@ -36,7 +39,13 @@ import { getContentImageUrl } from '@/lib/authApi';
 
 export default function ApprovalsPage() {
   const dispatch = useDispatch();
-  const { memberApplications, volunteerApplications, loading: appLoading, successMessage: appSuccess } = useSelector((state) => state.applications);
+  const { 
+    memberApplications, 
+    volunteerApplications, 
+    coordinatorApplications = [], 
+    loading: appLoading, 
+    successMessage: appSuccess 
+  } = useSelector((state) => state.applications);
   const { donations, loading: donLoading, successMessage: donSuccess } = useSelector((state) => state.donations);
 
   const [activeTab, setActiveTab] = useState('members');
@@ -48,11 +57,13 @@ export default function ApprovalsPage() {
   useEffect(() => {
     dispatch(fetchMemberApplications());
     dispatch(fetchVolunteerApplications());
+    dispatch(fetchCoordinatorApplications());
     dispatch(fetchDonations());
   }, [dispatch]);
 
   const pendingMembers = memberApplications.filter(a => a.status === 'pending');
   const pendingVolunteers = volunteerApplications.filter(a => a.status === 'pending');
+  const pendingCoordinators = (coordinatorApplications || []).filter(a => a.status === 'pending');
   const pendingDonations = donations.filter(d => d.status === 'pending');
 
   const handleApproveMember = async (id) => {
@@ -90,6 +101,22 @@ export default function ApprovalsPage() {
     }
   };
 
+  const handleApproveCoordinator = async (id) => {
+    try {
+      setProcessingId(id);
+      const res = await dispatch(approveCoordinatorApplication(id)).unwrap();
+      setActionNotice(res.message || 'Coordinator approved! Official ID Card & Appointment Letter generated & emailed.');
+      setTimeout(() => setActionNotice(null), 5000);
+      dispatch(fetchCoordinatorApplications());
+    } catch (err) {
+      const errMsg = typeof err === 'string' ? err : err?.message || 'Failed to approve coordinator';
+      setActionNotice(`⚠️ ${errMsg}`);
+      setTimeout(() => setActionNotice(null), 6000);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const handleApproveDonation = async (id) => {
     try {
       setProcessingId(id);
@@ -117,6 +144,9 @@ export default function ApprovalsPage() {
       } else if (type === 'volunteer') {
         await dispatch(rejectVolunteerApplication({ id, reason })).unwrap();
         dispatch(fetchVolunteerApplications());
+      } else if (type === 'coordinator') {
+        await dispatch(rejectCoordinatorApplication({ id, reason })).unwrap();
+        dispatch(fetchCoordinatorApplications());
       } else if (type === 'donation') {
         await dispatch(rejectDonation({ id, reason })).unwrap();
         dispatch(fetchDonations());
@@ -137,20 +167,29 @@ export default function ApprovalsPage() {
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">Trustee Approvals &amp; Verification Center</h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-1">
-            Zero-Fraud Policy: ID cards, appointment letters, and 80G tax receipts are issued ONLY upon manual verification of bank receipts and transaction UTRs.
-          </p>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiCheckCircle className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">Trustee Approvals &amp; Verification Center</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Zero-Fraud Verification Policy
+              </p>
+            </div>
+          </div>
         </div>
 
-        <Link
-          href="/dashboard"
-          className="text-xs font-bold text-amber-900 hover:text-stone-950 transition flex items-center gap-1 self-start md:self-auto px-3 py-1.5 rounded-xl border border-amber-200 bg-white/80 shadow-2xs"
-        >
-          ← Back to Overview
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
+        </div>
       </div>
 
       {/* Success Notification Alert */}
@@ -161,7 +200,7 @@ export default function ApprovalsPage() {
         </div>
       )}
 
-      {/* 3 Verification Category Tabs */}
+      {/* 4 Verification Category Tabs */}
       <div className="bg-white mx-3 p-1 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-1.5">
         <button
           onClick={() => setActiveTab('members')}
@@ -175,6 +214,21 @@ export default function ApprovalsPage() {
           <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === 'members' ? 'bg-white/20 text-white' : 'bg-slate-200 text-black font-bold'
             }`}>
             {pendingMembers.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('coordinators')}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${activeTab === 'coordinators'
+            ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+            : 'bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-800'
+            }`}
+        >
+          <FiShield className="w-3.5 h-3.5" />
+          <span>Coordinator Applications</span>
+          <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === 'coordinators' ? 'bg-white/20 text-white' : 'bg-slate-200 text-black font-bold'
+            }`}>
+            {pendingCoordinators.length}
           </span>
         </button>
 
@@ -236,7 +290,7 @@ export default function ApprovalsPage() {
                   key={app._id}
                   className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs hover:border-emerald-300 transition flex flex-col lg:flex-row lg:items-center justify-between gap-6"
                 >
-                  <div className="space-y-2 flex-1">
+                  <div className="space-y-2.5 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">
                         {app.planName}
@@ -245,9 +299,32 @@ export default function ApprovalsPage() {
                         ₹{Number(app.feeAmount || 0).toLocaleString('en-IN')}
                       </span>
                       <span className="text-[11px] text-gray-500">
-                        Applied: {new Date(app.appliedAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        Applied: {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}
                       </span>
                     </div>
+
+                    {/* Added by Coordinator Attribution Banner */}
+                    {(app.isAddedByCoordinator || app.addedByCoordinator || app.coordinatorName) && (
+                      <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 shadow-2xs">
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0"></span>
+                        <div className="flex-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                          <span>
+                            <strong className="text-amber-900 font-black">Added by Coordinator:</strong>{' '}
+                            <span className="font-black text-amber-950 underline underline-offset-2">
+                              {app.coordinatorName || 'Official Coordinator'}
+                            </span>
+                            {app.coordinatorId ? (
+                              <span className="ml-1 text-[11px] font-mono font-bold text-amber-800">
+                                ({app.coordinatorId})
+                              </span>
+                            ) : ''}
+                          </span>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded-md border border-amber-300">
+                            Awaiting Trustee Final Approval
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
                     <div>
                       <h4 className="text-base font-black text-black">{app.name}</h4>
@@ -359,6 +436,146 @@ export default function ApprovalsPage() {
         </div>
       )}
 
+      {/* ----------------- TAB: COORDINATOR APPLICATIONS ----------------- */}
+      {activeTab === 'coordinators' && (
+        <div className="mx-3 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
+              <FiShield className="w-4 h-4 text-amber-700" />
+              <span>Pending Coordinator Applications ({pendingCoordinators.length})</span>
+            </h3>
+            <span className="text-[11px] text-slate-500">
+              Approving automatically mints Coordinator ID, dual-sided ID card, appointment letter and emails credentials to the coordinator.
+            </span>
+          </div>
+
+          {pendingCoordinators.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center">
+              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-xs">
+                <FiCheckCircle className="w-7 h-7" />
+              </div>
+              <h4 className="font-bold text-slate-800 text-sm">All Coordinator Applications Cleared</h4>
+              <p className="text-xs text-slate-500 mt-1">There are no pending coordinator applications waiting for review.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {pendingCoordinators.map((app) => (
+                <div
+                  key={app._id}
+                  className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs hover:border-amber-400 transition flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                >
+                  <div className="space-y-2 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                        {app.qualification || 'Graduate'}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                        Area: {app.areaOfOperation || app.district || 'Regional Operations'}
+                      </span>
+                      <span className="text-[11px] text-gray-500">
+                        Applied: {app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-base font-black text-black">{app.name}</h4>
+                      <div className="text-xs text-gray-700 flex flex-wrap gap-x-4 gap-y-1 mt-1 font-medium">
+                        <span>📧 {app.email}</span>
+                        <span>📱 {app.phone}</span>
+                        <span>🩸 Blood: {app.bloodGroup || 'O+'}</span>
+                        <span>📍 {app.district || 'Aligarh'}, {app.state || 'UP'}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-amber-50/50 border border-amber-200 rounded-2xl p-3 space-y-2 text-xs">
+                      {app.experience && (
+                        <p className="text-stone-800">
+                          <strong>Experience:</strong> {app.experience}
+                        </p>
+                      )}
+                      {app.skills && (
+                        <p className="text-stone-800">
+                          <strong>Skills &amp; Outreach:</strong> {app.skills}
+                        </p>
+                      )}
+                      {app.motivation && (
+                        <p className="text-stone-700 italic">
+                          <strong>Motivation:</strong> &ldquo;{app.motivation}&rdquo;
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-amber-200">
+                        {app.photoUrl && (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage(getContentImageUrl(app.photoUrl))}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 font-bold text-xs transition border border-purple-200 cursor-pointer"
+                          >
+                            <FiEye className="w-3.5 h-3.5" />
+                            <span>Photo</span>
+                          </button>
+                        )}
+                        {(app.documentFront || app.idProofUrl) && (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage(getContentImageUrl(app.documentFront || app.idProofUrl))}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs transition border border-blue-200 cursor-pointer"
+                          >
+                            <FiEye className="w-3.5 h-3.5" />
+                            <span>KYC Front ({app.documentType || 'ID Proof'})</span>
+                          </button>
+                        )}
+                        {app.documentBack && (
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage(getContentImageUrl(app.documentBack))}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs transition border border-indigo-200 cursor-pointer"
+                          >
+                            <FiEye className="w-3.5 h-3.5" />
+                            <span>KYC Back</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Approve / Reject Actions */}
+                  <div className="flex lg:flex-col items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      disabled={!!processingId}
+                      onClick={() => handleApproveCoordinator(app._id)}
+                      className="w-full px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 disabled:cursor-not-allowed text-white font-bold text-xs shadow-md shadow-amber-600/20 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      {processingId === app._id ? (
+                        <>
+                          <FiRefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Issuing Credentials...</span>
+                        </>
+                      ) : (
+                        <>
+                          <FiCheckCircle className="w-4 h-4" />
+                          <span>Approve &amp; Email Credentials</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!!processingId}
+                      onClick={() => setRejectModal({ open: true, type: 'coordinator', id: app._id, reason: '' })}
+                      className="w-full px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed text-slate-700 hover:text-red-700 border border-slate-200 hover:border-red-200 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <FiXCircle className="w-4 h-4" />
+                      <span>Reject</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ----------------- TAB 2: VOLUNTEER APPLICATIONS ----------------- */}
       {activeTab === 'volunteers' && (
         <div className="mx-3 space-y-4">
@@ -392,7 +609,7 @@ export default function ApprovalsPage() {
                         Volunteer Wing
                       </span>
                       <span className="text-[11px] text-slate-400">
-                        Applied: {new Date(app.appliedAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        Applied: {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}
                       </span>
                     </div>
 
@@ -519,7 +736,7 @@ export default function ApprovalsPage() {
                         Verification Pending
                       </span>
                       <span className="text-[11px] text-slate-400">
-                        Date: {new Date(d.date || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        Date: {d.date ? new Date(d.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}
                       </span>
                     </div>
 

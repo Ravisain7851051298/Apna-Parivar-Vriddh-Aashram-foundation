@@ -449,20 +449,27 @@ class AuthService {
     try {
       const MembershipApplication = require('../models/MembershipApplication');
       const VolunteerApplication = require('../models/VolunteerApplication');
+      const CoordinatorApplication = require('../models/CoordinatorApplication');
       const Donation = require('../models/Donation');
 
-      const [membershipApp, volunteerApp, userDonations] = await Promise.all([
+      const [membershipApp, volunteerApp, coordinatorApp, userDonations] = await Promise.all([
         MembershipApplication.findOne({ $or: [{ user: userId }, { userId }, { email: user.email }] }).sort({ createdAt: -1 }).populate('plan'),
         VolunteerApplication.findOne({ $or: [{ user: userId }, { userId }, { email: user.email }] }).sort({ createdAt: -1 }),
+        CoordinatorApplication.findOne({ $or: [{ user: userId }, { userId }, { email: user.email }] }).sort({ createdAt: -1 }),
         Donation.find({ $or: [{ donor: userId }, { donorEmail: user.email }] }).sort({ createdAt: -1 })
       ]);
 
       userSafe.membershipApplication = membershipApp ? (membershipApp.toObject ? membershipApp.toObject() : membershipApp) : null;
       userSafe.volunteerApplication = volunteerApp ? (volunteerApp.toObject ? volunteerApp.toObject() : volunteerApp) : null;
+      userSafe.coordinatorApplication = coordinatorApp ? (coordinatorApp.toObject ? coordinatorApp.toObject() : coordinatorApp) : null;
       userSafe.donations = userDonations || [];
 
       userSafe.isMember = user.role === 'Member' || user.role === 'Admin' || (membershipApp && membershipApp.status === 'approved') || (user.memberId && (user.memberId.startsWith('APVAF-MEM-') || user.memberId.startsWith('MEM-')));
       userSafe.isVolunteer = user.role === 'Volunteer' || (volunteerApp && volunteerApp.status === 'approved') || (user.volunteerId && (user.volunteerId.startsWith('APVAF-VOL-') || user.volunteerId.startsWith('VOL-')));
+      userSafe.isCoordinator = user.role === 'Coordinator' || user.isCoordinator || (coordinatorApp && coordinatorApp.status === 'approved') || Boolean(user.coordinatorId && user.coordinatorId.startsWith('APVAF-CRD-'));
+      if (userSafe.isCoordinator && !userSafe.coordinatorId) {
+        userSafe.coordinatorId = coordinatorApp?.assignedCoordinatorId || user.coordinatorId || `APVAF-CRD-${user.phone ? user.phone.slice(-4) : '2026'}`;
+      }
 
       // Calculate and verify membership plan expiry status
       const appExpiry = membershipApp?.expiresAt || membershipApp?.membershipExpiresAt;

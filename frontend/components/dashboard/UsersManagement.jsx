@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   FiUsers,
@@ -204,28 +205,36 @@ export default function UsersManagement() {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-2xl border border-amber-200/90 shadow-xs mx-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="w-full bg-linear-to-r from-amber-100/90 via-[#fefce8] to-amber-50 p-4 rounded-bl-3xl border-b border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-200/80 text-amber-950 text-xs font-black mb-1 border border-amber-300">
-            <FiShield className="w-3.5 h-3.5 text-amber-800" />
-            <span>Identity &amp; Governance Center</span>
+          <div className="flex items-center gap-2.5">
+            <span className="p-2.5 rounded-xl bg-white text-amber-900 border border-amber-300 shadow-2xs shrink-0">
+              <FiShield className="w-5 h-5 text-amber-700" />
+            </span>
+            <div>
+              <h1 className="text-lg sm:text-xl font-black text-stone-950 tracking-tight">User Accounts &amp; Access Control</h1>
+              <p className="text-xs text-amber-950/80 font-medium">
+                Apna Parivar Vriddh Aashram Foundation • Identity &amp; Governance Center
+              </p>
+            </div>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-stone-950 tracking-tight">User Accounts &amp; Access Control</h1>
-          <p className="text-xs text-amber-950/80 font-medium mt-0.5">
-            Manage all registered public donors, verified members, field volunteers, and administrators.
-          </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={loadUsers}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-100/60 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
+            className="p-2 rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-stone-700 font-bold text-xs transition cursor-pointer shadow-2xs"
             title="Refresh Users"
           >
-            <FiRefreshCw className={`w-3.5 h-3.5 text-amber-800 ${loading ? "animate-spin" : ""}`} />
-            <span>Sync</span>
+            <FiRefreshCw className={`w-4 h-4 text-amber-800 ${loading ? "animate-spin" : ""}`} />
           </button>
+          <Link
+            href="/dashboard"
+            className="text-xs font-bold text-stone-600 hover:text-amber-900 bg-white/80 hover:bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 transition shadow-2xs"
+          >
+            ← Overview
+          </Link>
         </div>
       </div>
 
@@ -677,7 +686,7 @@ export default function UsersManagement() {
               </span>
               <h2 className="text-xl font-black text-black">Present Award to {awardModalUser.name}</h2>
               <p className="text-xs text-slate-600 mt-0.5">
-                The granted badge will be displayed on the recipient's personal portal (/profile/my-awards).
+                The granted badge will be displayed on the recipient&apos;s personal portal (/profile/my-awards).
               </p>
             </div>
 

@@ -37,6 +37,10 @@ class UserRepository {
     return User.findOne({ $or: [{ volunteerId }, { memberId: volunteerId }] });
   }
 
+  async findByCoordinatorId(coordinatorId) {
+    return User.findOne({ $or: [{ coordinatorId }, { memberId: coordinatorId }] });
+  }
+
   async find(query = {}, sort = { createdAt: -1 }) {
     return User.find(query).select('-password').sort(sort);
   }

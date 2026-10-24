@@ -6,6 +6,7 @@ const planRepository = require('../repositories/planRepository');
 const { 
   sendMembershipApprovalEmail, 
   sendVolunteerApprovalEmail,
+  sendCoordinatorApprovalEmail,
   sendGuestApplicationCredentialsEmail 
 } = require('./emailService');
 
@@ -143,6 +144,16 @@ class ApplicationService {
       }
     }
 
+    const addedByCoordinatorId = appData.addedByCoordinator || appData.coordinatorIdRef || null;
+    const coordinatorNameStr = appData.coordinatorName || '';
+    const coordinatorCodeStr = appData.coordinatorId || '';
+    const isAddedByCoord = Boolean(addedByCoordinatorId || appData.isAddedByCoordinator);
+
+    if (user && addedByCoordinatorId) {
+      user.addedByCoordinator = addedByCoordinatorId;
+      user.coordinatorName = coordinatorNameStr;
+    }
+
     const application = await applicationRepository.createMembershipApp({
       user: user?._id || null,
       userId: user?._id || null,
@@ -150,6 +161,10 @@ class ApplicationService {
       name: applicantName,
       email: applicantEmail,
       phone: applicantPhone,
+      addedByCoordinator: addedByCoordinatorId,
+      coordinatorName: coordinatorNameStr,
+      coordinatorId: coordinatorCodeStr,
+      isAddedByCoordinator: isAddedByCoord,
       plan: planId,
       planId: plan._id?.toString() || planId,
       planName: plan.title || plan.name || 'Membership Plan',
@@ -458,6 +473,10 @@ class ApplicationService {
       oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
       user.membershipExpiresAt = oneYearFromNow;
       user.membershipStatus = 'active';
+      if (app.addedByCoordinator && !user.addedByCoordinator) {
+        user.addedByCoordinator = app.addedByCoordinator;
+        user.coordinatorName = app.coordinatorName;
+      }
 
       // If user had no password, generate initial password
       if (!user.password) {
@@ -653,6 +672,308 @@ class ApplicationService {
     return app;
   }
 
+  async applyCoordinator(userId, appData) {
+    const { 
+      name,
+      email,
+      phone,
+      qualification,
+      experience,
+      areaOfOperation,
+      skills,
+      motivation,
+      bloodGroup, 
+      dob, 
+      address, 
+      district, 
+      state, 
+      photoUrl,
+      documentType,
+      documentFront,
+      documentBack,
+      idProofUrl
+    } = appData;
+
+    const finalPhoto = photoUrl || appData.userPhoto || appData.avatar || '';
+    const finalDocType = documentType || appData.documentType || 'Aadhaar Card';
+    const finalDocFront = documentFront || idProofUrl || appData.idProofDocument || appData.idProof || '';
+    const finalDocBack = documentBack || '';
+    const finalIdProof = finalDocFront || idProofUrl || appData.idProof;
+
+    if (!finalIdProof && !finalDocFront) throw new Error('Government ID proof upload is required for coordinator verification');
+
+    let user = userId ? await userRepository.findById(userId) : null;
+    const applicantEmail = (email || user?.email || '').toLowerCase().trim();
+    const applicantPhone = (phone || user?.phone || '').trim();
+    const applicantName = (name || user?.name || '').trim();
+
+    let generatedPassword = null;
+    let isUpdatedPassword = false;
+
+    if (!userId) {
+      if (!applicantName || (!applicantEmail && !applicantPhone)) {
+        throw new Error('Please provide your Name, Email, and Mobile Number for coordinator enrollment.');
+      }
+
+      if (applicantEmail) {
+        user = await userRepository.findByEmail(applicantEmail);
+      }
+
+      const tempPass = 'APVAF@' + Math.floor(100000 + Math.random() * 900000);
+      const hashedPassword = await bcrypt.hash(tempPass, 10);
+      generatedPassword = tempPass;
+
+      if (user) {
+        user.password = hashedPassword;
+        isUpdatedPassword = true;
+        if (applicantName) user.name = applicantName;
+        if (applicantPhone) user.phone = applicantPhone;
+        if (bloodGroup) user.bloodGroup = bloodGroup;
+        if (dob) user.dob = dob;
+        if (address) user.address = address;
+        user.district = district || user.district || 'Aligarh';
+        user.state = state || user.state || 'Uttar Pradesh';
+        if (finalPhoto) user.photoUrl = finalPhoto;
+        if (finalDocType) user.documentType = finalDocType;
+        if (finalDocFront) user.documentFront = finalDocFront;
+        if (finalDocBack) user.documentBack = finalDocBack;
+        user.coordinatorArea = areaOfOperation || user.coordinatorArea || 'Regional Operations';
+        user.status = user.status === 'active' ? 'active' : 'pending';
+        await user.save();
+      } else {
+        user = await userRepository.create({
+          name: applicantName,
+          email: applicantEmail,
+          phone: applicantPhone || '9999999999',
+          password: hashedPassword,
+          role: 'Coordinator',
+          status: 'pending',
+          isCoordinator: false,
+          coordinatorArea: areaOfOperation || 'Regional Operations',
+          designation: 'District / Field Coordinator',
+          bloodGroup: bloodGroup || 'O+',
+          dob: dob || '1995-01-01',
+          address: address || '',
+          district: district || 'Aligarh',
+          state: state || 'Uttar Pradesh',
+          photoUrl: finalPhoto || '',
+          documentType: finalDocType,
+          documentFront: finalDocFront,
+          documentBack: finalDocBack,
+          idCardGenerated: false,
+          appointmentLetterGenerated: false
+        });
+      }
+
+      if (applicantEmail) {
+        sendGuestApplicationCredentialsEmail({
+          to: applicantEmail,
+          name: user.name,
+          temporaryPassword: generatedPassword,
+          applicationType: 'Coordinator',
+          isUpdatedPassword
+        }).catch(err => console.warn('Guest coordinator credentials email dispatch notice:', err.message));
+      }
+    } else {
+      if (user) {
+        if (bloodGroup) user.bloodGroup = bloodGroup;
+        if (dob) user.dob = dob;
+        if (address) user.address = address;
+        if (district) user.district = district;
+        if (state) user.state = state;
+        if (finalPhoto) user.photoUrl = finalPhoto;
+        if (finalDocType) user.documentType = finalDocType;
+        if (finalDocFront) user.documentFront = finalDocFront;
+        if (finalDocBack) user.documentBack = finalDocBack;
+        if (areaOfOperation) user.coordinatorArea = areaOfOperation;
+        await user.save();
+      }
+    }
+
+    const application = await applicationRepository.createCoordinatorApp({
+      user: user?._id || null,
+      userId: user?._id || null,
+      isGuest: !userId,
+      name: applicantName,
+      email: applicantEmail,
+      phone: applicantPhone,
+      qualification: qualification || 'Graduate',
+      experience: experience || '',
+      areaOfOperation: areaOfOperation || district || 'Aligarh District',
+      skills: skills || 'Team Coordination & Social Outreach',
+      motivation: motivation || '',
+      bloodGroup: bloodGroup || user?.bloodGroup || 'O+',
+      dob: dob || user?.dob || '1995-01-01',
+      address: address || user?.address || '',
+      district: district || user?.district || 'Aligarh',
+      state: state || user?.state || 'Uttar Pradesh',
+      photoUrl: finalPhoto || user?.photoUrl || '',
+      documentType: finalDocType,
+      documentFront: finalDocFront,
+      documentBack: finalDocBack,
+      idProofUrl: finalIdProof,
+      status: 'pending'
+    });
+
+    return application;
+  }
+
+  async getCoordinatorApplications(filter = {}) {
+    return applicationRepository.findCoordinatorApps(filter);
+  }
+
+  async generateUniqueCoordinatorId() {
+    const currentYear = new Date().getFullYear();
+    const prefix = `APVAF-CRD-${currentYear}-`;
+    const users = await userRepository.find({ 
+      $or: [
+        { coordinatorId: new RegExp(`^${prefix}`) },
+        { memberId: new RegExp(`^${prefix}`) }
+      ]
+    });
+    let maxSeq = 100;
+    for (const u of users) {
+      const idToTest = u.coordinatorId || u.memberId;
+      if (idToTest) {
+        const match = idToTest.match(/(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (!isNaN(num) && num > maxSeq) maxSeq = num;
+        }
+      }
+    }
+    let nextSeq = maxSeq + 1;
+    let candidate = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+    while (await userRepository.findByCoordinatorId(candidate)) {
+      nextSeq++;
+      candidate = `${prefix}${String(nextSeq).padStart(4, '0')}`;
+    }
+    return candidate;
+  }
+
+  async approveCoordinatorApplication(appId, adminUser) {
+    const app = await applicationRepository.findCoordinatorAppById(appId);
+    if (!app) throw new Error('Coordinator application not found');
+
+    const userId = app.user?._id || app.user || app.userId;
+    let user = userId ? await userRepository.findById(userId) : null;
+    if (!user && app.email) {
+      user = await userRepository.findByEmail(app.email.toLowerCase().trim());
+    }
+
+    const verifiedCoordId = (user && user.coordinatorId && user.coordinatorId.startsWith('APVAF-CRD-')) 
+      ? user.coordinatorId 
+      : await this.generateUniqueCoordinatorId();
+    let generatedPassword = null;
+
+    if (!user) {
+      const tempPass = 'APVAF@' + Math.floor(100000 + Math.random() * 900000);
+      const hashedPassword = await bcrypt.hash(tempPass, 10);
+      generatedPassword = tempPass;
+
+      user = await userRepository.create({
+        name: app.name || 'Valued Coordinator',
+        email: app.email ? app.email.toLowerCase().trim() : `coordinator_${verifiedCoordId.toLowerCase()}@apnaparivarvriddhaashram.org`,
+        phone: app.phone ? app.phone.trim() : '9999999999',
+        password: hashedPassword,
+        role: 'Coordinator',
+        status: 'active',
+        isCoordinator: true,
+        coordinatorId: verifiedCoordId,
+        coordinatorStatus: 'active',
+        coordinatorArea: app.areaOfOperation || 'Regional Operations',
+        designation: 'District / Field Coordinator',
+        bloodGroup: app.bloodGroup || 'O+',
+        dob: app.dob || '1995-01-01',
+        address: app.address || '',
+        district: app.district || 'Aligarh',
+        state: app.state || 'Uttar Pradesh',
+        photoUrl: app.photoUrl || '',
+        documentType: app.documentType || '',
+        documentFront: app.documentFront || app.idProofUrl || '',
+        documentBack: app.documentBack || '',
+        idCardGenerated: true,
+        appointmentLetterGenerated: true,
+        verifiedAt: new Date(),
+        verifiedBy: adminUser?.name || 'Trustee Admin'
+      });
+
+      app.user = user._id;
+      app.userId = user._id;
+    } else {
+      user.status = 'active';
+      user.role = 'Coordinator';
+      user.isCoordinator = true;
+      user.coordinatorId = verifiedCoordId;
+      user.coordinatorStatus = 'active';
+      user.coordinatorArea = app.areaOfOperation || user.coordinatorArea || 'Regional Operations';
+      user.designation = 'District / Field Coordinator';
+      if (app.photoUrl && !user.photoUrl) user.photoUrl = app.photoUrl;
+      if (app.documentType) user.documentType = app.documentType;
+      if (app.documentFront) user.documentFront = app.documentFront;
+      if (app.documentBack) user.documentBack = app.documentBack;
+      user.idCardGenerated = true;
+      user.appointmentLetterGenerated = true;
+      user.verifiedAt = new Date();
+      user.verifiedBy = adminUser?.name || 'Trustee Admin';
+
+      if (!user.password) {
+        const tempPass = 'APVAF@' + Math.floor(100000 + Math.random() * 900000);
+        user.password = await bcrypt.hash(tempPass, 10);
+        generatedPassword = tempPass;
+      }
+    }
+
+    const qrData = `https://apnaparivarvriddhaashram.org/verify/coordinator/${verifiedCoordId}`;
+    try {
+      user.qrCodeUrl = await QRCode.toDataURL(qrData);
+    } catch (e) {
+      user.qrCodeUrl = '';
+    }
+    await user.save();
+
+    app.status = 'approved';
+    app.assignedCoordinatorId = verifiedCoordId;
+    app.reviewedBy = adminUser?.name || 'Trustee Admin';
+    app.reviewedAt = new Date();
+    await app.save();
+
+    try {
+      const emailPayload = user.toObject ? user.toObject() : { ...user };
+      if (generatedPassword) {
+        emailPayload.temporaryPassword = generatedPassword;
+      }
+      sendCoordinatorApprovalEmail(emailPayload).catch(e => {
+        console.warn('Coordinator approval email send warning:', e.message);
+      });
+    } catch (e) {
+      console.warn('Coordinator approval email dispatch prep warning:', e.message);
+    }
+
+    return { application: app, user, temporaryPassword: generatedPassword };
+  }
+
+  async rejectCoordinatorApplication(appId, reason, adminUser) {
+    const app = await applicationRepository.findCoordinatorAppById(appId);
+    if (!app) throw new Error('Coordinator application not found');
+
+    app.status = 'rejected';
+    app.rejectionReason = reason || 'Coordinator application verification criteria not met';
+    app.reviewedBy = adminUser?.name || 'Trustee Admin';
+    app.reviewedAt = new Date();
+    await app.save();
+
+    return app;
+  }
+
+  async deleteCoordinatorApplication(appId) {
+    const app = await applicationRepository.findCoordinatorAppById(appId);
+    if (!app) throw new Error('Coordinator application not found');
+    const { deleteDocumentFiles } = require('../utils/fileCleaner');
+    await deleteDocumentFiles(app);
+    return applicationRepository.deleteCoordinatorApp(appId);
+  }
+
   async deleteMembershipApplication(appId) {
     const app = await applicationRepository.findMembershipAppById(appId);
     if (!app) throw new Error('Membership application not found');
@@ -667,6 +988,106 @@ class ApplicationService {
     const { deleteDocumentFiles } = require('../utils/fileCleaner');
     await deleteDocumentFiles(app);
     return applicationRepository.deleteVolunteerApp(appId);
+  }
+
+  async updateMembershipImages(appId, userId, images, isAdmin = false) {
+    let app = await applicationRepository.findMembershipAppById(appId);
+    if (!app) {
+      const apps = await applicationRepository.findMembershipApps({ $or: [{ user: appId }, { userId: appId }] });
+      if (apps && apps.length > 0) app = apps[0];
+    }
+    if (!app) throw new Error('Membership application not found');
+
+    const isOwner = (
+      userId && (
+        (app.user && app.user.toString() === userId.toString()) ||
+        (app.userId && app.userId.toString() === userId.toString()) ||
+        (app.addedByCoordinator && app.addedByCoordinator.toString() === userId.toString())
+      )
+    );
+
+    if (!isAdmin && !isOwner) {
+      throw new Error('Unauthorized to update documents for this membership application');
+    }
+
+    if (app.status === 'approved') {
+      throw new Error('Membership application is already approved by Admin. Documents cannot be modified.');
+    }
+
+    if (images.photoUrl) app.photoUrl = images.photoUrl;
+    if (images.documentFront) {
+      app.documentFront = images.documentFront;
+      app.idProofUrl = images.documentFront;
+    }
+    if (images.idProofUrl && !images.documentFront) {
+      app.documentFront = images.idProofUrl;
+      app.idProofUrl = images.idProofUrl;
+    }
+    if (images.documentBack) app.documentBack = images.documentBack;
+    if (images.paymentScreenshot) app.paymentScreenshot = images.paymentScreenshot;
+
+    await app.save();
+
+    const linkedUserId = app.user?._id || app.user || app.userId;
+    if (linkedUserId) {
+      const user = await userRepository.findById(linkedUserId);
+      if (user) {
+        if (images.photoUrl) user.photoUrl = images.photoUrl;
+        if (images.documentFront) user.documentFront = images.documentFront;
+        if (images.documentBack) user.documentBack = images.documentBack;
+        await user.save();
+      }
+    }
+    return app;
+  }
+
+  async updateVolunteerImages(appId, userId, images, isAdmin = false) {
+    let app = await applicationRepository.findVolunteerAppById(appId);
+    if (!app) {
+      const apps = await applicationRepository.findVolunteerApps({ $or: [{ user: appId }, { userId: appId }] });
+      if (apps && apps.length > 0) app = apps[0];
+    }
+    if (!app) throw new Error('Volunteer application not found');
+
+    const isOwner = (
+      userId && (
+        (app.user && app.user.toString() === userId.toString()) ||
+        (app.userId && app.userId.toString() === userId.toString())
+      )
+    );
+
+    if (!isAdmin && !isOwner) {
+      throw new Error('Unauthorized to update documents for this volunteer application');
+    }
+
+    if (app.status === 'approved') {
+      throw new Error('Volunteer application is already approved by Admin. Documents cannot be modified.');
+    }
+
+    if (images.photoUrl) app.photoUrl = images.photoUrl;
+    if (images.documentFront) {
+      app.documentFront = images.documentFront;
+      app.idProofUrl = images.documentFront;
+    }
+    if (images.idProofUrl && !images.documentFront) {
+      app.documentFront = images.idProofUrl;
+      app.idProofUrl = images.idProofUrl;
+    }
+    if (images.documentBack) app.documentBack = images.documentBack;
+
+    await app.save();
+
+    const linkedUserId = app.user?._id || app.user || app.userId;
+    if (linkedUserId) {
+      const user = await userRepository.findById(linkedUserId);
+      if (user) {
+        if (images.photoUrl) user.photoUrl = images.photoUrl;
+        if (images.documentFront) user.documentFront = images.documentFront;
+        if (images.documentBack) user.documentBack = images.documentBack;
+        await user.save();
+      }
+    }
+    return app;
   }
 }
 
