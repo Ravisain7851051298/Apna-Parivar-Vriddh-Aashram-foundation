@@ -3,10 +3,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { 
-  FiPrinter, 
-  FiFileText, 
-  FiCheckCircle, 
+import {
+  FiPrinter,
+  FiFileText,
+  FiCheckCircle,
   FiLock,
   FiCreditCard,
   FiUserCheck,
@@ -31,34 +31,41 @@ export default function AppointmentLetterPage() {
 
   // Membership & Volunteer eligibility checks (strictly prevent donor ID APVAF-DON- / BYK-DON- from being treated as member)
   const isMemberVerified = Boolean(
-    effectiveUser?.role === 'Member' || 
-    effectiveUser?.role === 'Admin' || 
-    (effectiveUser?.isMember && !effectiveUser?.memberId?.startsWith('APVAF-DON-') && !effectiveUser?.memberId?.startsWith('BYK-DON-')) || 
+    effectiveUser?.role === 'Member' ||
+    effectiveUser?.role === 'Admin' ||
+    (effectiveUser?.isMember && !effectiveUser?.memberId?.startsWith('APVAF-DON-') && !effectiveUser?.memberId?.startsWith('BYK-DON-')) ||
     (effectiveUser?.membershipApplication?.status === 'approved') ||
     (effectiveUser?.memberId && (effectiveUser.memberId.startsWith('APVAF-MEM-') || effectiveUser.memberId.startsWith('BYK-MEM-') || effectiveUser.memberId.startsWith('MEM-')))
   );
 
   const isVolunteerVerified = Boolean(
-    effectiveUser?.role === 'Volunteer' || 
-    effectiveUser?.isVolunteer || 
+    effectiveUser?.role === 'Volunteer' ||
+    effectiveUser?.isVolunteer ||
     effectiveUser?.volunteerApplication?.status === 'approved' ||
     (effectiveUser?.volunteerId && !effectiveUser?.volunteerId?.startsWith('APVAF-DON-') && !effectiveUser?.volunteerId?.startsWith('BYK-DON-'))
   );
 
   const isCoordinatorVerified = Boolean(
-    effectiveUser?.role === 'Coordinator' || 
-    effectiveUser?.isCoordinator || 
+    effectiveUser?.role === 'Coordinator' ||
+    effectiveUser?.role?.toLowerCase?.() === 'coordinator' ||
+    effectiveUser?.isCoordinator ||
     effectiveUser?.coordinatorApplication?.status === 'approved' ||
     (effectiveUser?.coordinatorId && !effectiveUser?.coordinatorId?.startsWith('APVAF-DON-'))
   );
 
   const paramType = searchParams.get('type');
-  const defaultTab = paramType 
-    ? paramType 
+  const defaultTab = paramType
+    ? paramType.toLowerCase()
     : (isCoordinatorVerified ? 'coordinator' : (isVolunteerVerified && !isMemberVerified ? 'volunteer' : 'member'));
   const [selectedTab, setSelectedTab] = useState(null);
   const activeTab = selectedTab || defaultTab;
   const setActiveTab = setSelectedTab;
+
+  useEffect(() => {
+    if (paramType) {
+      setSelectedTab(paramType.toLowerCase());
+    }
+  }, [paramType]);
   const [origin] = useState(() => (typeof window !== 'undefined' ? window.location.origin : ''));
 
   const rawMemberId = effectiveUser?.memberId;
@@ -70,8 +77,8 @@ export default function AppointmentLetterPage() {
   const volunteerId = (rawVolId && !rawVolId.startsWith('APVAF-DON-') && !rawVolId.startsWith('BYK-DON-'))
     ? rawVolId
     : (effectiveUser?.role === 'Volunteer' && rawMemberId && !rawMemberId.startsWith('APVAF-DON-') && !rawMemberId.startsWith('BYK-DON-')
-        ? rawMemberId
-        : `APVAF-VOL-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`);
+      ? rawMemberId
+      : `APVAF-VOL-${effectiveUser?.phone ? effectiveUser.phone.slice(-4) : '2026'}`);
 
   const rawCoordId = effectiveUser?.coordinatorId || effectiveUser?.coordinatorApplication?.assignedCoordinatorId;
   const coordinatorId = (rawCoordId && !rawCoordId.startsWith('APVAF-DON-'))
@@ -122,11 +129,10 @@ export default function AppointmentLetterPage() {
           {/* Coordinator Appointment Tab */}
           <button
             onClick={() => setActiveTab('coordinator')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
-              activeTab === 'coordinator'
+            className={`flex-1 min-w-35 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${activeTab === 'coordinator'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
-            }`}
+              }`}
           >
             <FiShield className="w-4 h-4 text-amber-800" />
             <span>Coordinator Appointment</span>
@@ -138,11 +144,10 @@ export default function AppointmentLetterPage() {
           {/* Member Appointment Tab */}
           <button
             onClick={() => setActiveTab('member')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
-              activeTab === 'member'
+            className={`flex-1 min-w-35 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${activeTab === 'member'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
-            }`}
+              }`}
           >
             <FiCreditCard className="w-4 h-4" />
             <span>Member Appointment</span>
@@ -154,11 +159,10 @@ export default function AppointmentLetterPage() {
           {/* Volunteer Offer Tab */}
           <button
             onClick={() => setActiveTab('volunteer')}
-            className={`flex-1 min-w-[140px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
-              activeTab === 'volunteer'
+            className={`flex-1 min-w-35 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer ${activeTab === 'volunteer'
                 ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md ring-1 ring-amber-400/50'
                 : 'text-stone-700 hover:text-amber-950 hover:bg-white/80'
-            }`}
+              }`}
           >
             <FiUserCheck className="w-4 h-4" />
             <span>Volunteer Offer Letter</span>
@@ -192,7 +196,7 @@ export default function AppointmentLetterPage() {
 
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    href="/profile/apply-member"
+                    href="/apply-member"
                     className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Official Membership</span>
@@ -244,7 +248,7 @@ export default function AppointmentLetterPage() {
                   </div>
 
                   <div className="text-[11px] text-stone-700 font-semibold">
-                    Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br/>
+                    Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br />
                     Certified under Section <strong>12A &amp; 80G</strong> of Income Tax Act 1961 • PAN: <strong>{settings?.panNo || 'AAATB4321Q'}</strong>
                   </div>
 
@@ -372,7 +376,7 @@ export default function AppointmentLetterPage() {
 
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    href="/profile/apply-volunteer"
+                    href="/apply-volunteer"
                     className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Volunteer Enrolment</span>
@@ -424,7 +428,7 @@ export default function AppointmentLetterPage() {
                   </div>
 
                   <div className="text-[11px] text-stone-700 font-semibold">
-                    Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br/>
+                    Regd. Under Indian Trusts Act, 1882 • Reg. No: <strong>{settings?.registrationNo || '421/2019'}</strong> • NITI Aayog NGO Darpan ID: <strong>{settings?.nitiAayogDarpanId || 'RJ/2022/0319482'}</strong><br />
                     Certified under Section <strong>12A &amp; 80G</strong> of Income Tax Act 1961 • PAN: <strong>{settings?.panNo || 'AAATB4321Q'}</strong>
                   </div>
 
@@ -552,7 +556,7 @@ export default function AppointmentLetterPage() {
 
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    href="/profile/apply-coordinator"
+                    href="/apply-coordinator"
                     className="px-6 py-2.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                   >
                     <span>Apply for Official Coordinator</span>

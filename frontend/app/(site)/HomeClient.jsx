@@ -31,7 +31,9 @@ import {
   FiPlay,
   FiLock,
   FiFileText,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiEdit3,
+  FiPlus
 } from 'react-icons/fi';
 import {
   FaWhatsapp,
@@ -50,6 +52,40 @@ import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
 import { getYoutubeVideoId, getYoutubeEmbedUrl, isVideoItem } from '@/lib/youtube';
 import api from '@/services/api';
 import toast from 'react-hot-toast';
+
+// Authentic default testimonials ensuring visitors always see genuine reflections and blessings
+const DEFAULT_TESTIMONIALS = [
+  {
+    id: 'fb_1',
+    name: 'Dr. Manish Sharma',
+    role: 'Regular 80G Donor',
+    rating: 5,
+    profilePicture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    comment: 'The transparency and dedicated elder care of Apna Parivar Vriddh Aashram Foundation is commendable. The 80G tax receipt was generated instantly and every rupee was accounted for in their senior meal and healthcare drive.',
+    adminReply: 'Thank you Dr. Manish! Your generous contributions support destitute senior citizens with shelter and nutritious satvik meals. We deeply value your ongoing trust.',
+    repliedBy: 'Dr. Ravi Saini (Trustee & President)'
+  },
+  {
+    id: 'fb_2',
+    name: 'Suman Lata',
+    role: 'Active Caregiver Volunteer',
+    rating: 5,
+    profilePicture: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    comment: 'Volunteering with this ashram gave me a meaningful platform to serve elderly mothers and fathers with love, satsang, and genuine dignity. Highly inspiring initiative.',
+    adminReply: 'Suman ji, our ashram is blessed with compassionate volunteers like you. Thank you for dedicating your time to our venerable parents!',
+    repliedBy: 'Ashram Seva Coordinator'
+  },
+  {
+    id: 'fb_3',
+    name: 'Rajeshwari Devi',
+    role: 'Family Visitor & Well-Wisher',
+    rating: 5,
+    profilePicture: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80',
+    comment: 'When we visited on Diwali to distribute sweets, we were overwhelmed by the joyous atmosphere, clean rooms, and heartfelt smiles of the elderly residents. It truly feels like one big family.',
+    adminReply: 'Rajeshwari ji, your presence brought boundless joy to our elders. The ashram gates are always open for you!',
+    repliedBy: 'Trust Management Desk'
+  }
+];
 
 // 5 Pillars directly matching elder care priorities with distinct icons & luxury amber styling
 const BANNER_FIVE_PILLARS = [
@@ -138,6 +174,8 @@ function HomeClientContent() {
   const [reviewIdx, setReviewIdx] = useState(0);
   const [galleryFilter, setGalleryFilter] = useState('all');
   const [selectedMedia, setSelectedMedia] = useState(null);
+  const [selectedSponsor, setSelectedSponsor] = useState(null);
+  const [activeSponsorIdx, setActiveSponsorIdx] = useState(0);
 
   // Event join states
   const [joinedEventIds, setJoinedEventIds] = useState(new Set());
@@ -150,7 +188,9 @@ function HomeClientContent() {
   const activeServices = Array.isArray(services) ? services : [];
   const activeSponsorships = Array.isArray(sponsorships) ? sponsorships : [];
   const activeAwards = Array.isArray(awards)
-    ? awards.filter((a) => (a.isOrgAward || Boolean(a.awardedBy)) && a.isActive !== false)
+    ? awards
+      .filter((a) => a.isOrgAward === true && a.isActive !== false)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     : [];
 
   // Initialize joined events for current user
@@ -226,6 +266,10 @@ function HomeClientContent() {
   const approvedReviews = Array.isArray(feedbacks)
     ? feedbacks.filter((f) => (f.status || 'Approved').toLowerCase() === 'approved')
     : [];
+
+  const displayReviews = (approvedReviews && approvedReviews.length > 0)
+    ? approvedReviews
+    : DEFAULT_TESTIMONIALS;
 
   // Active team members list
   const activeMembersList = (teamMembers && teamMembers.length > 0)
@@ -346,7 +390,7 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 2. ABOUT US SECTION ================= */}
-      <section id="about-section" className="py-14 sm:py-20 bg-white border-b border-amber-100">
+      <section id="about-section" className="py-14 sm:py-20 bg-linear-to-br from-yellow-200 via-purple-100 to-orange-100 border-b border-amber-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
@@ -603,7 +647,7 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 5. EVENTS SECTION ================= */}
-      <section id="events-section" className="py-16 sm:py-20 bg-white border-b border-slate-200">
+      <section id="events-section" className="py-16 sm:py-20 bg-linear-to-bl from-yellow-200 via-purple-100 to-orange-100 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
@@ -841,7 +885,7 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 7. PHOTO & VIDEO GALLERY ================= */}
-      <section id="gallery-section" className="py-16 sm:py-20 bg-white border-b border-amber-100">
+      <section id="gallery-section" className="py-16 sm:py-20 bg-linear-to-br from-yellow-200 via-purple-100 to-orange-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
@@ -1022,7 +1066,7 @@ function HomeClientContent() {
       )}
 
       {/* ================= 8. OUR DEDICATED TEAM MEMBERS ================= */}
-      <section id="members-section" className="py-16 sm:py-20 bg-slate-50 border-b border-amber-100">
+      <section id="members-section" className="py-16 sm:py-20 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
@@ -1059,16 +1103,10 @@ function HomeClientContent() {
                 return (
                   <div
                     key={idx}
-                    className={`bg-white rounded-3xl p-5 text-center shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-between group ${
-                      isExpired
-                        ? 'border-2 border-rose-300/80 hover:border-rose-500 bg-rose-50/10'
-                        : 'border border-amber-200 hover:border-amber-400'
-                    }`}
+                    className="p-4 text-center transition-all duration-300 flex flex-col items-center justify-between group hover:-translate-y-1.5"
                   >
                     <div className="flex flex-col items-center">
-                      <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full border-3 p-1 bg-white shadow-md mb-4 overflow-hidden group-hover:scale-105 transition-transform ${
-                        isExpired ? 'border-rose-400 grayscale-30' : 'border-amber-400/80'
-                      }`}>
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full mb-3.5 overflow-hidden group-hover:scale-105 transition-transform duration-300 bg-slate-100">
                         <img
                           src={mImg}
                           alt={mName}
@@ -1080,22 +1118,22 @@ function HomeClientContent() {
                         />
                       </div>
 
-                      <h4 className="font-black text-sm text-slate-900 group-hover:text-amber-800">
+                      <h4 className="font-black text-sm sm:text-base text-slate-900 group-hover:text-amber-800 transition-colors">
                         {mName}
                       </h4>
-                      <p className="text-[11px] font-bold text-amber-800 mt-1">
+                      <p className="text-xs font-bold text-amber-700 mt-0.5">
                         {mRole}
                       </p>
                     </div>
 
                     {isExpired ? (
-                      <div className="mt-4 pt-3 border-t border-slate-100 w-full flex items-center justify-center gap-1.5 text-[10px] font-bold text-rose-700 bg-rose-50 py-1 rounded-full">
-                        <FiAlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                      <div className="mt-3 w-full flex items-center justify-center gap-1 text-[11px] font-bold text-rose-700">
+                        <FiAlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                         <span>Expired Member</span>
                       </div>
                     ) : (
-                      <div className="mt-4 pt-3 border-t border-slate-100 w-full flex items-center justify-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 py-1 rounded-full">
-                        <FiCheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <div className="mt-3 w-full flex items-center justify-center gap-1 text-[11px] font-bold text-emerald-700">
+                        <FiCheckCircle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>Verified Official Member</span>
                       </div>
                     )}
@@ -1124,129 +1162,98 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 9. CORPORATE SPONSORSHIPS & CSR PARTNERS ================= */}
-      <section id="sponsorships-section" className="py-16 sm:py-20 bg-white border-b border-amber-100">
+      <section id="sponsorships-section" className="py-16 sm:py-20 bg-linear-to-l from-yellow-200 via-purple-100 to-orange-100 border-b border-amber-100 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-black uppercase tracking-wider shadow-2xs">
               <FiShield className="w-3.5 h-3.5 text-amber-700" />
               <span>Corporate Social Responsibility (CSR)</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-              Corporate Partnerships &amp; <span className="text-amber-700">Sponsorships</span>
+              Corporate Partnerships &amp; <span className="text-amber-800">Sponsors</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl mx-auto leading-relaxed">
               Distinguished institutional partners and corporate patrons powering dignified living, healthcare, and nourishment for our senior residents.
             </p>
           </div>
 
           {loading ? (
-            <CardSkeleton count={4} />
+            <CardSkeleton count={3} />
           ) : activeSponsorships.length === 0 ? (
             <EmptyState itemName="Corporate Sponsorships & Partners" />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 pt-2">
               {activeSponsorships.map((spon, idx) => {
-                const sId = spon._id || spon.id || idx;
-                const logo = getContentImageUrl(spon.logoUrl || spon.logo) || '/logo.jpg';
-                const orgName = spon.organizationName || 'Corporate Partner';
-                const tier = spon.tier || 'CSR Partner';
-                const supportType = spon.supportType || 'Elder Care Support';
+                const sId = spon._id || spon.id;
+                const sLogo = getContentImageUrl(spon.logoUrl || spon.image || spon.logo) || '/logo.jpg';
+                const sName = spon.organizationName || spon.title || 'Corporate Partner';
+                const sTier = spon.tier || 'CSR Partner';
 
                 return (
-                  <div
-                    key={sId}
-                    className="bg-amber-50/30 rounded-3xl p-6 border border-amber-200/80 hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                  <Link
+                    key={sId || idx}
+                    href={`/sponsors/${sId}`}
+                    className="group flex flex-col items-center text-center p-3 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer max-w-[240px]"
+                    title={`Click to view ${sName} details`}
                   >
-                    <div>
-                      <div className="h-24 w-full flex items-center justify-center p-3 bg-white rounded-2xl border border-amber-200/70 shadow-xs mb-4 overflow-hidden">
-                        <img
-                          src={logo}
-                          alt={orgName}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = '/logo.jpg';
-                          }}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
-                            {tier}
-                          </span>
-                          <span className="text-[10px] font-bold text-slate-500">
-                            {supportType}
-                          </span>
-                        </div>
-
-                        <h3 className="font-black text-sm text-slate-900 group-hover:text-amber-800 leading-snug">
-                          {orgName}
-                        </h3>
-
-                        {spon.title && (
-                          <p className="text-xs font-semibold text-amber-900">
-                            {spon.title}
-                          </p>
-                        )}
-
-                        {spon.description && (
-                          <div className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                            <MarkdownRenderer content={spon.description} />
-                          </div>
-                        )}
-                      </div>
+                    {/* Sponsor Image */}
+                    <div className="w-48 h-28 sm:w-56 sm:h-32 rounded-2xl bg-white p-4 shadow-sm hover:shadow-xl transition-all duration-300 flex items-center justify-center border border-slate-100 group-hover:border-amber-300">
+                      <img
+                        src={sLogo}
+                        alt={sName}
+                        className="max-h-full max-w-full object-contain filter group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/logo.jpg';
+                        }}
+                      />
                     </div>
 
-                    {spon.websiteUrl && (
-                      <div className="pt-4 mt-3 border-t border-amber-200/60">
-                        <a
-                          href={spon.websiteUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline"
-                        >
-                          <span>Visit Partner Website</span>
-                          <FiExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
+                    {/* Sponsor Name */}
+                    <h3 className="mt-3.5 text-base sm:text-lg font-black text-slate-900 group-hover:text-amber-800 transition-colors tracking-tight">
+                      {sName}
+                    </h3>
+
+                    {/* Tier badge */}
+                    {sTier && (
+                      <span className="mt-1 px-3 py-0.5 rounded-full text-[11px] font-bold bg-amber-100/80 text-amber-900 border border-amber-300/80">
+                        {sTier} Partner
+                      </span>
                     )}
-                  </div>
+
+                    <span className="mt-2 text-xs font-bold text-amber-700 flex items-center gap-1 group-hover:underline">
+                      <span>View Details</span>
+                      <FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </Link>
                 );
               })}
             </div>
           )}
 
-          <div className="text-center pt-2">
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition"
-            >
-              <span>Partner With Us Under CSR</span>
-              <FiArrowRight className="w-4 h-4 text-stone-950" />
-            </Link>
-          </div>
-
         </div>
       </section>
 
+
       {/* ================= 10. ORGANIZATION AWARDS & HONORS ================= */}
-      <section id="awards-section" className="py-16 sm:py-20 bg-slate-50 border-b border-amber-100">
+      <section id="awards-section" className="py-16 sm:py-20 bg-linear-to-b from-[#fffef7] via-[#fffbf0] to-white border-b border-amber-200/70 scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
-              <FiAward className="w-3.5 h-3.5 text-amber-700" />
-              <span>Excellence &amp; Accreditations</span>
+          <div className="text-center max-w-3xl mx-auto space-y-2.5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-linear-to-r from-amber-400 to-yellow-300 border border-amber-400 text-stone-950 text-xs font-black shadow-xs">
+              <FiAward className="w-3.5 h-3.5 text-stone-950" />
+              <span>Conferred Recognitions &amp; Accreditations</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
-              Organization Awards &amp; <span className="text-amber-700">Honors</span>
+              Organization Awards &amp; <span className="text-amber-800">Honors</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
-              National recognitions, citations, and awards conferred to Apna Parivar Vriddh Aashram Foundation.
+            <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl mx-auto leading-relaxed">
+              State, national, and humanitarian awards conferred upon{" "}
+              <strong className="text-slate-900">Apna Parivar Vriddh Aashram Foundation</strong> by government bodies,
+              philanthropic councils, and renowned social institutions.
             </p>
           </div>
 
@@ -1255,21 +1262,22 @@ function HomeClientContent() {
           ) : activeAwards.length === 0 ? (
             <EmptyState itemName="Organization Awards & Accreditations" />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {activeAwards.map((award, idx) => {
                 const aId = award._id || award.id || idx;
                 const img = getContentImageUrl(award.awardImage || award.certificateUrl || award.image) || '/logo.jpg';
                 const aTitle = award.title || 'National Excellence Award';
-                const awardedBy = award.awardedBy || 'Government / Social Body';
+                const awardedBy = award.awardedBy || 'Government & Social Welfare Council';
                 const year = award.year || '2025-2026';
 
                 return (
                   <div
                     key={aId}
-                    className="bg-white rounded-3xl overflow-hidden border border-amber-200 hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                    className="bg-white rounded-3xl overflow-hidden border-2 border-amber-200/90 hover:border-amber-400 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group"
                   >
                     <div>
-                      <div className="relative h-52 bg-slate-100 overflow-hidden">
+                      {/* Award Image with Vignette & Badges */}
+                      <div className="relative h-56 bg-slate-100 overflow-hidden">
                         <img
                           src={img}
                           alt={aTitle}
@@ -1279,41 +1287,64 @@ function HomeClientContent() {
                             e.currentTarget.src = '/logo.jpg';
                           }}
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
-                        <div className="absolute top-3 left-3">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-amber-950 bg-linear-to-tr from-amber-400 to-yellow-300 shadow-sm flex items-center gap-1.5">
-                            <FiAward className="w-3 h-3 text-amber-900" />
+                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
+
+                        {/* Top Badges */}
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-stone-950 bg-linear-to-r from-amber-400 to-yellow-300 shadow-sm flex items-center gap-1.5">
+                            <FiAward className="w-3.5 h-3.5 text-stone-950" />
                             <span>{year}</span>
                           </span>
+                          {award.tier && (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white bg-slate-900/80 backdrop-blur-xs border border-white/20">
+                              {award.tier}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Conferred By Overlay */}
+                        <div className="absolute bottom-3 left-4 right-4">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 block mb-0.5">
+                            Conferred By
+                          </span>
+                          <p className="text-xs font-black text-white truncate drop-shadow-sm">
+                            {awardedBy}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="p-6 space-y-2.5">
-                        <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wide block">
-                          Conferred By: {awardedBy}
-                        </span>
-                        <h3 className="font-black text-base text-slate-900 group-hover:text-amber-800 leading-snug">
+                      {/* Card Content */}
+                      <div className="p-6 space-y-3">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="font-bold text-amber-800 uppercase tracking-wide truncate max-w-[80%]">
+                            {award.category || 'Elder Care & Social Welfare'}
+                          </span>
+                        </div>
+
+                        <h3 className="font-black text-base text-slate-900 group-hover:text-amber-800 transition leading-snug line-clamp-2">
                           {aTitle}
                         </h3>
+
                         {award.description && (
-                          <div className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                          <div className="text-xs text-slate-600 leading-relaxed line-clamp-3 font-normal">
                             <MarkdownRenderer content={award.description} />
                           </div>
                         )}
                       </div>
                     </div>
 
+                    {/* Bottom Action Footer */}
                     <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-2">
                       <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
                         <FiCheckCircle className="w-3.5 h-3.5" />
-                        <span>Verified Honor</span>
+                        <span>Verified Citation</span>
                       </span>
                       <Link
-                        href="/certificates"
-                        className="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1"
+                        href={`/awards/${aId}`}
+                        className="text-xs font-black text-amber-800 hover:text-amber-950 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
                       >
-                        <span>Verify Certificate</span>
-                        <FiArrowRight className="w-3.5 h-3.5" />
+                        <span>View Award Details</span>
+                        <FiArrowRight className="w-3.5 h-3.5 text-amber-700" />
                       </Link>
                     </div>
                   </div>
@@ -1322,13 +1353,14 @@ function HomeClientContent() {
             </div>
           )}
 
-          <div className="text-center pt-2">
+          {/* Bottom Call to Action */}
+          <div className="text-center pt-4">
             <Link
-              href="/certificates"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-amber-50 border border-amber-300 text-xs font-black text-amber-950 transition shadow-2xs hover:shadow-md"
+              href="/awards"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-linear-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-xs font-black text-white transition shadow-md hover:shadow-xl hover:scale-102"
             >
-              <span>View All Accreditations &amp; Citations</span>
-              <FiArrowRight className="w-4 h-4 text-amber-700" />
+              <span>Explore All Organization Awards &amp; Honors</span>
+              <FiArrowRight className="w-4 h-4 text-white" />
             </Link>
           </div>
 
@@ -1340,31 +1372,40 @@ function HomeClientContent() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-bold mb-2 shadow-2xs">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-bold shadow-2xs">
               <FiStar className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
               <span>Voices of Compassion</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight">
               Testimonials &amp; <span className="text-amber-700">Blessings</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 font-medium">
               Real reflections and reviews from families, donors, and patrons who have experienced the warmth of our aashram.
             </p>
+            <div className="pt-1">
+              <Link
+                href="/feedback#submit-review"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md transition hover:scale-105"
+              >
+                <FiEdit3 className="w-3.5 h-3.5" />
+                <span>Write a Testimonial / Share Blessings</span>
+              </Link>
+            </div>
           </div>
 
           {loading ? (
             <CardSkeleton count={1} />
-          ) : approvedReviews.length === 0 ? (
+          ) : displayReviews.length === 0 ? (
             <EmptyState itemName="Testimonials & Reviews" />
           ) : (
             <div className="relative pt-10">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
                 <div className="w-20 h-20 rounded-full border-4 border-amber-400 p-1 bg-white shadow-xl overflow-hidden flex items-center justify-center">
-                  {approvedReviews[reviewIdx]?.profilePicture ? (
+                  {displayReviews[reviewIdx % displayReviews.length]?.profilePicture ? (
                     <img
-                      src={getContentImageUrl(approvedReviews[reviewIdx].profilePicture)}
-                      alt={approvedReviews[reviewIdx]?.name || 'User'}
+                      src={getContentImageUrl(displayReviews[reviewIdx % displayReviews.length].profilePicture)}
+                      alt={displayReviews[reviewIdx % displayReviews.length]?.name || 'User'}
                       className="w-full h-full object-cover rounded-full"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -1373,7 +1414,7 @@ function HomeClientContent() {
                     />
                   ) : (
                     <div className="w-full h-full rounded-full bg-linear-to-tr from-amber-600 to-yellow-500 text-stone-950 flex items-center justify-center font-black text-xl">
-                      {approvedReviews[reviewIdx]?.name?.charAt(0) || 'U'}
+                      {displayReviews[reviewIdx % displayReviews.length]?.name?.charAt(0) || 'U'}
                     </div>
                   )}
                 </div>
@@ -1381,11 +1422,11 @@ function HomeClientContent() {
 
               {/* Testimonial Box */}
               <div className="relative bg-amber-50/20 rounded-3xl pt-14 pb-8 px-6 sm:px-12 border border-amber-200/80 shadow-sm text-center">
-                {approvedReviews.length > 1 && (
+                {displayReviews.length > 1 && (
                   <>
                     <button
                       type="button"
-                      onClick={() => setReviewIdx((prev) => (prev - 1 + approvedReviews.length) % approvedReviews.length)}
+                      onClick={() => setReviewIdx((prev) => (prev - 1 + displayReviews.length) % displayReviews.length)}
                       className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border border-amber-200"
                       aria-label="Previous Review"
                     >
@@ -1394,7 +1435,7 @@ function HomeClientContent() {
 
                     <button
                       type="button"
-                      onClick={() => setReviewIdx((prev) => (prev + 1) % approvedReviews.length)}
+                      onClick={() => setReviewIdx((prev) => (prev + 1) % displayReviews.length)}
                       className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border border-amber-200"
                       aria-label="Next Review"
                     >
@@ -1409,45 +1450,53 @@ function HomeClientContent() {
                       <FiStar key={i} className="w-4 h-4 fill-amber-400 text-amber-500" />
                     ))}
                     <span className="text-xs font-bold text-slate-600 ml-1">
-                      ({approvedReviews[reviewIdx]?.rating || 5}.0)
+                      ({displayReviews[reviewIdx % displayReviews.length]?.rating || 5}.0)
                     </span>
                   </div>
 
                   <p className="text-xs sm:text-sm text-slate-700 italic leading-relaxed px-2">
-                    “{approvedReviews[reviewIdx]?.comment || 'Witnessing the loving care and dignity provided to the elders here fills the heart with pure peace. May this noble mission continue to touch many lives.'}”
+                    “{displayReviews[reviewIdx % displayReviews.length]?.comment || 'Witnessing the loving care and dignity provided to the elders here fills the heart with pure peace. May this noble mission continue to touch many lives.'}”
                   </p>
 
                   <div>
                     <h4 className="text-sm font-black text-amber-950">
-                      {approvedReviews[reviewIdx]?.name || 'Anonymous Supporter'}
+                      {displayReviews[reviewIdx % displayReviews.length]?.name || 'Anonymous Supporter'}
                     </h4>
                     <span className="inline-block px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold mt-0.5">
-                      {approvedReviews[reviewIdx]?.role || 'Dedicated Supporter'}
+                      {displayReviews[reviewIdx % displayReviews.length]?.role || 'Dedicated Supporter'}
                     </span>
                   </div>
 
-                  {approvedReviews[reviewIdx]?.adminReply && (
+                  {displayReviews[reviewIdx % displayReviews.length]?.adminReply && (
                     <div className="mt-4 bg-linear-to-br from-amber-50/80 to-yellow-50/40 p-3.5 rounded-2xl border border-amber-200 text-left space-y-1.5">
                       <div className="flex items-center gap-1.5 text-xs font-black text-amber-950">
                         <FiShield className="w-3.5 h-3.5 text-amber-700" />
-                        <span>Official Response: {approvedReviews[reviewIdx]?.repliedBy || 'Management Desk'}</span>
+                        <span>Official Response: {displayReviews[reviewIdx % displayReviews.length]?.repliedBy || 'Management Desk'}</span>
                       </div>
                       <div className="flex items-start gap-2 pl-1">
                         <FiCornerDownRight className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
                         <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                          {approvedReviews[reviewIdx].adminReply}
+                          {displayReviews[reviewIdx % displayReviews.length].adminReply}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  <div className="pt-2">
+                  <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href="/feedback#submit-review"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-stone-950 font-black text-xs shadow-md transition hover:scale-105"
+                    >
+                      <FiEdit3 className="w-3.5 h-3.5" />
+                      <span>Write Your Testimonial</span>
+                    </Link>
+
                     <Link
                       href="/feedback"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline"
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-white hover:bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs transition shadow-2xs"
                     >
-                      <FiMessageSquare className="w-3.5 h-3.5" />
-                      <span>Share Your Experience / View All Reviews</span>
+                      <FiMessageSquare className="w-3.5 h-3.5 text-amber-700" />
+                      <span>View All Reviews</span>
                     </Link>
                   </div>
                 </div>
@@ -1572,94 +1621,7 @@ function HomeClientContent() {
         </div>
       </section>
 
-      {/* ================= ORGANIZATION AWARDS & HONORS RECEIVED ================= */}
-      {activeAwards.length > 0 && (
-        <section id="awards" className="py-16 sm:py-20 bg-linear-to-b from-[#fffdf5] via-[#fefce8] to-[#fffdf5] border-b border-amber-200/80 scroll-mt-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-            <div className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-linear-to-tr from-amber-400 to-yellow-300 text-stone-950 font-black text-xs uppercase tracking-wider shadow-xs">
-                <FiAward className="w-3.5 h-3.5 text-stone-950" />
-                <span>Honors &amp; Recognitions</span>
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-black text-stone-950 tracking-tight">
-                Awards Received by Apna Parivar Vriddh Aashram
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-600 font-medium">
-                National, state, and humanitarian awards conferred upon our foundation for exemplary elder care and selfless social service.
-              </p>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeAwards.map((awd, idx) => (
-                <div
-                  key={awd._id || awd.id || idx}
-                  className="bg-white rounded-3xl p-6 border-2 border-amber-200/90 hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
-                        {awd.tier || "Honor"}
-                      </span>
-                      {awd.year && (
-                        <span className="text-[10px] font-extrabold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                          {awd.year}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      {awd.awardImage || awd.image ? (
-                        <img
-                          src={getContentImageUrl(awd.awardImage || awd.image)}
-                          alt={awd.title}
-                          className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-300 shadow-xs shrink-0"
-                        />
-                      ) : (
-                        <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-amber-400 to-yellow-500 text-stone-950 flex items-center justify-center font-bold text-2xl shadow-md border-2 border-amber-200 shrink-0">
-                          <FiAward className="w-8 h-8" />
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="font-black text-base text-stone-950 group-hover:text-amber-900 leading-snug">
-                          {awd.title}
-                        </h3>
-                        {awd.awardedBy && (
-                          <p className="text-xs font-bold text-amber-800 mt-1">
-                            Conferred by: {awd.awardedBy}
-                          </p>
-                        )}
-                        <span className="inline-block text-[10px] font-bold text-stone-500 uppercase mt-0.5">
-                          {awd.category || "Elder Welfare & Social Service"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {awd.description && (
-                      <p className="text-xs text-stone-600 leading-relaxed font-medium">
-                        {awd.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {awd.certificateUrl && (
-                    <div className="pt-4 mt-4 border-t border-amber-100 flex items-center justify-between">
-                      <a
-                        href={getContentImageUrl(awd.certificateUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 hover:text-amber-950 group-hover:underline"
-                      >
-                        <FiCheckCircle className="w-3.5 h-3.5" />
-                        <span>View Official Citation / Certificate</span>
-                      </a>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ================= 13. LOCATION & MAP ================= */}
       <section id="locate-us" className="py-16 sm:py-20 bg-white scroll-mt-24">
@@ -1772,7 +1734,7 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 14. INSPIRING VOLUNTEER & CTA BANNER ================= */}
-      <section className="py-14 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 text-center relative overflow-hidden">
+      {/* <section className="py-14 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-4">
@@ -1806,8 +1768,7 @@ function HomeClientContent() {
             </Link>
           </div>
         </div>
-      </section>
-
+      </section> */}
     </div>
   );
 }

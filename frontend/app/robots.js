@@ -1,5 +1,5 @@
 export default function robots() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://indianyouthfoundation.org';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://apnaparivarvriddhaashram.org';
 
   return {
     rules: [

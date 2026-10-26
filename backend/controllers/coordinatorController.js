@@ -519,6 +519,47 @@ const updateMemberImages = async (req, res) => {
   }
 };
 
+/**
+ * 12. Coordinator: Delete enrolled member application (only allowed until admin has approved)
+ */
+const deleteMemberByCoordinator = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+    const member = await MembershipApplication.findById(memberId);
+    if (!member) {
+      return res.status(404).json({ success: false, message: 'Enrolled member application not found' });
+    }
+
+    // Check authorization: Admin or the Coordinator who enrolled the member
+    const isAdmin = req.user?.role?.toLowerCase() === 'admin';
+    const isEnroller = (
+      req.user && member.addedByCoordinator &&
+      member.addedByCoordinator.toString() === req.user.id.toString()
+    );
+
+    if (!isAdmin && !isEnroller) {
+      return res.status(403).json({ success: false, message: 'Unauthorized to delete this member application.' });
+    }
+
+    // STRICT RULE: Cannot delete once member application is approved by Admin!
+    if (member.status === 'approved') {
+      return res.status(400).json({
+        success: false,
+        message: 'Member application is already APPROVED by Admin. Deletion is locked and cannot be removed.'
+      });
+    }
+
+    await applicationService.deleteMembershipApplication(memberId);
+
+    return res.json({
+      success: true,
+      message: `Member application for ${member.name} has been deleted successfully.`
+    });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getCoordinators,
   getCoordinatorMembers,
@@ -530,5 +571,7 @@ module.exports = {
   toggleCoordinatorStatus,
   resendCoordinatorCredentials,
   deleteCoordinator,
-  updateMemberImages
+  updateMemberImages,
+  deleteMemberByCoordinator
 };
+

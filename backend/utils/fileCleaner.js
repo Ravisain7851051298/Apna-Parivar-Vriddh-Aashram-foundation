@@ -19,11 +19,14 @@ const VALID_CATEGORIES = new Set([
   'gallery',
   'news',
   'settings',
+  'awards',
   'general'
 ]);
 
 // Map common aliases to canonical folder names
 const CATEGORY_ALIASES = {
+  award: 'awards',
+  awards: 'awards',
   profile: 'avatars',
   avatar: 'avatars',
   user: 'avatars',

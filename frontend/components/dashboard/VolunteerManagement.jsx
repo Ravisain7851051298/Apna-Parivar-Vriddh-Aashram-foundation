@@ -8,8 +8,6 @@ import {
   FiCheckCircle,
   FiClock,
   FiEye,
-  FiMail,
-  FiPhone,
   FiRefreshCw,
   FiSearch,
   FiShield,
@@ -360,15 +358,15 @@ export default function VolunteerManagement() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white mx-3 p-1 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white mx-3 p-1 rounded-2xl border border-yellow-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative flex-1 w-full max-w-md">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-yellow-400 w-4 h-4" />
           <input
             type="text"
             placeholder="Search by volunteer name, email, phone, or skill..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-red-500 text-black placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-yellow-200 focus:outline-yellow-500 text-black placeholder:text-slate-400"
           />
         </div>
 
@@ -383,8 +381,8 @@ export default function VolunteerManagement() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${activeTab === tab.key
-                ? "bg-red-600 text-white shadow-md shadow-red-600/20"
-                : "bg-slate-100 text-black hover:bg-red-50 hover:text-red-600"
+                ? "bg-yellow-500 text-black shadow-md shadow-yellow-500/20"
+                : "bg-slate-100 text-black hover:bg-yellow-100 hover:text-yellow-600"
                 }`}
             >
               <span>{tab.label}</span>
@@ -405,7 +403,7 @@ export default function VolunteerManagement() {
       <div className="bg-white mx-3 rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-slate-700 text-xs space-y-2">
-            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-red-600" />
+            <FiRefreshCw className="w-6 h-6 animate-spin mx-auto text-yellow-500" />
             <p>Loading volunteer applications...</p>
           </div>
         ) : filtered.length === 0 ? (
@@ -453,7 +451,7 @@ export default function VolunteerManagement() {
                     <tr key={id} className="group hover:bg-slate-50/80 transition">
                       <td className="py-3 px-3.5">
                         <div className="flex items-center gap-2.5">
-                          <div 
+                          <div
                             onClick={() => photo && setSelectedProof(getContentImageUrl(photo))}
                             className={`w-9 h-9 rounded-full bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center ${photo ? 'cursor-pointer hover:ring-2 hover:ring-[#0b8026]' : ''}`}
                             title={photo ? "Click to view photo" : "No photo"}
@@ -646,13 +644,12 @@ export default function VolunteerManagement() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${
-                  (viewModalItem.status || "pending").toLowerCase() === "approved" || (viewModalItem.status || "pending").toLowerCase() === "active"
-                    ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                    : (viewModalItem.status || "pending").toLowerCase() === "rejected"
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${(viewModalItem.status || "pending").toLowerCase() === "approved" || (viewModalItem.status || "pending").toLowerCase() === "active"
+                  ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                  : (viewModalItem.status || "pending").toLowerCase() === "rejected"
                     ? "bg-rose-100 text-rose-800 border border-rose-200"
                     : "bg-amber-100 text-amber-800 border border-amber-200"
-                }`}>
+                  }`}>
                   {viewModalItem.status || "pending"}
                 </span>
                 <button
@@ -666,10 +663,10 @@ export default function VolunteerManagement() {
 
             {/* Modal Body */}
             <div className="p-5 sm:p-6 space-y-6 overflow-y-auto">
-              
+
               {/* Volunteer Overview Card */}
               <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-200 flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                <div 
+                <div
                   onClick={() => (viewModalItem.photoUrl || viewModalItem.user?.photoUrl) && setSelectedProof(getContentImageUrl(viewModalItem.photoUrl || viewModalItem.user?.photoUrl))}
                   className="w-20 h-20 rounded-2xl border-2 border-[#0b8026] bg-white overflow-hidden shrink-0 flex items-center justify-center shadow-xs cursor-pointer hover:ring-2 hover:ring-[#0b8026] transition"
                   title="Click to zoom photo"

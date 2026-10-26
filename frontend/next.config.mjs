@@ -31,6 +31,21 @@ const nextConfig = {
         destination: '/event/:id',
         permanent: true,
       },
+      {
+        source: '/profile/apply-member',
+        destination: '/apply-member',
+        permanent: true,
+      },
+      {
+        source: '/profile/apply-volunteer',
+        destination: '/apply-volunteer',
+        permanent: true,
+      },
+      {
+        source: '/profile/apply-coordinator',
+        destination: '/apply-coordinator',
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

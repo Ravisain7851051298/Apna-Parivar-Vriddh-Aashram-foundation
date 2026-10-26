@@ -121,6 +121,7 @@ export default function AdminLayout({ children }) {
       items: [
         { label: '80G Tax Donations', href: '/dashboard/donations', icon: FiHeart, badge: pendingDonations },
         { label: 'Org Certificates', href: '/dashboard/certificates', icon: FiShield },
+        { label: 'Org Awards', href: '/dashboard/org-awards', icon: FiAward },
       ]
     },
     {
@@ -619,10 +620,7 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* ----------------- MAIN ADMIN WORKSPACE WITH HEADER ----------------- */}
-      <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${collapsed ? 'md:pl-20' : 'md:pl-64'
-          }`}
-      >
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out`}>
         {/* TOP HEADER FOR ADMIN DASHBOARD */}
         <header className="sticky top-0 z-20 bg-[#fefce8]/95 backdrop-blur-md border-b border-amber-200/90 px-4 py-3 flex items-center justify-between gap-4 shadow-2xs">
           {/* Left section: Collapse/Expand toggles & Page Breadcrumb */}

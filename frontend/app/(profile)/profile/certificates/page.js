@@ -352,14 +352,14 @@ export default function ProfileCertificatesPage() {
                   <span>View 80G Receipts &amp; Donations</span>
                 </Link>
                 <Link
-                  href="/profile/apply-volunteer"
+                  href="/apply-volunteer"
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-amber-300 text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition flex items-center justify-center gap-2"
                 >
                   <FiUserPlus className="w-4 h-4 text-amber-700" />
                   <span>Join as Volunteer</span>
                 </Link>
                 <Link
-                  href="/profile/apply-member"
+                  href="/apply-member"
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white border border-amber-300 text-stone-900 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition flex items-center justify-center gap-2"
                 >
                   <FiCreditCard className="w-4 h-4 text-amber-700" />
@@ -378,13 +378,13 @@ export default function ProfileCertificatesPage() {
               </p>
               <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
                 <Link
-                  href="/profile/apply-volunteer"
+                  href="/apply-volunteer"
                   className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs transition shadow-md"
                 >
                   Apply as Field Volunteer
                 </Link>
                 <Link
-                  href="/profile/apply-member"
+                  href="/apply-member"
                   className="px-5 py-2.5 rounded-xl bg-white text-stone-900 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition shadow-sm"
                 >
                   Apply for Membership

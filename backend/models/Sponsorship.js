@@ -10,16 +10,14 @@ const sponsorshipSchema = new mongoose.Schema({
   tier: {
     type: String,
     enum: [
-      'Title Sponsor',
-      'Platinum Sponsor',
-      'Gold Sponsor',
-      'Silver Sponsor',
-      'Corporate Partner',
-      'Community Partner',
-      'Healthcare Partner',
-      'Nutrition Partner'
+      'Platinum',
+      'Gold',
+      'Silver',
+      'Bronze',
+      'Associate',
+      'CSR Partner'
     ],
-    default: 'Corporate Partner'
+    default: 'CSR Partner'
   },
   websiteUrl: { type: String, default: '', trim: true },
   link: { type: String, default: '', trim: true },

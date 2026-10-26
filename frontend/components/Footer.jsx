@@ -230,6 +230,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/awards" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
+                  <span>Organization Awards &amp; Honors</span>
+                </Link>
+              </li>
+              <li>
                 <Link href="/certificates" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
                   <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
                   <span>12A &amp; 80G Tax Certificates</span>

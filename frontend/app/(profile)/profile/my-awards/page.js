@@ -288,12 +288,12 @@ export default function MyAwardsPage() {
           </div>
 
           <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-[100px]">
+            <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-25">
               <span className="text-[10px] text-amber-200 uppercase tracking-wider font-bold block">Earned Badges</span>
               <span className="text-2xl font-black text-amber-400">{awards.length}</span>
             </div>
             {totalPoints > 0 && (
-              <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-[100px]">
+              <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/10 text-center min-w-25">
                 <span className="text-[10px] text-emerald-200 uppercase tracking-wider font-bold block">Honor Points</span>
                 <span className="text-2xl font-black text-emerald-400">{totalPoints}</span>
               </div>
@@ -354,14 +354,14 @@ export default function MyAwardsPage() {
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/profile/apply-volunteer"
+              href="/apply-volunteer"
               className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs transition shadow-md shadow-amber-500/20 flex items-center gap-2"
             >
               <FiUserPlus className="w-4 h-4" />
               <span>Apply for Field Volunteering</span>
             </Link>
             <Link
-              href="/profile/apply-member"
+              href="/apply-member"
               className="px-5 py-2.5 rounded-xl bg-white text-stone-900 border border-amber-300 font-bold text-xs hover:bg-amber-50 hover:border-amber-400 transition shadow-xs flex items-center gap-2"
             >
               <FiCreditCard className="w-4 h-4 text-amber-700" />

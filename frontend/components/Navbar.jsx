@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react';
 
-const emptySubscribe = () => () => {};
+const emptySubscribe = () => () => { };
 function useIsMounted() {
   return useSyncExternalStore(
     emptySubscribe,
@@ -66,8 +66,8 @@ export default function Navbar() {
         setActiveDropdown(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   // Close drawer and dropdowns on route changes without cascading render
@@ -80,6 +80,12 @@ export default function Navbar() {
 
   const toggleDropdown = (id) => {
     setActiveDropdown((prev) => (prev === id ? null : id));
+  };
+
+  const handleDropdownLinkClick = () => {
+    setTimeout(() => {
+      setActiveDropdown(null);
+    }, 120);
   };
 
   const toggleMobileSubmenu = (id) => {
@@ -128,6 +134,7 @@ export default function Navbar() {
       links: [
         { label: 'About Foundation', href: '/about', icon: FiBookOpen, desc: 'Our journey, ethos & elder care dedication' },
         { label: 'Who We Are', href: '/who-we-are', icon: FiUsers, desc: 'Grassroots shelter for homeless senior citizens' },
+        { label: 'Awards & Honors', href: '/awards', icon: FiAward, desc: 'State & national recognitions conferred to Aashram' },
         { label: 'Mission & Vision', href: '/mission-vision', icon: FiActivity, desc: 'Dignity, satvik living & selfless seva' },
         { label: 'Inspiring Stories', href: '/story', icon: FiFileText, desc: 'Lives transformed at our Aashram' },
       ],
@@ -188,7 +195,7 @@ export default function Navbar() {
   const whatsappNumber = (settings?.whatsapp || '918959055269').replace(/[^0-9]/g, '');
 
   return (
-    <header className="sticky top-0 z-50 transition-all duration-300">
+    <header ref={dropdownRef} className="sticky top-0 z-50 transition-all duration-300">
 
       {/* ================= 1. TOP UTILITY & ANNOUNCEMENT BAR ================= */}
       <div className="relative z-50 bg-linear-to-r from-amber-600 via-amber-500 to-yellow-500 text-stone-950 border-b border-amber-600/30 text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:px-6 shadow-xs">
@@ -284,7 +291,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links with Modern Dropdowns */}
-            <nav className="hidden lg:flex items-center gap-0.5 2xl:gap-1.5" ref={dropdownRef}>
+            <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1.5">
               {/* Home link */}
               {/* <Link
                 href="/"
@@ -305,7 +312,11 @@ export default function Navbar() {
                 });
 
                 return (
-                  <div key={group.id} className="relative">
+                  <div
+                    key={group.id}
+                    className="relative"
+                    onMouseLeave={() => setActiveDropdown((prev) => (prev === group.id ? null : prev))}
+                  >
                     <button
                       type="button"
                       onClick={() => toggleDropdown(group.id)}
@@ -325,10 +336,9 @@ export default function Navbar() {
                     {/* Dropdown Box */}
                     {isOpen && (
                       <div
-                        onMouseLeave={() => setActiveDropdown(null)}
-                        className="absolute left-0 top-full mt-1.5 w-72 bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-amber-200 p-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150 ring-1 ring-amber-500/10"
+                        className="absolute left-0 top-full pt-1.5 w-72 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
                       >
-                        <div className="space-y-0.5">
+                        <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-amber-200 p-2 ring-1 ring-amber-500/10 space-y-0.5">
                           {group.links.map((link) => {
                             const IconComp = link.icon;
                             const clean = link.href.split('#')[0];
@@ -338,7 +348,7 @@ export default function Navbar() {
                               <Link
                                 key={link.href + link.label}
                                 href={link.href}
-                                onClick={() => setActiveDropdown(null)}
+                                onClick={handleDropdownLinkClick}
                                 className={`flex items-start gap-3 p-2.5 rounded-xl transition group ${isSubActive
                                   ? 'bg-amber-100/80 text-amber-950 font-bold'
                                   : 'hover:bg-amber-50/70 text-stone-700 hover:text-amber-900'
@@ -380,7 +390,7 @@ export default function Navbar() {
               {isAdmin && (
                 <Link
                   href="/dashboard"
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900 hover:bg-amber-900 text-white text-xs font-bold transition shadow-xs whitespace-nowrap"
+                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-stone-900 hover:bg-amber-900 text-white text-xs font-bold transition shadow-xs whitespace-nowrap"
                   title="Admin Control Center"
                 >
                   <FiLayers className="w-4 h-4 text-amber-400 my-0.5" />
@@ -476,7 +486,7 @@ export default function Navbar() {
                         <div className="py-1 space-y-0.5 text-xs font-medium text-stone-700">
                           <Link
                             href="/profile"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiUser className="w-4 h-4 text-amber-700" />
@@ -484,7 +494,7 @@ export default function Navbar() {
                           </Link>
                           <Link
                             href={isMember ? '/profile/member' : '/apply-member'}
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiCreditCard className="w-4 h-4 text-amber-700" />
@@ -492,7 +502,7 @@ export default function Navbar() {
                           </Link>
                           <Link
                             href={isVolunteer ? '/profile/volunteer' : '/apply-volunteer'}
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiUsers className="w-4 h-4 text-amber-700" />
@@ -501,7 +511,7 @@ export default function Navbar() {
                           {isCoordinator ? (
                             <Link
                               href="/profile/coordinator/members"
-                              onClick={() => setActiveDropdown(null)}
+                              onClick={handleDropdownLinkClick}
                               className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-amber-500/10 text-amber-950 font-bold hover:bg-amber-100 transition"
                             >
                               <FiShield className="w-4 h-4 text-amber-700" />
@@ -510,7 +520,7 @@ export default function Navbar() {
                           ) : (
                             <Link
                               href="/apply-coordinator"
-                              onClick={() => setActiveDropdown(null)}
+                              onClick={handleDropdownLinkClick}
                               className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                             >
                               <FiShield className="w-4 h-4 text-amber-700" />
@@ -519,7 +529,7 @@ export default function Navbar() {
                           )}
                           <Link
                             href="/profile/id-card"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiShield className="w-4 h-4 text-amber-700" />
@@ -527,7 +537,7 @@ export default function Navbar() {
                           </Link>
                           <Link
                             href="/profile/certificates"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiAward className="w-4 h-4 text-amber-700" />
@@ -535,7 +545,7 @@ export default function Navbar() {
                           </Link>
                           <Link
                             href="/profile/settings"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={handleDropdownLinkClick}
                             className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-50 hover:text-amber-900 transition"
                           >
                             <FiSettings className="w-4 h-4 text-amber-700" />
@@ -561,11 +571,11 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative">
                   <button
                     type="button"
                     onClick={() => toggleDropdown('login_menu_box')}
-                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-amber-300 hover:border-amber-500 bg-amber-50/60 hover:bg-amber-100 text-stone-800 hover:text-amber-900 font-bold text-xs transition cursor-pointer whitespace-nowrap"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 lg:py-2 hover:scale-105 transition duration-300 ease-in-out cursor-pointer rounded-full border border-amber-300 hover:border-amber-500 bg-amber-50/60 hover:bg-amber-100 text-stone-800 hover:text-amber-900 font-bold text-xs lg:text-sm whitespace-nowrap"
                   >
                     <FiLogIn className="w-3.5 h-3.5 text-amber-700" />
                     <span>Login</span>
@@ -576,7 +586,7 @@ export default function Navbar() {
                     <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-amber-200 p-2 z-50 ring-1 ring-amber-500/10 animate-in fade-in slide-in-from-top-1 duration-150 text-xs font-semibold">
                       <Link
                         href="/login?role=coordinator"
-                        onClick={() => setActiveDropdown(null)}
+                        onClick={handleDropdownLinkClick}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-100/70 text-stone-700 hover:text-amber-950 transition"
                       >
                         <FiShield className="w-4 h-4 text-amber-600" />
@@ -584,7 +594,7 @@ export default function Navbar() {
                       </Link>
                       <Link
                         href="/login?role=member"
-                        onClick={() => setActiveDropdown(null)}
+                        onClick={handleDropdownLinkClick}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-amber-50 text-stone-700 hover:text-amber-900 transition"
                       >
                         <FiUserCheck className="w-4 h-4 text-amber-600" />
@@ -592,7 +602,7 @@ export default function Navbar() {
                       </Link>
                       <Link
                         href="/login?role=volunteer"
-                        onClick={() => setActiveDropdown(null)}
+                        onClick={handleDropdownLinkClick}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-emerald-50 text-stone-700 hover:text-emerald-800 transition"
                       >
                         <FiUsers className="w-4 h-4 text-emerald-600" />
@@ -600,28 +610,36 @@ export default function Navbar() {
                       </Link>
                       <Link
                         href="/login?role=admin"
-                        onClick={() => setActiveDropdown(null)}
+                        onClick={handleDropdownLinkClick}
                         className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-stone-50 text-stone-700 hover:text-stone-900 transition"
                       >
                         <FiShield className="w-4 h-4 text-amber-800" />
                         <span>Admin Desk Login</span>
                       </Link>
-                      <div className="pt-1 mt-1 border-t border-stone-100 space-y-1">
+                      <div className="pt-1 mt-1 border-t border-yellow-500/30 space-y-1">
+                        <Link
+                          href="/apply-coordinator"
+                          onClick={handleDropdownLinkClick}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-100/70 text-amber-950 font-bold hover:bg-yellow-200"
+                        >
+                          <FiShield className="w-4 h-4 text-amber-800" />
+                          <span>Apply as Coordinator</span>
+                        </Link>
                         <Link
                           href="/apply-member"
-                          onClick={() => setActiveDropdown(null)}
+                          onClick={handleDropdownLinkClick}
                           className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-100/70 text-amber-950 font-bold hover:bg-amber-200"
                         >
                           <FiUserPlus className="w-4 h-4 text-amber-800" />
                           <span>Apply for Membership</span>
                         </Link>
                         <Link
-                          href="/apply-coordinator"
-                          onClick={() => setActiveDropdown(null)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-100/70 text-amber-950 font-bold hover:bg-yellow-200"
+                          href="/apply-volunteer"
+                          onClick={handleDropdownLinkClick}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-100/70 text-green-950 font-bold hover:bg-green-200"
                         >
-                          <FiShield className="w-4 h-4 text-amber-800" />
-                          <span>Apply as Coordinator</span>
+                          <FiUsers className="w-4 h-4 text-green-800" />
+                          <span>Apply as Volunteer</span>
                         </Link>
                       </div>
                     </div>
@@ -633,7 +651,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 hover:bg-amber-100 text-stone-800 hover:text-amber-900 flex items-center justify-center transition border border-amber-300 cursor-pointer shrink-0"
+                className="xl:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 hover:bg-amber-100 text-stone-800 hover:text-amber-900 flex items-center justify-center transition border border-amber-300 cursor-pointer shrink-0"
                 aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
               >
                 {mobileMenuOpen ? <FiX className="w-5 h-5 text-red-600" /> : <FiMenu className="w-5 h-5 text-amber-900" />}

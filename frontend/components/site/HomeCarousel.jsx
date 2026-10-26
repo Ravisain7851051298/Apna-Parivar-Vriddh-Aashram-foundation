@@ -41,7 +41,7 @@ export default function HomeCarousel({ slides = [] }) {
 
   return (
     <div
-      className="relative w-full h-115 sm:h-130 md:h-145 lg:h-[580px] xl:h-[640px] 2xl:h-[700px] overflow-hidden bg-slate-950 group pt-2 lg:pt-6"
+      className="relative w-full h-115 sm:h-130 md:h-145 lg:h-200 overflow-hidden bg-slate-950 group pt-2 lg:pt-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >

@@ -419,7 +419,7 @@ export default function DonationManagement() {
         </>
       ) : (
         /* Bank & UPI QR Settings Form */
-        <div className="bg-white mx-3 p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm max-w-3xl text-black">
+        <div className="bg-white mx-3 p-6 sm:p-8 rounded-3xl border border-yellow-200 shadow-sm max-w-full text-black">
           <h2 className="text-xl font-black text-black mb-1">NGO Banking &amp; UPI QR Credentials</h2>
           <p className="text-xs text-slate-600 mb-6">
             Configure the bank account details and UPI QR code shown on public donation pages.
@@ -546,7 +546,7 @@ export default function DonationManagement() {
               <button
                 type="submit"
                 disabled={savingSettings}
-                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold rounded-xl shadow-md transition cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl border border-amber-300 bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-extrabold shadow-md transition cursor-pointer disabled:opacity-50"
               >
                 {savingSettings ? "Saving Settings..." : "Save Banking Credentials"}
               </button>

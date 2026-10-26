@@ -464,7 +464,7 @@ export default function ProfileVolunteerPage() {
 
               <div className="shrink-0">
                 <Link
-                  href="/profile/apply-volunteer"
+                  href="/apply-volunteer"
                   className="px-6 py-3.5 rounded-2xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/25 transition flex items-center gap-2 cursor-pointer"
                 >
                   <span>Apply as Volunteer Now</span>
@@ -518,7 +518,7 @@ export default function ProfileVolunteerPage() {
                   Volunteer Program Info
                 </Link>
                 <Link
-                  href="/profile/apply-volunteer"
+                  href="/apply-volunteer"
                   className="px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center gap-1.5"
                 >
                   <span>Fill Volunteer Form</span>

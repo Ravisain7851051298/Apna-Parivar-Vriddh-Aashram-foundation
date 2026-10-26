@@ -26,6 +26,9 @@ router.post('/members', verifyToken, requireRole(['coordinator', 'Coordinator', 
 // Coordinator / Admin: Edit member images / KYC until approved
 router.put('/members/:memberId/images', verifyToken, requireRole(['coordinator', 'Coordinator', 'admin', 'Admin']), handleOptionalFileUpload, coordinatorController.updateMemberImages);
 
+// Coordinator / Admin: Delete enrolled member application (locked once approved by Admin)
+router.delete('/members/:memberId', verifyToken, requireRole(['coordinator', 'Coordinator', 'admin', 'Admin']), coordinatorController.deleteMemberByCoordinator);
+
 // Admin or Coordinator: View members of a specific coordinator
 router.get('/:id/members', verifyToken, coordinatorController.getCoordinatorMembers);
 

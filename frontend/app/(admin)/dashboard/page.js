@@ -9,28 +9,20 @@ import {
   FiTarget,
   FiClock,
   FiDownload,
-  FiAward,
-  FiPlay,
   FiSettings,
-  FiEye,
   FiPrinter,
   FiUser,
   FiTrendingUp,
   FiCheckCircle,
-  FiAlertCircle,
   FiRefreshCw,
-  FiCalendar,
   FiActivity,
   FiPieChart,
   FiBarChart2,
   FiFileText,
   FiArrowUpRight,
   FiHeart,
-  FiShield,
   FiCheck,
-  FiUserCheck
 } from 'react-icons/fi';
-import { ADMIN_NAV_ITEMS } from '@/components/AdminSidebar';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
 
@@ -1224,7 +1216,7 @@ export default function DashboardPage() {
           </div>
 
           <Link
-            href={activeRecentTab === 'donations' ? '/donation' : '/members'}
+            href={activeRecentTab === 'donations' ? '/dashboard/donation' : '/dashboard/members'}
             className="text-xs font-bold text-amber-700 hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
             <span>{activeRecentTab === 'donations' ? 'View All Donations Directory' : 'View Full Member Directory'}</span>

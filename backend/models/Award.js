@@ -3,8 +3,12 @@ const mongoose = require('mongoose');
 const awardSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   description: { type: String, default: '', trim: true },
+  fullContent: { type: String, default: '', trim: true },
+  citation: { type: String, default: '', trim: true },
+  venue: { type: String, default: '', trim: true },
+  dateConferred: { type: Date },
   badgeIcon: { type: String, default: 'FiAward' },
-  badgeColor: { type: String, enum: ['gold', 'red', 'emerald', 'blue', 'purple'], default: 'gold' },
+  badgeColor: { type: String, default: 'gold' },
   badgeImage: { type: String, default: '' },
   category: { 
     type: String, 
@@ -13,16 +17,16 @@ const awardSchema = new mongoose.Schema({
   },
   tier: { 
     type: String, 
-    enum: ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Special Honor', 'National Honor', 'State Award'], 
-    default: 'Gold' 
+    default: 'Gold',
+    trim: true
   },
   points: { type: Number, default: 100 },
-  awardedBy: { type: String, default: 'Government & Social Welfare Council', trim: true },
-  year: { type: String, default: '2026', trim: true },
+  awardedBy: { type: String, default: '', trim: true },
+  year: { type: String, default: '', trim: true },
   awardImage: { type: String, default: '' },
   image: { type: String, default: '' },
   certificateUrl: { type: String, default: '' },
-  isOrgAward: { type: Boolean, default: true },
+  isOrgAward: { type: Boolean, default: false },
   order: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true }
 }, {

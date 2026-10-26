@@ -2,7 +2,7 @@
 
 import React, { useState, useSyncExternalStore } from 'react';
 
-const emptySubscribe = () => () => {};
+const emptySubscribe = () => () => { };
 function useIsMounted() {
   return useSyncExternalStore(
     emptySubscribe,
@@ -105,6 +105,7 @@ export default function ProfileLayout({ children }) {
   );
   const isCoordinator = Boolean(
     effectiveUser.role === 'Coordinator' ||
+    effectiveUser.role?.toLowerCase?.() === 'coordinator' ||
     effectiveUser.isCoordinator ||
     effectiveUser.coordinatorApplication?.status === 'approved' ||
     (effectiveUser.coordinatorId && !effectiveUser.coordinatorId.startsWith('APVAF-DON-'))
@@ -131,12 +132,6 @@ export default function ProfileLayout({ children }) {
         icon: FiUserPlus
       }
     );
-  } else {
-    menuItems.push({
-      label: 'Apply for Coordinator',
-      href: '/profile/apply-coordinator',
-      icon: FiShield
-    });
   }
 
   menuItems.push(
@@ -152,16 +147,16 @@ export default function ProfileLayout({ children }) {
     },
     {
       label: isCoordinator ? 'Official Coordinator ID Card' : (isVolunteer && !isMember ? 'Volunteer ID Card' : 'Official ID Card'),
-      href: isCoordinator 
-        ? '/profile/id-card?type=coordinator' 
+      href: isCoordinator
+        ? '/profile/id-card?type=coordinator'
         : (isVolunteer && !isMember ? '/profile/id-card?type=volunteer' : '/profile/id-card'),
       icon: FiShield,
       locked: !isVerified
     },
     {
       label: isCoordinator ? 'Coordinator Appointment Letter' : (isVolunteer && !isMember ? 'Volunteer Offer Letter' : 'Offer / Appointment Letter'),
-      href: isCoordinator 
-        ? '/profile/appointment-letter?type=coordinator' 
+      href: isCoordinator
+        ? '/profile/appointment-letter?type=coordinator'
         : (isVolunteer && !isMember ? '/profile/appointment-letter?type=volunteer' : '/profile/appointment-letter'),
       icon: FiFileText,
       locked: !isVerified
@@ -176,8 +171,8 @@ export default function ProfileLayout({ children }) {
     router.push('/login');
   };
 
-  const primaryRoleLabel = isCoordinator 
-    ? 'Coordinator' 
+  const primaryRoleLabel = isCoordinator
+    ? 'Coordinator'
     : (effectiveUser.role === 'Admin' ? 'Admin' : (isVolunteer ? 'Volunteer' : (isMember ? 'Member' : 'Supporter')));
 
   return (
@@ -226,17 +221,17 @@ export default function ProfileLayout({ children }) {
           <div className="md:hidden bg-white border-b border-amber-200 p-4 space-y-1 z-30 shadow-lg animate-in slide-in-from-top duration-200">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const itemPath = item.href.split('?')[0];
+              const isActive = pathname === itemPath;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition ${
-                    isActive
-                      ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-sm'
-                      : 'text-stone-700 hover:bg-amber-50 hover:text-amber-950'
-                  }`}
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition ${isActive
+                    ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-sm'
+                    : 'text-stone-700 hover:bg-amber-50 hover:text-amber-950'
+                    }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Icon className={`w-4 h-4 ${isActive ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -258,14 +253,13 @@ export default function ProfileLayout({ children }) {
 
         {/* ----------------- DESKTOP COLLAPSIBLE SIDEBAR ----------------- */}
         <aside
-          className={`hidden md:flex flex-col justify-between bg-white border-r border-amber-200/90 transition-all duration-300 ease-in-out sticky top-0 h-screen shrink-0 relative select-none ${
-            sidebarOpen ? 'w-64' : 'w-20'
-          }`}
+          className={`hidden md:flex flex-col justify-between bg-white border-r border-amber-200/90 transition-all duration-300 ease-in-out top-0 h-screen shrink-0 sticky select-none ${sidebarOpen ? 'w-64' : 'w-20'
+            }`}
         >
           {/* Collapse Toggle Button - Centered on X-axis Divider & Y-axis Sidebar Border */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="absolute top-[82px] -right-3.5 -translate-y-1/2 z-40 w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 border-2 border-white shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+            className="absolute top-20.5 -right-3.5 -translate-y-1/2 z-40 w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 border-2 border-white shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
             title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
             aria-label={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
           >
@@ -277,15 +271,14 @@ export default function ProfileLayout({ children }) {
           </button>
 
           {/* Scrollable Sidebar Content */}
-          <div className="flex-1 flex flex-col justify-between h-full overflow-y-auto overflow-x-hidden">
+          <div className="flex-1 flex flex-col justify-between min-h-full overflow-y-auto overflow-x-hidden">
             <div>
               {/* User Profile Card */}
               <div className={`transition-all text-center ${sidebarOpen ? 'p-6 pb-5' : 'p-2.5 pt-4 pb-3.5'}`}>
                 <div className="relative inline-block mx-auto mb-2 group">
                   <div
-                    className={`rounded-full p-1 bg-linear-to-tr from-amber-500 via-yellow-400 to-amber-600 shadow-lg ring-4 ring-amber-300/40 transition-all duration-300 group-hover:scale-105 ${
-                      sidebarOpen ? 'w-24 h-24' : 'w-11 h-11'
-                    }`}
+                    className={`rounded-full p-1 bg-linear-to-tr from-amber-500 via-yellow-400 to-amber-600 shadow-lg ring-4 ring-amber-300/40 transition-all duration-300 group-hover:scale-105 ${sidebarOpen ? 'w-24 h-24' : 'w-11 h-11'
+                      }`}
                   >
                     <div className="w-full h-full rounded-full overflow-hidden bg-white">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -305,9 +298,8 @@ export default function ProfileLayout({ children }) {
                     </div>
                   </div>
                   <span
-                    className={`absolute bottom-0 right-0 rounded-full border-2 border-white flex items-center justify-center text-white shadow-md ${
-                      sidebarOpen ? 'w-6 h-6 text-[10px]' : 'w-4 h-4 text-[8px]'
-                    } ${isVerified ? 'bg-emerald-600' : 'bg-amber-500'}`}
+                    className={`absolute bottom-0 right-0 rounded-full border-2 border-white flex items-center justify-center text-white shadow-md ${sidebarOpen ? 'w-6 h-6 text-[10px]' : 'w-4 h-4 text-[8px]'
+                      } ${isVerified ? 'bg-emerald-600' : 'bg-amber-500'}`}
                     title={isVerified ? 'Verified Active Member' : 'Pending Verification'}
                   >
                     {isVerified ? (
@@ -361,19 +353,18 @@ export default function ProfileLayout({ children }) {
                 <nav className="space-y-1.5">
                   {menuItems.map((item) => {
                     const Icon = item.icon;
-                    const isActive = pathname === item.href;
+                    const itemPath = item.href.split('?')[0];
+                    const isActive = pathname === itemPath;
                     return (
                       <Link
                         key={item.href}
                         href={item.href}
                         title={item.label}
-                        className={`flex items-center rounded-2xl text-xs font-bold transition ${
-                          sidebarOpen ? 'justify-between px-3.5 py-2.5' : 'justify-center w-11 h-11 mx-auto'
-                        } ${
-                          isActive
+                        className={`flex items-center rounded-2xl text-xs font-bold transition ${sidebarOpen ? 'justify-between px-3.5 py-2.5' : 'justify-center w-11 h-11 mx-auto'
+                          } ${isActive
                             ? 'bg-linear-to-r from-amber-500 to-yellow-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
                             : 'text-stone-700 hover:bg-amber-50 hover:text-amber-950'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-stone-950' : 'text-amber-700'}`} />
@@ -396,20 +387,19 @@ export default function ProfileLayout({ children }) {
             <div>
               <div className="w-full border-t border-amber-200/90" />
               <div className={`space-y-2 ${sidebarOpen ? 'p-6' : 'p-2.5'}`}>
-                {effectiveUser.role === 'Admin' && (
+                {/* {effectiveUser.role === 'Admin' && (
                   <Link
                     href="/dashboard"
                     title="Switch to Admin Dashboard"
-                    className={`flex items-center justify-center rounded-2xl bg-stone-900 hover:bg-amber-950 text-amber-300 font-bold text-xs shadow-md transition ${
-                      sidebarOpen ? 'w-full py-2.5 px-4 gap-2' : 'w-11 h-11 mx-auto'
-                    }`}
+                    className={`flex items-center justify-center rounded-2xl bg-stone-900 hover:bg-amber-950 text-amber-300 font-bold text-xs shadow-md transition ${sidebarOpen ? 'w-full py-2.5 px-4 gap-2' : 'w-11 h-11 mx-auto'
+                      }`}
                   >
                     <FiShield className="w-4 h-4 text-amber-400 shrink-0" />
                     {sidebarOpen && <span>Switch to Admin Dashboard →</span>}
                   </Link>
-                )}
+                )} */}
 
-                {sidebarOpen && (
+                {/* {sidebarOpen && (
                   <div className="bg-amber-50/80 rounded-2xl p-3 border border-amber-200 text-center animate-in fade-in">
                     <span className="text-[10px] font-black text-amber-900 uppercase tracking-wider block">
                       12A &amp; 80G Certified Non-Profit
@@ -418,16 +408,15 @@ export default function ProfileLayout({ children }) {
                       अपना परिवार वृद्ध आश्रम • Adhartal, Jabalpur (M.P.)
                     </span>
                   </div>
-                )}
+                )} */}
 
                 <button
                   onClick={handleLogout}
                   title="Sign Out from Profile"
-                  className={`flex items-center justify-center rounded-2xl bg-amber-100/70 hover:bg-amber-200 text-amber-950 font-bold text-xs transition cursor-pointer ${
-                    sidebarOpen ? 'w-full py-2.5 px-4 gap-2' : 'w-11 h-11 mx-auto hover:bg-red-50 hover:text-red-700'
-                  }`}
+                  className={`flex items-center justify-center rounded-2xl bg-red-100/70 hover:bg-red-200 text-red-700 font-bold text-xs transition cursor-pointer ${sidebarOpen ? 'w-full py-2.5 px-4 gap-2' : 'w-11 h-11 mx-auto hover:bg-red-50 hover:text-red-700'
+                    }`}
                 >
-                  <FiLogOut className="w-4 h-4 text-amber-800 shrink-0" />
+                  <FiLogOut className="w-4 h-4 text-red-800 shrink-0" />
                   {sidebarOpen && <span>Sign Out from Profile</span>}
                 </button>
               </div>
