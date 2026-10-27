@@ -582,8 +582,11 @@ function HomeClientContent() {
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
 
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white bg-amber-700 shadow-sm">
+                        <div className="absolute top-3 left-3 right-3 flex items-start pointer-events-none">
+                          <span
+                            className="inline-block max-w-[85%] truncate px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider text-white bg-amber-700 shadow-sm"
+                            title={cmp.category || 'Elder Care'}
+                          >
                             {cmp.category || 'Elder Care'}
                           </span>
                         </div>
@@ -660,7 +663,7 @@ function HomeClientContent() {
         {/* Animated Botanical Bouquet (Purple, Yellow, Orange Leaves & Floral Spike) on Bottom Corner */}
         <DecorativeLeaves
           position="bottom-right"
-          size="lg"
+          size="md"
           showFloralSpike={true}
           showYellowLeaf={true}
           showOrangeLeaf={true}

@@ -11,6 +11,8 @@ router.get('/all', optionalAuth, orgDocumentController.getAllOrgDocuments);
 router.post('/', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.createOrgDocument);
 router.post('/create', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.createOrgDocument);
 router.put('/:id', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.updateOrgDocument);
+router.patch('/:id/toggle-visibility', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.toggleOrgDocumentVisibility);
+router.put('/:id/toggle-visibility', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.toggleOrgDocumentVisibility);
 router.delete('/:id', verifyToken, requireRole(['admin', 'Admin']), orgDocumentController.deleteOrgDocument);
 
 module.exports = router;

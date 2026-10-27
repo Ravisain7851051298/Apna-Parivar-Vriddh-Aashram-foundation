@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   FiCalendar,
-  FiClock,
   FiMapPin,
   FiShare2,
   FiArrowLeft,
@@ -13,14 +12,14 @@ import {
   FiCheckCircle,
   FiLock,
   FiCheck,
-  FiExternalLink,
   FiCopy
 } from 'react-icons/fi';
-import { FaWhatsapp, FaFacebookF, FaXTwitter } from 'react-icons/fa6';
+import { FaWhatsapp } from 'react-icons/fa6';
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
-import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
+import { CardSkeleton } from '@/components/common/SkeletonLoader';
+import DecorativeLeaves from '@/components/site/DecorativeLeaves';
 import api from '@/services/api';
 import toast from 'react-hot-toast';
 
@@ -30,8 +29,7 @@ function EventDetailContent({ params }) {
   const searchParams = useSearchParams();
   const eventId = resolvedParams?.id;
   const actionParam = searchParams.get('action');
-
-  const { events, currentUser } = useNGO();
+  const { events, currentUser, settings } = useNGO();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
@@ -48,8 +46,8 @@ function EventDetailContent({ params }) {
       setEvent(found);
       const isAlready = currentUser && found.attendees?.some(
         (att) => (att.user && att.user === currentUser.id) ||
-                 (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
-                 (att.phone && att.phone === currentUser.phone)
+          (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
+          (att.phone && att.phone === currentUser.phone)
       );
       setHasJoined(Boolean(isAlready));
       setAttendeeCount(found.attendees?.length || 0);
@@ -65,8 +63,8 @@ function EventDetailContent({ params }) {
           setEvent(data);
           const isAlready = currentUser && data.attendees?.some(
             (att) => (att.user && att.user === currentUser.id) ||
-                     (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
-                     (att.phone && att.phone === currentUser.phone)
+              (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
+              (att.phone && att.phone === currentUser.phone)
           );
           setHasJoined(Boolean(isAlready));
           setAttendeeCount(data.attendees?.length || 0);
@@ -134,8 +132,9 @@ function EventDetailContent({ params }) {
   const shareWhatsApp = () => {
     if (typeof window === 'undefined') return;
     const url = window.location.href;
+    const defaultLoc = settings?.ngoName || 'Apna Parivar Vriddh Aashram';
     const text = encodeURIComponent(
-      `🗓️ *${event?.title}*\n📍 ${event?.location || 'Apna Parivar Vriddh Aashram, Jabalpur'}\n📅 ${event?.date || ''}\n\nJoin this event with us:\n${url}`
+      `🗓️ *${event?.title}*\n📍 ${event?.location || settings?.address || defaultLoc}\n📅 ${event?.date || ''}\n\nJoin this event with us:\n${url}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -200,8 +199,8 @@ function EventDetailContent({ params }) {
           </div>
         </div>
 
-        {/* Hero Card */}
-        <div className="bg-white rounded-3xl border border-amber-200/90 shadow-xl overflow-hidden">
+        {/* Hero Card - Largest rounded card with image */}
+        <div className="relative bg-white rounded-3xl border border-amber-200/90 shadow-xl overflow-hidden">
           <div className="relative aspect-16/9 sm:aspect-21/9 max-h-[460px] w-full overflow-hidden bg-slate-900">
             <img
               src={bannerUrl}
@@ -244,10 +243,10 @@ function EventDetailContent({ params }) {
               <div>
                 <span className="text-[11px] text-stone-500 font-bold block uppercase tracking-wider">Venue Location</span>
                 <strong className="text-stone-950 font-black text-xs line-clamp-1">
-                  {event.location || 'Apna Parivar Vriddh Aashram'}
+                  {event.location || settings?.address || settings?.ngoName || 'Apna Parivar Vriddh Aashram'}
                 </strong>
                 <span className="block text-stone-600 text-[11px] line-clamp-1">
-                  {event.locationAddress || 'Adhartal, Jabalpur (M.P.)'}
+                  {event.locationAddress || settings?.address || 'Ward No. 12, Near Bus Stand, Ellenabad, Sirsa, Haryana - 125102'}
                 </span>
               </div>
             </div>
@@ -267,7 +266,7 @@ function EventDetailContent({ params }) {
           </div>
 
           {/* Main Content & Registration Side Column */}
-          <div className="p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
             {/* Description Body (8 cols) */}
             <div className="lg:col-span-8 space-y-6">
               <div>
@@ -403,24 +402,51 @@ function EventDetailContent({ params }) {
               )}
 
               {/* Seva Help Box */}
-              <div className="pt-4 border-t border-amber-200/60 space-y-2 text-xs">
+              <div className="pt-4 border-t border-amber-200/60 space-y-2.5 text-xs">
                 <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">
                   Questions or Directions?
                 </span>
                 <p className="text-[11px] text-stone-600">
-                  Call our 24x7 seva helpline for transport guidance or elder admission assistance:
+                  Call our 24x7 seva helpline for transport guidance, directions, or elder assistance:
                 </p>
-                <a
-                  href="tel:+918959055269"
-                  className="inline-flex items-center gap-1.5 font-black text-amber-950 hover:underline text-xs"
-                >
-                  <span>📞 +91 8959055269</span>
-                </a>
+                <div className="space-y-1.5 pt-1">
+                  <a
+                    href={`tel:${(settings?.phone || '+91 8959055269').replace(/\s+/g, '')}`}
+                    className="inline-flex items-center gap-1.5 font-black text-amber-950 hover:text-amber-700 hover:underline text-xs"
+                  >
+                    <span>📞 {settings?.phone || '+91 8959055269'}</span>
+                  </a>
+                  {settings?.email && (
+                    <div className="block">
+                      <a
+                        href={`mailto:${settings.email}`}
+                        className="inline-flex items-center gap-1.5 font-bold text-stone-700 hover:text-amber-800 hover:underline text-[11px]"
+                      >
+                        <span>✉️ {settings.email}</span>
+                      </a>
+                    </div>
+                  )}
+                  {settings?.address && (
+                    <p className="text-[11px] text-stone-500 flex items-start gap-1 pt-0.5">
+                      <span className="shrink-0">📍</span>
+                      <span>{settings.address}</span>
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
+          {/* Botanical Animated Flower & Decorative Leaves in bottom-right corner of the largest round card */}
+          <DecorativeLeaves
+            position="bottom-right"
+            size="md"
+            showFlower={true}
+            showFloralSpike={true}
+            animated={true}
+            opacity={0.88}
+          />
+        </div>
       </div>
     </div>
   );

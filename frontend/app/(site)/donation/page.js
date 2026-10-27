@@ -27,6 +27,7 @@ import { FaQrcode } from 'react-icons/fa6';
 import confetti from 'canvas-confetti';
 import { useNGO } from '@/context/NGOContext';
 import DecorativeRings from '@/components/site/DecorativeRings';
+import DecorativeLeaves from '@/components/site/DecorativeLeaves';
 
 function DonationContent() {
   const { settings, campaigns, recordDonation, currentUser } = useNGO();
@@ -223,8 +224,29 @@ function DonationContent() {
 
   return (
     <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900 relative overflow-hidden">
-      {/* Giant Ambient Dark Yellow & Purple Big Rings */}
+      {/* Mid & Bottom Ambient Rings */}
       <DecorativeRings variant="donation" />
+
+      {/* Top-Left Botanical Blooming Flower & Leaves (sm size, right below header) */}
+      <DecorativeLeaves
+        position="top-left"
+        size="sm"
+        showFlower={true}
+        showFloralSpike={true}
+        animated={true}
+        opacity={0.92}
+      />
+
+      {/* Top-Right Botanical Blooming Flower & Leaves (sm size, right below header) */}
+      <DecorativeLeaves
+        position="top-right"
+        size="sm"
+        showFlower={true}
+        showFloralSpike={true}
+        animated={true}
+        opacity={0.92}
+      />
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
 
         {/* Top Header Card */}

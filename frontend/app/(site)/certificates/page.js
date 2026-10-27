@@ -36,7 +36,9 @@ export default function PublicOrganizationCertificatesPage() {
       const res = await fetch('/api/organization-certificates?status=Verified');
       const data = await res.json();
       if (data.success && data.documents) {
-        setDocuments(data.documents);
+        // Only display certificates that admin allows (isActive !== false)
+        const allowedDocs = data.documents.filter((doc) => doc.isActive !== false);
+        setDocuments(allowedDocs);
       }
     } catch (err) {
       console.warn('Error fetching organization documents:', err);
@@ -49,9 +51,10 @@ export default function PublicOrganizationCertificatesPage() {
     fetchCertificates();
   }, []);
 
-  // Filtered documents
+  // Filtered documents (guarantee only admin-allowed certificates are shown)
   const filteredDocuments = useMemo(() => {
     return documents.filter((doc) => {
+      if (doc.isActive === false) return false;
       if (activeCategory !== 'all' && doc.category !== activeCategory) {
         return false;
       }

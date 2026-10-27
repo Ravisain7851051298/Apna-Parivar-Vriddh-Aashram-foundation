@@ -12,6 +12,7 @@ import {
   FiSearch,
   FiRefreshCw,
   FiEye,
+  FiEyeOff,
   FiDownload,
   FiCheckCircle,
   FiShield,
@@ -30,6 +31,7 @@ export default function AdminOrganizationCertificatesPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [activeVisibility, setActiveVisibility] = useState('all'); // 'all' | 'active' | 'hidden'
   const [copiedId, setCopiedId] = useState('');
 
   // Modal States
@@ -53,6 +55,7 @@ export default function AdminOrganizationCertificatesPage() {
     fileSize: '',
     description: '',
     status: 'Verified',
+    isActive: true,
     order: 0
   });
 
@@ -79,6 +82,10 @@ export default function AdminOrganizationCertificatesPage() {
   // Filtered documents
   const filteredDocuments = useMemo(() => {
     return documents.filter((doc) => {
+      // Visibility filter
+      if (activeVisibility === 'active' && doc.isActive === false) return false;
+      if (activeVisibility === 'hidden' && doc.isActive !== false) return false;
+
       if (activeCategory !== 'all' && doc.category !== activeCategory) {
         return false;
       }
@@ -91,7 +98,7 @@ export default function AdminOrganizationCertificatesPage() {
         doc.category?.toLowerCase().includes(q)
       );
     });
-  }, [documents, activeCategory, searchQuery]);
+  }, [documents, activeCategory, activeVisibility, searchQuery]);
 
   // Open Create Modal
   const openCreateModal = () => {
@@ -109,6 +116,7 @@ export default function AdminOrganizationCertificatesPage() {
       fileSize: '',
       description: '',
       status: 'Verified',
+      isActive: true,
       order: documents.length + 1
     });
     setModalOpen(true);
@@ -130,9 +138,58 @@ export default function AdminOrganizationCertificatesPage() {
       fileSize: doc.fileSize || '',
       description: doc.description || '',
       status: doc.status || 'Verified',
+      isActive: doc.isActive !== false,
       order: doc.order || 0
     });
     setModalOpen(true);
+  };
+
+  // Quick toggle active / displayed status for public website
+  const handleToggleVisibility = async (doc) => {
+    const id = doc._id || doc.id;
+    const currentActive = doc.isActive !== false;
+    const newActive = !currentActive;
+
+    // Optimistically update local state immediately
+    setDocuments((prev) =>
+      prev.map((d) => ((d._id === id || d.id === id) ? { ...d, isActive: newActive } : d))
+    );
+
+    try {
+      const res = await fetch(`/api/organization-certificates/${id}/toggle-visibility`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: newActive })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActionSuccess(
+          data.message || `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`
+        );
+      } else {
+        // Fallback to standard PUT update
+        const fallbackRes = await fetch(`/api/organization-certificates/${id}`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isActive: newActive })
+        });
+        const fbData = await fallbackRes.json();
+        if (fbData.success) {
+          setActionSuccess(
+            `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`
+          );
+        } else {
+          fetchDocuments();
+          alert('Failed to update certificate visibility');
+        }
+      }
+      setTimeout(() => setActionSuccess(''), 4000);
+    } catch (err) {
+      fetchDocuments();
+      alert('Error updating certificate visibility');
+    }
   };
 
   // Handle File Upload to backend
@@ -254,6 +311,9 @@ export default function AdminOrganizationCertificatesPage() {
     setTimeout(() => setCopiedId(''), 2000);
   };
 
+  const displayedCount = useMemo(() => documents.filter((d) => d.isActive !== false).length, [documents]);
+  const hiddenCount = useMemo(() => documents.filter((d) => d.isActive === false).length, [documents]);
+
   return (
     <div className="space-y-4">
       {/* Top Header Card */}
@@ -309,24 +369,62 @@ export default function AdminOrganizationCertificatesPage() {
         </div>
       )}
 
-      {/* Unified Search & Category Filter Bar */}
-      <div className="bg-white mx-3 p-1 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Search */}
-        <div className="relative w-full sm:max-w-md">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-          <input
-            type="text"
-            placeholder="Search by certificate title, reg no, or issuing authority..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900"
-          />
+      {/* Unified Search & Filters Bar */}
+      <div className="bg-white mx-3 p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          {/* Search */}
+          <div className="relative w-full sm:max-w-md">
+            <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search by certificate title, reg no, or issuing authority..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full text-xs pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900"
+            />
+          </div>
+
+          {/* Visibility Filter Tabs */}
+          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl self-stretch sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setActiveVisibility('all')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${activeVisibility === 'all'
+                ? 'bg-white text-slate-900 shadow-2xs font-black'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
+            >
+              All ({documents.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveVisibility('active')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 ${activeVisibility === 'active'
+                ? 'bg-emerald-700 text-white shadow-2xs font-black'
+                : 'text-emerald-800 hover:bg-emerald-50'
+                }`}
+            >
+              <FiEye className="w-3.5 h-3.5" />
+              <span>Displayed ({displayedCount})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveVisibility('hidden')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1 ${activeVisibility === 'hidden'
+                ? 'bg-amber-600 text-white shadow-2xs font-black'
+                : 'text-amber-900 hover:bg-amber-50'
+                }`}
+            >
+              <FiEyeOff className="w-3.5 h-3.5" />
+              <span>Hidden ({hiddenCount})</span>
+            </button>
+          </div>
         </div>
 
         {/* Categories */}
-        <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0 text-xs font-bold">
+        <div className="flex items-center gap-1.5 w-full overflow-x-auto pb-1 text-xs font-bold border-t border-slate-100 pt-2">
           {[
-            { key: 'all', label: `All (${documents.length})` },
+            { key: 'all', label: 'All Categories' },
             { key: '12A Registration', label: '12A Order' },
             { key: '80G Exemption', label: '80G Tax Exemption' },
             { key: 'NITI Aayog Darpan', label: 'NITI Aayog' },
@@ -358,7 +456,7 @@ export default function AdminOrganizationCertificatesPage() {
                 <th className="py-3 px-3.5">Registration No. / Authority</th>
                 <th className="py-3 px-3.5">File Format</th>
                 <th className="py-3 px-3.5">Issue Date &amp; Validity</th>
-                <th className="py-3 px-3.5">Status</th>
+                <th className="py-3 px-3.5 text-center">Display Status</th>
                 <th className="py-3 px-3.5 text-right sticky right-0 bg-slate-50 z-20 shadow-[-6px_0_10px_-2px_rgba(0,0,0,0.06)]">
                   Actions
                 </th>
@@ -454,17 +552,65 @@ export default function AdminOrganizationCertificatesPage() {
                         </span>
                       </td>
 
-                      {/* Status */}
-                      <td className="py-3 px-3.5 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">
-                          <FiCheckCircle className="w-3 h-3 text-emerald-600" />
-                          <span>Govt. Verified</span>
-                        </span>
+                      {/* Display / Visibility Status Toggle Button */}
+                      <td className="py-3 px-3.5 whitespace-nowrap text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleVisibility(doc)}
+                          title={
+                            doc.isActive !== false
+                              ? "Certificate is PUBLIC on /certificates. Click to Hide."
+                              : "Certificate is HIDDEN from /certificates. Click to Display."
+                          }
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black transition cursor-pointer shadow-2xs ${doc.isActive !== false
+                            ? "bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300"
+                            : "bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300"
+                            }`}
+                        >
+                          {doc.isActive !== false ? (
+                            <>
+                              <FiEye className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                              <span>Displayed</span>
+                            </>
+                          ) : (
+                            <>
+                              <FiEyeOff className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                              <span>Hidden</span>
+                            </>
+                          )}
+                        </button>
                       </td>
 
                       {/* Sticky Right Actions Column */}
                       <td className="py-3 px-3.5 text-right whitespace-nowrap sticky right-0 bg-white group-hover:bg-slate-50 z-10 shadow-[-6px_0_10px_-2px_rgba(0,0,0,0.06)]">
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* Quick Toggle Hide / Display Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleVisibility(doc)}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition border cursor-pointer ${doc.isActive !== false
+                              ? "bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300"
+                              : "bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-300"
+                              }`}
+                            title={
+                              doc.isActive !== false
+                                ? "Hide this certificate from public website (/certificates)"
+                                : "Display this certificate on public website (/certificates)"
+                            }
+                          >
+                            {doc.isActive !== false ? (
+                              <>
+                                <FiEyeOff className="w-3.5 h-3.5 text-amber-700" />
+                                <span>Hide</span>
+                              </>
+                            ) : (
+                              <>
+                                <FiEye className="w-3.5 h-3.5 text-emerald-700" />
+                                <span>Display</span>
+                              </>
+                            )}
+                          </button>
+
                           {/* Preview Button */}
                           <button
                             type="button"
@@ -682,6 +828,27 @@ export default function AdminOrganizationCertificatesPage() {
                   placeholder="Explain donor tax exemption, government recognition, or legal significance..."
                   className="w-full text-xs p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900"
                 />
+              </div>
+
+              {/* Display on Public Website Switch */}
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <span className="font-bold text-slate-900 text-xs block">
+                    Display on Public Website (/certificates)
+                  </span>
+                  <span className="text-[11px] text-slate-500 block">
+                    When enabled, this certificate is visible to all visitors. Turn off to hide.
+                  </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive !== false}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
               </div>
 
               {/* Submit Buttons */}

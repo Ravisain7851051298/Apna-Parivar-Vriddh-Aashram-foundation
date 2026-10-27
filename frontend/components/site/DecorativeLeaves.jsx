@@ -22,6 +22,7 @@ import React, { useId } from 'react';
  * - showFloralSpike: boolean (default true)
  * - showYellowLeaf: boolean (default true)
  * - showOrangeLeaf: boolean (default true)
+ * - showFlower: boolean (default true)
  * - animated: boolean (default true)
  * - opacity: number (default 0.95)
  * - rotate: number
@@ -34,6 +35,7 @@ export default function DecorativeLeaves({
   showFloralSpike = true,
   showYellowLeaf = true,
   showOrangeLeaf = true,
+  showFlower = true,
   animated = true,
   opacity = 0.95,
   rotate = 0,
@@ -163,6 +165,31 @@ export default function DecorativeLeaves({
             transform-origin: 300px 300px;
           }
         }
+
+        /* 7. Animated Blooming Flower Blossom */
+        @keyframes flowerBloom_${uniqueId} {
+          0%, 100% {
+            transform: rotate(0deg) scale(1);
+            transform-origin: 236px 232px;
+          }
+          50% {
+            transform: rotate(8deg) scale(1.08);
+            transform-origin: 236px 232px;
+          }
+        }
+
+        @keyframes flowerPulse_${uniqueId} {
+          0%, 100% {
+            opacity: 0.9;
+            transform: scale(1);
+            transform-origin: 236px 232px;
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.15);
+            transform-origin: 236px 232px;
+          }
+        }
       `}</style>
 
       <svg
@@ -274,6 +301,57 @@ export default function DecorativeLeaves({
             <stop offset="50%" stopColor="#f97316" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#fef08a" stopOpacity="0.85" />
           </linearGradient>
+
+          {/* 8. Blooming Flower Outer Petal Gradient (Vibrant fuchsia to warm coral-gold) */}
+          <linearGradient
+            id={`flowerPetalGrad_${uniqueId}`}
+            x1="0"
+            y1="1"
+            x2="0.5"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#9333ea" stopOpacity="0.95" />
+            <stop offset="45%" stopColor="#f43f5e" stopOpacity="0.95" />
+            <stop offset="85%" stopColor="#fb923c" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#fde047" stopOpacity="0.98" />
+          </linearGradient>
+
+          {/* 9. Blooming Flower Inner Petal Gradient */}
+          <linearGradient
+            id={`flowerInnerPetalGrad_${uniqueId}`}
+            x1="0"
+            y1="1"
+            x2="0.5"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#e11d48" stopOpacity="0.92" />
+            <stop offset="60%" stopColor="#fbbf24" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#fffbeb" stopOpacity="0.98" />
+          </linearGradient>
+
+          {/* 10. Flower Center Core Radial Gradient */}
+          <radialGradient
+            id={`flowerCenterGrad_${uniqueId}`}
+            cx="40%"
+            cy="40%"
+            r="60%"
+          >
+            <stop offset="0%" stopColor="#fef08a" />
+            <stop offset="50%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#b45309" />
+          </radialGradient>
+
+          {/* 11. Flower Glow Filter */}
+          <radialGradient
+            id={`flowerGlow_${uniqueId}`}
+            cx="50%"
+            cy="50%"
+            r="50%"
+          >
+            <stop offset="0%" stopColor="#fde047" stopOpacity="0.45" />
+            <stop offset="60%" stopColor="#fb923c" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#f43f5e" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* ================= 1. VERTICAL PURPLE LEAF (~82° ALONG VERTICAL EDGE) ================= */}
@@ -579,6 +657,75 @@ export default function DecorativeLeaves({
             strokeLinecap="round"
           />
         </g>
+
+        {/* ================= 7. ANIMATED BLOOMING FLOWER BLOSSOM ================= */}
+        {/* Layered botanical flower with breathing petals, golden pistil, and radiating stamens */}
+        {showFlower && (
+          <g
+            style={
+              animated
+                ? { animation: `flowerBloom_${uniqueId} 7s ease-in-out infinite alternate 0.3s` }
+                : {}
+            }
+          >
+            {/* Ambient Petal Halo */}
+            <circle
+              cx="236"
+              cy="232"
+              r="34"
+              fill={`url(#flowerGlow_${uniqueId})`}
+              style={
+                animated
+                  ? { animation: `flowerPulse_${uniqueId} 4.5s ease-in-out infinite alternate` }
+                  : {}
+              }
+            />
+
+            {/* 6 Outer Petals */}
+            {[0, 60, 120, 180, 240, 300].map((deg) => (
+              <path
+                key={`outer-${deg}`}
+                d="M 236 232 C 220 206, 224 186, 236 182 C 248 186, 252 206, 236 232 Z"
+                fill={`url(#flowerPetalGrad_${uniqueId})`}
+                transform={`rotate(${deg} 236 232)`}
+                opacity="0.95"
+              />
+            ))}
+
+            {/* 6 Inner Petals (30° offset, slightly smaller for rich floral depth) */}
+            {[30, 90, 150, 210, 270, 330].map((deg) => (
+              <path
+                key={`inner-${deg}`}
+                d="M 236 232 C 223 210, 227 195, 236 191 C 245 195, 249 210, 236 232 Z"
+                fill={`url(#flowerInnerPetalGrad_${uniqueId})`}
+                transform={`rotate(${deg} 236 232)`}
+                opacity="0.92"
+              />
+            ))}
+
+            {/* Center Pistil Core */}
+            <circle cx="236" cy="232" r="9.5" fill={`url(#flowerCenterGrad_${uniqueId})`} />
+            <circle cx="236" cy="232" r="7.5" fill="#facc15" />
+
+            {/* Stamens & Pollen Pearls */}
+            {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+              const rad = (deg * Math.PI) / 180;
+              const x = 236 + Math.cos(rad) * 6.2;
+              const y = 232 + Math.sin(rad) * 6.2;
+              return (
+                <circle
+                  key={`pollen-${deg}`}
+                  cx={x}
+                  cy={y}
+                  r="1.4"
+                  fill="#ffffff"
+                  opacity="0.95"
+                />
+              );
+            })}
+            <circle cx="236" cy="232" r="3.2" fill="#d97706" />
+          </g>
+        )}
       </svg>
     </div>
   );

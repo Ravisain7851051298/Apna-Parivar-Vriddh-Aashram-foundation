@@ -72,61 +72,63 @@ export default function Footer() {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* ================= 1. HIGHLIGHT CONTACT CARDS ================= */}
-      <div className="border-b border-slate-800/80 py-8 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="border-b border-slate-800/80 py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5">
 
           {/* Aashram Address Card */}
-          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-2xl p-5 transition-all duration-300 shadow-sm flex items-start gap-4 group">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
-              <FiMapPin className="text-xl" />
+          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-sm flex items-center sm:items-start gap-3 sm:gap-4 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-amber-500/15 text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
+              <FiMapPin className="text-base sm:text-lg md:text-xl" />
             </div>
-            <div className="space-y-1">
-              <h4 className="text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+            <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+              <h4 className="text-white text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
                 <span>Aashram Location</span>
-                <span className="text-[10px] text-amber-400 font-bold px-1.5 py-0.2 bg-amber-400/10 rounded border border-amber-400/30">Jabalpur</span>
+                <span className="text-[9px] sm:text-[10px] text-amber-400 font-bold px-1.5 py-0.2 bg-amber-400/10 rounded border border-amber-400/30">
+                  {settings?.address ? (settings.address.includes('Jabalpur') ? 'Jabalpur' : 'Sirsa') : 'Jabalpur'}
+                </span>
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                {settings?.address || 'Behind Adhartal Railway Station, Adhartal, Jabalpur, Madhya Pradesh - 482001'}
+              <p className="text-[11px] sm:text-xs text-slate-300 leading-snug sm:leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
+                {settings?.address || 'Jay Prakash Nagar, Adhartal, Jabalpur, Madhya Pradesh - 482001'}
               </p>
             </div>
           </div>
 
           {/* 24x7 Helpline Card */}
-          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-2xl p-5 transition-all duration-300 shadow-sm flex items-start gap-4 group">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
-              <FiPhone className="text-xl" />
+          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-400/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-sm flex items-center sm:items-start gap-3 sm:gap-4 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-amber-500/15 text-amber-400 group-hover:bg-amber-500 group-hover:text-stone-950 flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
+              <FiPhone className="text-base sm:text-lg md:text-xl" />
             </div>
-            <div className="space-y-1">
-              <h4 className="text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+            <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+              <h4 className="text-white text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
                 <span>24x7 Elder Helpline</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
               </h4>
               <a
                 href={`tel:${settings?.phone || '+918959055269'}`}
-                className="text-sm font-black text-amber-400 hover:text-white transition block"
+                className="text-xs sm:text-sm font-black text-amber-400 hover:text-white transition block"
               >
                 {settings?.phone || '+91 8959055269'}
               </a>
-              <span className="text-[11px] text-slate-400 font-medium block">
+              <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium block truncate">
                 Free Aashram Admission &amp; Donation Support
               </span>
             </div>
           </div>
 
           {/* 80G Tax Exemption Card */}
-          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 transition-all duration-300 shadow-sm flex items-start gap-4 group">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:bg-[#15803d] group-hover:text-white flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
-              <FiShield className="text-xl" />
+          <div className="bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-5 transition-all duration-300 shadow-sm flex items-center sm:items-start gap-3 sm:gap-4 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:bg-[#15803d] group-hover:text-white flex items-center justify-center shrink-0 transition-colors duration-300 shadow-inner">
+              <FiShield className="text-base sm:text-lg md:text-xl" />
             </div>
-            <div className="space-y-1">
-              <h4 className="text-white text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+            <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+              <h4 className="text-white text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center gap-1.5 flex-wrap">
                 <span>80G Tax Exemption</span>
-                <span className="text-[10px] text-emerald-400 font-bold px-1.5 py-0.2 bg-emerald-400/10 rounded">50% Rebate</span>
+                <span className="text-[9px] sm:text-[10px] text-emerald-400 font-bold px-1.5 py-0.2 bg-emerald-400/10 rounded">50% Rebate</span>
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                Reg: {settings?.exemption80G || 'CIT(EXEMP)/80G/2022-23/G-912'}
+              <p className="text-[11px] sm:text-xs text-slate-300 leading-snug sm:leading-relaxed font-medium truncate">
+                Reg: {settings?.exemption80G || 'CIT(EXEMP)/80G/2023-24/G-9401'}
               </p>
-              <span className="text-[11px] text-emerald-400 font-semibold block">
+              <span className="text-[10px] sm:text-[11px] text-emerald-400 font-semibold block truncate">
                 Instant Form 10BD Eligible Receipt
               </span>
             </div>
@@ -137,10 +139,10 @@ export default function Footer() {
 
       {/* ================= 2. MAIN FOOTER GRID ================= */}
       <div className="py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-12 gap-x-6 gap-y-8 sm:gap-8 lg:gap-10 items-start">
 
-          {/* Brand & Mission (Col 4) */}
-          <div className="md:col-span-4 space-y-5">
+          {/* Brand & Mission (Col 4 on md+, full width on mobile) */}
+          <div className="col-span-2 md:col-span-4 space-y-5">
             <div className="flex items-center gap-3.5">
               <div className="w-16 h-16 rounded-2xl border-2 border-amber-400/80 p-1 bg-white flex items-center justify-center shrink-0 shadow-lg overflow-hidden">
                 <img
@@ -190,122 +192,122 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links (Col 3) */}
-          <div className="md:col-span-3 space-y-4">
+          {/* Quick Links (Col 3 on md+, 1 col on mobile -> side-by-side with Get Involved) */}
+          <div className="col-span-1 md:col-span-3 space-y-4">
             <div className="border-b-2 border-emerald-500 inline-block pb-1">
               <h3 className="font-black text-sm text-white tracking-wide uppercase">
                 Explore Aashram
               </h3>
             </div>
 
-            <ul className="space-y-2 text-xs text-slate-300">
+            <ul className="space-y-2.5 text-xs text-slate-300">
               <li>
-                <Link href="/" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Home Page</span>
+                <Link href="/" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Home Page</span>
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>About Our Foundation</span>
+                <Link href="/about" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">About Our Foundation</span>
                 </Link>
               </li>
               <li>
-                <Link href="/who-we-are" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Who We Are &amp; Values</span>
+                <Link href="/who-we-are" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Who We Are &amp; Values</span>
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>5 Pillars of Elder Care</span>
+                <Link href="/services" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">5 Pillars of Elder Care</span>
                 </Link>
               </li>
               <li>
-                <Link href="/team-members" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Trustees &amp; Caregivers</span>
+                <Link href="/team-members" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Trustees &amp; Caregivers</span>
                 </Link>
               </li>
               <li>
-                <Link href="/awards" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Organization Awards &amp; Honors</span>
+                <Link href="/awards" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Organization Awards &amp; Honors</span>
                 </Link>
               </li>
               <li>
-                <Link href="/certificates" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>12A &amp; 80G Tax Certificates</span>
+                <Link href="/certificates" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">12A &amp; 80G Tax Certificates</span>
                 </Link>
               </li>
               <li>
-                <Link href="/#reports-section" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Annual Reports &amp; Audits</span>
+                <Link href="/#reports-section" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Annual Reports &amp; Audits</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Causes & Get Involved (Col 2) */}
-          <div className="md:col-span-2 space-y-4">
+          {/* Causes & Get Involved (Col 2 on md+, 1 col on mobile -> side-by-side with Explore Aashram) */}
+          <div className="col-span-1 md:col-span-2 space-y-4">
             <div className="border-b-2 border-emerald-500 inline-block pb-1">
               <h3 className="font-black text-sm text-white tracking-wide uppercase">
                 Get Involved
               </h3>
             </div>
 
-            <ul className="space-y-2 text-xs text-slate-300">
+            <ul className="space-y-2.5 text-xs text-slate-300">
               <li>
-                <Link href="/campaigns" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Sponsor an Elder</span>
+                <Link href="/campaigns" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Sponsor an Elder</span>
                 </Link>
               </li>
               <li>
-                <Link href="/donation" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Tithi Bhoj Seva</span>
+                <Link href="/donation" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Tithi Bhoj Seva</span>
                 </Link>
               </li>
               <li>
-                <Link href="/apply-member" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Apply for Member</span>
+                <Link href="/apply-member" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Apply for Member</span>
                 </Link>
               </li>
               <li>
-                <Link href="/apply-volunteer" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Volunteer With Us</span>
+                <Link href="/apply-volunteer" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Volunteer With Us</span>
                 </Link>
               </li>
               <li>
-                <Link href="/event" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Medical Camps</span>
+                <Link href="/event" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Medical Camps</span>
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Photo Gallery</span>
+                <Link href="/gallery" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Photo Gallery</span>
                 </Link>
               </li>
               <li>
-                <Link href="/feedback" className="hover:text-emerald-400 transition flex items-center gap-1.5 group">
-                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition" />
-                  <span>Donor Feedback</span>
+                <Link href="/feedback" className="hover:text-emerald-400 transition flex items-start gap-1.5 group">
+                  <FiChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 transition shrink-0 mt-0.5" />
+                  <span className="leading-snug">Donor Feedback</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Connect & Direct Actions (Col 3) */}
-          <div className="md:col-span-3 space-y-5">
+          {/* Connect & Direct Actions (Col 3 on md+, full width on mobile) */}
+          <div className="col-span-2 md:col-span-3 space-y-5">
             <div className="border-b-2 border-emerald-500 inline-block pb-1">
               <h3 className="font-black text-sm text-white tracking-wide uppercase">
                 Connect With Us

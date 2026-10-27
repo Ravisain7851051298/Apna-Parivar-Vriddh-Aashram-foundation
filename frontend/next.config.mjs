@@ -15,7 +15,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'api.qrserver.com' },
+      { protocol: 'http', hostname: 'localhost' },
       { protocol: 'https', hostname: '**' }
     ]
   },
@@ -49,7 +49,7 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    const rawTarget = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const rawTarget = process.env.NEXT_PUBLIC_API_URL;
     const cleanTarget = rawTarget.trim().replace(/\/api\/?$/, '');
     return [
       {

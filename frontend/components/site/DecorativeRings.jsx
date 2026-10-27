@@ -50,22 +50,11 @@ export default function DecorativeRings({ variant = 'page-corners', className = 
     return (
       <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
         {/* Giant Top-Center Dark Yellow & Purple Big Rings */}
-        <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-162.5 h-162.5 rounded-full border-3 border-amber-500/25 ring-28 ring-purple-500/10 pointer-events-none" />
+        {/* <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-162.5 h-162.5 rounded-full border-3 border-amber-500/25 ring-28 ring-purple-500/10 pointer-events-none" />
         <div className="absolute -top-36 left-1/2 -translate-x-1/2 w-130 h-130 rounded-3xl rotate-12 border-3 border-purple-500/30 pointer-events-none" />
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-97.5 h-97.5 rounded-full border-2 border-yellow-500/35 pointer-events-none" />
         <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-65 h-65 rounded-2xl rotate-45 border-2 border-purple-600/35 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-35 h-35 rounded-full border-2 border-amber-600/40 pointer-events-none" />
-
-        {/* Giant Top-Left Big Rings */}
-        <div className="absolute -top-40 -left-40 w-135 h-135 rounded-full border-3 border-purple-500/25 ring-24 ring-amber-400/15 pointer-events-none" />
-        <div className="absolute -top-28 -left-28 w-100 h-100 rounded-3xl -rotate-12 border-2 border-amber-500/30 pointer-events-none" />
-        <div className="absolute -top-14 -left-14 w-65 h-65 rounded-full border-2 border-purple-600/35 pointer-events-none" />
-
-        {/* Giant Top-Right Big Rings */}
-        <div className="absolute -top-40 -right-40 w-135 h-135 rounded-full border-3 border-amber-500/25 ring-24 ring-purple-400/15 pointer-events-none" />
-        <div className="absolute -top-28 -right-28 w-100 h-100 rounded-3xl rotate-12 border-2 border-purple-500/30 pointer-events-none" />
-        <div className="absolute -top-14 -right-14 w-65 h-65 rounded-full border-2 border-yellow-500/35 pointer-events-none" />
-
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-35 h-35 rounded-full border-2 border-amber-600/40 pointer-events-none" /> */}
         {/* Mid-page Big Rings floating */}
         <div className="absolute top-1/3 -left-32 w-115 h-115 rounded-full border-2 border-amber-500/20 pointer-events-none" />
         <div className="absolute top-1/3 -left-20 w-80 h-80 rounded-3xl rotate-12 border-2 border-purple-500/25 pointer-events-none" />

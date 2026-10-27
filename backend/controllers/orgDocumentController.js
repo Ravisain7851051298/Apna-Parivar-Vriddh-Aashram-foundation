@@ -116,10 +116,17 @@ const getAllOrgDocuments = async (req, res) => {
     const isAdmin = req.user && (req.user.role === 'Admin' || req.user.role === 'admin' || req.user.role === 'manager');
     const filter = {};
 
-    if (!isAdmin) {
+    // For public requests (or non-all status requests), only return certificates allowed by admin
+    if (!isAdmin || req.query.status !== 'all') {
       filter.status = 'Verified';
+      filter.isActive = { $ne: false };
     } else if (req.query.status && req.query.status !== 'all') {
       filter.status = req.query.status;
+    }
+
+    // Specific query parameter override if provided
+    if (req.query.isActive !== undefined) {
+      filter.isActive = req.query.isActive === 'true' || req.query.isActive === true;
     }
 
     if (req.query.category && req.query.category !== 'all') {
@@ -161,6 +168,7 @@ const createOrgDocument = async (req, res) => {
       fileSize,
       description,
       status,
+      isActive,
       order
     } = req.body;
 
@@ -187,6 +195,7 @@ const createOrgDocument = async (req, res) => {
       fileSize: fileSize || '',
       description: (description || '').trim(),
       status: status || 'Verified',
+      isActive: isActive === undefined ? true : (isActive === true || isActive === 'true'),
       order: Number(order) || 0
     });
 
@@ -215,6 +224,10 @@ const updateOrgDocument = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
 
+    if (updateData.isActive !== undefined) {
+      updateData.isActive = updateData.isActive === true || updateData.isActive === 'true';
+    }
+
     if (updateData.fileUrl && !updateData.fileType) {
       updateData.fileType = /\.pdf(\?|$)/i.test(updateData.fileUrl) ? 'pdf' : 'image';
     }
@@ -239,6 +252,36 @@ const updateOrgDocument = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Failed to update organization document',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Toggle organization certificate visibility (Admin only)
+ */
+const toggleOrgDocumentVisibility = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const document = await OrganizationDocument.findById(id);
+
+    if (!document) {
+      return res.status(404).json({ success: false, message: 'Document not found' });
+    }
+
+    document.isActive = document.isActive === false ? true : false;
+    await document.save();
+
+    return res.json({
+      success: true,
+      message: `Certificate is now ${document.isActive ? 'Displayed on public website' : 'Hidden from public website'}`,
+      data: document,
+      document
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: 'Failed to toggle document visibility',
       error: error.message
     });
   }
@@ -277,6 +320,7 @@ module.exports = {
   getAllOrgDocuments,
   createOrgDocument,
   updateOrgDocument,
+  toggleOrgDocumentVisibility,
   deleteOrgDocument
 };
 

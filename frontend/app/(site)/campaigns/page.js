@@ -23,6 +23,8 @@ import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
 import MarkdownRenderer from '@/components/common/MarkdownRenderer';
 import { CardSkeleton, EmptyState } from '@/components/common/SkeletonLoader';
+import DecorativeLeaves from '@/components/site/DecorativeLeaves';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 const CATEGORIES = [
   'All Drives',
@@ -289,17 +291,25 @@ export default function CampaignsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
+    <div className="relative min-h-screen bg-linear-to-b from-[#fffef7] via-[#fffbf0] to-[#fef8e7]/30 py-12 selection:bg-amber-500 selection:text-slate-900 overflow-hidden">
+      {/* Animated Botanical Flower & Leaves at Bottom-Right Corner */}
+      <DecorativeLeaves
+        position="top-right"
+        size="sm"
+        showFlower={true}
+        showFloralSpike={true}
+        animated={true}
+        opacity={0.92}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-200">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-amber-200/70">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 mb-2">
-              <FiTarget className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Crowdfunding & Welfare Drives</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/90 text-amber-900 text-xs font-bold border border-amber-300/80 mb-2">
+              <FiTarget className="w-3.5 h-3.5 text-amber-700" />
+              <span>Crowdfunding &amp; Welfare Drives</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
               Active Crowdfunding Campaigns
             </h1>
             <p className="text-xs sm:text-sm text-slate-700 mt-1 max-w-2xl">
@@ -311,7 +321,7 @@ export default function CampaignsPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
               >
                 <FiPlus className="w-4 h-4" />
                 <span>Launch New Campaign</span>
@@ -323,7 +333,7 @@ export default function CampaignsPage() {
         {/* Category Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 mr-2 flex-shrink-0">
-            <FiFilter className="w-3.5 h-3.5 text-emerald-700" />
+            <FiFilter className="w-3.5 h-3.5 text-amber-700" />
             <span>Filter:</span>
           </div>
           {CATEGORIES.map((cat) => {
@@ -333,8 +343,8 @@ export default function CampaignsPage() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${isSelected
-                    ? 'bg-emerald-700 text-white shadow-sm'
-                    : 'bg-white text-black border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800'
+                  ? 'bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20 border border-amber-400'
+                  : 'bg-white/90 text-slate-800 border border-amber-200/80 hover:bg-amber-50 hover:text-amber-900'
                   }`}
               >
                 {cat}
@@ -344,8 +354,8 @@ export default function CampaignsPage() {
           <button
             onClick={() => setSelectedCategory('Urgent')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 cursor-pointer ${selectedCategory === 'Urgent'
-                ? 'bg-emerald-700 text-white shadow-sm'
-                : 'bg-white text-black border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800'
+              ? 'bg-rose-600 text-white shadow-md'
+              : 'bg-white/90 text-slate-800 border border-amber-200/80 hover:bg-rose-50 hover:text-rose-800'
               }`}
           >
             🔥 Urgent Only
@@ -371,11 +381,11 @@ export default function CampaignsPage() {
               return (
                 <div
                   key={id}
-                  className="bg-white rounded-3xl overflow-hidden border border-slate-200/90 hover:shadow-xl transition-all flex flex-col justify-between group"
+                  className="bg-white/95 rounded-3xl overflow-hidden border border-amber-200/80 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-900/10 transition-all flex flex-col justify-between group"
                 >
                   <div>
                     {/* Campaign Image Container */}
-                    <Link href={`/campaigns/${id}`} className="block relative h-56 overflow-hidden bg-slate-100 group/img">
+                    <Link href={`/campaigns/${id}`} className="block relative h-56 overflow-hidden bg-amber-50/50 group/img">
                       <img
                         src={displayImage}
                         alt={camp.title}
@@ -386,7 +396,10 @@ export default function CampaignsPage() {
                       />
 
                       {/* Category Badge */}
-                      <span className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-xs text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full border border-emerald-200 shadow-sm">
+                      <span
+                        className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-xs text-amber-900 text-[11px] font-bold px-3 py-1 rounded-full border border-amber-300 shadow-xs max-w-[80%] truncate"
+                        title={camp.category || 'General Drive'}
+                      >
                         {camp.category || 'General Drive'}
                       </span>
 
@@ -402,10 +415,10 @@ export default function CampaignsPage() {
                         <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => openEditModal(camp)}
-                            className="p-2 rounded-xl bg-white/90 hover:bg-white text-slate-800 hover:text-black border border-slate-200 shadow-md backdrop-blur-xs transition cursor-pointer"
+                            className="p-2 rounded-xl bg-white/90 hover:bg-white text-slate-800 hover:text-black border border-amber-200 shadow-md backdrop-blur-xs transition cursor-pointer"
                             title="Edit Campaign"
                           >
-                            <FiEdit2 className="w-3.5 h-3.5" />
+                            <FiEdit2 className="w-3.5 h-3.5 text-amber-700" />
                           </button>
                           <button
                             onClick={() => setDeletingCampaign(camp)}
@@ -420,8 +433,8 @@ export default function CampaignsPage() {
 
                     {/* Campaign Body Details */}
                     <div className="p-6">
-                      <h3 className="font-extrabold text-base text-black line-clamp-2 leading-snug">
-                        <Link href={`/campaigns/${id}`} className="hover:text-emerald-700 transition">
+                      <h3 className="font-extrabold text-base text-slate-900 line-clamp-2 leading-snug">
+                        <Link href={`/campaigns/${id}`} className="hover:text-amber-700 transition">
                           {camp.title}
                         </Link>
                       </h3>
@@ -430,25 +443,25 @@ export default function CampaignsPage() {
                       </div>
 
                       {/* Progress Bar & Financials */}
-                      <div className="mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                      <div className="mt-6 bg-amber-50/70 p-4 rounded-2xl border border-amber-200/60">
+                        <div className="w-full bg-amber-200/60 h-2.5 rounded-full overflow-hidden">
                           <div
-                            className="bg-linear-to-r from-emerald-600 to-teal-500 h-full rounded-full transition-all duration-500"
+                            className="bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${percent}%` }}
                           />
                         </div>
 
                         <div className="flex justify-between items-center text-xs mt-3">
-                          <span className="font-black text-black text-sm">
+                          <span className="font-black text-slate-900 text-sm">
                             ₹{raised.toLocaleString('en-IN')}{' '}
                             <span className="text-[11px] font-normal text-slate-600">raised</span>
                           </span>
-                          <span className="font-bold text-emerald-700">{percent}%</span>
+                          <span className="font-extrabold text-amber-800">{percent}%</span>
                         </div>
                         <div className="text-[11px] text-slate-600 mt-1.5 flex items-center justify-between">
                           <span>Target: ₹{goal.toLocaleString('en-IN')}</span>
-                          <span className="flex items-center gap-1">
-                            <FiUsers className="w-3 h-3 text-slate-500" />
+                          <span className="flex items-center gap-1 font-medium">
+                            <FiUsers className="w-3 h-3 text-amber-600" />
                             {camp.donorCount || 0} donors
                           </span>
                         </div>
@@ -460,32 +473,32 @@ export default function CampaignsPage() {
                   <div className="p-6 pt-0 space-y-2">
                     <Link
                       href={`/donation?campaign=${id}`}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md shadow-emerald-700/20 transition cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition cursor-pointer"
                     >
-                      <FiHeart className="w-4 h-4 fill-white" />
+                      <FiHeart className="w-4 h-4 fill-slate-950" />
                       <span>Donate to This Campaign (80G)</span>
                     </Link>
 
                     <Link
                       href={`/campaigns/${id}`}
-                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition cursor-pointer text-center"
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-amber-50/80 hover:bg-amber-100/90 text-amber-950 border border-amber-200/80 font-bold text-xs transition cursor-pointer text-center"
                     >
                       <span>View Campaign Details</span>
-                      <FiArrowRight className="w-3.5 h-3.5 text-emerald-700" />
+                      <FiArrowRight className="w-3.5 h-3.5 text-amber-700" />
                     </Link>
 
                     {isAdmin && (
                       <div className="grid grid-cols-2 gap-2 pt-1">
                         <button
                           onClick={() => openEditModal(camp)}
-                          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-black font-bold text-[11px] transition cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 hover:bg-amber-50 text-slate-800 font-bold text-[11px] border border-slate-200 transition cursor-pointer"
                         >
-                          <FiEdit2 className="w-3.5 h-3.5 text-slate-700" />
+                          <FiEdit2 className="w-3.5 h-3.5 text-amber-700" />
                           <span>Edit</span>
                         </button>
                         <button
                           onClick={() => setDeletingCampaign(camp)}
-                          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] transition cursor-pointer"
+                          className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-[11px] border border-rose-200 transition cursor-pointer"
                         >
                           <FiTrash2 className="w-3.5 h-3.5 text-rose-600" />
                           <span>Delete</span>
@@ -514,46 +527,46 @@ export default function CampaignsPage() {
               </button>
 
               <div className="flex items-center gap-2 mb-2">
-                <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+                <span className="p-2 rounded-xl bg-amber-100 text-amber-700">
                   <FiTarget className="w-5 h-5" />
                 </span>
                 <div>
-                  <h3 className="font-black text-xl text-black">Launch Crowdfunding Campaign</h3>
+                  <h3 className="font-black text-xl text-slate-900">Launch Crowdfunding Campaign</h3>
                   <p className="text-xs text-slate-600">Publish a public donation drive with photo and goal.</p>
                 </div>
               </div>
 
               <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs mt-4">
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Title (English) *</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Title (English) *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Free School Bags & Study Kits for 500 Slum Children"
                     value={addTitle}
                     onChange={(e) => setAddTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Title (Hindi / Local)</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Title (Hindi / Local)</label>
                   <input
                     type="text"
                     placeholder="e.g. 500 जरूरतमंद बच्चों के लिए मुफ्त स्कूल बैग और अध्ययन सामग्री"
                     value={addTitleHi}
                     onChange={(e) => setAddTitleHi(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-black block mb-1">Category</label>
+                    <label className="font-bold text-slate-900 block mb-1">Category</label>
                     <select
                       value={addCategory}
                       onChange={(e) => setAddCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-bold text-black bg-white"
+                      className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-bold text-slate-900 bg-white"
                     >
                       <option value="Child Education">Child Education</option>
                       <option value="Emergency Healthcare">Emergency Healthcare</option>
@@ -565,23 +578,23 @@ export default function CampaignsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="font-bold text-black block mb-1">Funding Goal (INR) *</label>
+                    <label className="font-bold text-slate-900 block mb-1">Funding Goal (INR) *</label>
                     <input
                       type="number"
                       required
                       min={100}
                       value={addGoalAmount}
                       onChange={(e) => setAddGoalAmount(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-bold text-black bg-white"
+                      className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-bold text-slate-900 bg-white"
                     />
                   </div>
                 </div>
 
                 {/* IMAGE UPLOAD OPTION */}
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="font-bold text-black flex items-center gap-1.5">
-                      <FiImage className="w-4 h-4 text-emerald-700" />
+                    <label className="font-bold text-slate-900 flex items-center gap-1.5">
+                      <FiImage className="w-4 h-4 text-amber-700" />
                       <span>Campaign Banner Image</span>
                     </label>
                     <span className="text-[10px] text-slate-500">Upload file or enter URL</span>
@@ -599,9 +612,9 @@ export default function CampaignsPage() {
                     />
                     <label
                       htmlFor="addCampaignFileInput"
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-emerald-600 text-black font-bold cursor-pointer transition shadow-xs text-xs"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-amber-300 hover:border-amber-500 text-slate-900 font-bold cursor-pointer transition shadow-xs text-xs"
                     >
-                      <FiUploadCloud className="w-4 h-4 text-emerald-700" />
+                      <FiUploadCloud className="w-4 h-4 text-amber-700" />
                       <span>{addImageFile ? 'Change Image File' : 'Upload Image from Device'}</span>
                     </label>
 
@@ -618,7 +631,7 @@ export default function CampaignsPage() {
 
                   {/* Image Preview Box */}
                   {addImagePreview ? (
-                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 h-36 bg-white">
+                    <div className="relative rounded-2xl overflow-hidden border border-amber-200 h-36 bg-white">
                       <img
                         src={addImagePreview}
                         alt="Preview"
@@ -643,23 +656,23 @@ export default function CampaignsPage() {
                       setAddBannerUrl(e.target.value);
                       if (!addImageFile) setAddImagePreview(e.target.value);
                     }}
-                    className="w-full px-3.5 py-2 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Description *</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Description *</label>
                   <textarea
                     rows={3}
                     required
                     placeholder="Describe the background, urgency, direct beneficiaries, and how the donations will be used..."
                     value={addDescription}
                     onChange={(e) => setAddDescription(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
-                <label className="flex items-center gap-2 font-bold text-black cursor-pointer bg-rose-50/60 p-3 rounded-xl border border-rose-100">
+                <label className="flex items-center gap-2 font-bold text-slate-900 cursor-pointer bg-rose-50/60 p-3 rounded-xl border border-rose-100">
                   <input
                     type="checkbox"
                     checked={addUrgent}
@@ -683,11 +696,11 @@ export default function CampaignsPage() {
                   <button
                     type="submit"
                     disabled={addingSubmitting}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition cursor-pointer"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-500 disabled:opacity-50 text-slate-950 font-black rounded-xl shadow-md shadow-amber-500/20 transition cursor-pointer"
                   >
                     {addingSubmitting ? (
                       <>
-                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                         <span>Publishing...</span>
                       </>
                     ) : (
@@ -715,44 +728,44 @@ export default function CampaignsPage() {
               </button>
 
               <div className="flex items-center gap-2 mb-2">
-                <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
+                <span className="p-2 rounded-xl bg-amber-100 text-amber-700">
                   <FiEdit2 className="w-5 h-5" />
                 </span>
                 <div>
-                  <h3 className="font-black text-xl text-black">Edit Crowdfunding Campaign</h3>
+                  <h3 className="font-black text-xl text-slate-900">Edit Crowdfunding Campaign</h3>
                   <p className="text-xs text-slate-600">Update goals, title, description, or upload a new banner.</p>
                 </div>
               </div>
 
               <form onSubmit={handleEditSubmit} className="space-y-4 text-xs mt-4">
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Title (English) *</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Title (English) *</label>
                   <input
                     type="text"
                     required
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Title (Hindi / Local)</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Title (Hindi / Local)</label>
                   <input
                     type="text"
                     value={editTitleHi}
                     onChange={(e) => setEditTitleHi(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="font-bold text-black block mb-1">Category</label>
+                    <label className="font-bold text-slate-900 block mb-1">Category</label>
                     <select
                       value={editCategory}
                       onChange={(e) => setEditCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-bold text-black bg-white"
+                      className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-bold text-slate-900 bg-white"
                     >
                       <option value="Child Education">Child Education</option>
                       <option value="Emergency Healthcare">Emergency Healthcare</option>
@@ -764,33 +777,33 @@ export default function CampaignsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="font-bold text-black block mb-1">Funding Goal (INR) *</label>
+                    <label className="font-bold text-slate-900 block mb-1">Funding Goal (INR) *</label>
                     <input
                       type="number"
                       required
                       min={100}
                       value={editGoalAmount}
                       onChange={(e) => setEditGoalAmount(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-bold text-black bg-white"
+                      className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-bold text-slate-900 bg-white"
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-black block mb-1">Raised (INR)</label>
+                    <label className="font-bold text-slate-900 block mb-1">Raised (INR)</label>
                     <input
                       type="number"
                       min={0}
                       value={editRaisedAmount}
                       onChange={(e) => setEditRaisedAmount(e.target.value)}
-                      className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-bold text-black bg-white"
+                      className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-bold text-slate-900 bg-white"
                     />
                   </div>
                 </div>
 
                 {/* IMAGE UPLOAD OPTION IN EDIT */}
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="font-bold text-black flex items-center gap-1.5">
-                      <FiImage className="w-4 h-4 text-emerald-700" />
+                    <label className="font-bold text-slate-900 flex items-center gap-1.5">
+                      <FiImage className="w-4 h-4 text-amber-700" />
                       <span>Update Banner Image</span>
                     </label>
                     <span className="text-[10px] text-slate-500">Pick from device or change link</span>
@@ -808,9 +821,9 @@ export default function CampaignsPage() {
                     />
                     <label
                       htmlFor="editCampaignFileInput"
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-emerald-600 text-black font-bold cursor-pointer transition shadow-xs text-xs"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-amber-300 hover:border-amber-500 text-slate-900 font-bold cursor-pointer transition shadow-xs text-xs"
                     >
-                      <FiUploadCloud className="w-4 h-4 text-emerald-700" />
+                      <FiUploadCloud className="w-4 h-4 text-amber-700" />
                       <span>{editImageFile ? 'Select Different Image' : 'Upload New Photo'}</span>
                     </label>
 
@@ -827,7 +840,7 @@ export default function CampaignsPage() {
 
                   {/* Preview of current or newly selected photo */}
                   {editImagePreview && (
-                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 h-36 bg-white">
+                    <div className="relative rounded-2xl overflow-hidden border border-amber-200 h-36 bg-white">
                       <img
                         src={editImagePreview}
                         alt="Preview"
@@ -852,23 +865,23 @@ export default function CampaignsPage() {
                         setEditBannerUrl(e.target.value);
                         if (!editImageFile) setEditImagePreview(e.target.value);
                       }}
-                      className="w-full px-3.5 py-2 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                      className="w-full px-3.5 py-2 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-bold text-black block mb-1">Campaign Description *</label>
+                  <label className="font-bold text-slate-900 block mb-1">Campaign Description *</label>
                   <textarea
                     rows={3}
                     required
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border rounded-xl border-slate-300 focus:outline-emerald-600 font-medium text-black bg-white"
+                    className="w-full px-3.5 py-2.5 border rounded-xl border-amber-200 focus:outline-amber-600 font-medium text-slate-900 bg-white"
                   />
                 </div>
 
-                <label className="flex items-center gap-2 font-bold text-black cursor-pointer bg-rose-50/60 p-3 rounded-xl border border-rose-100">
+                <label className="flex items-center gap-2 font-bold text-slate-900 cursor-pointer bg-rose-50/60 p-3 rounded-xl border border-rose-100">
                   <input
                     type="checkbox"
                     checked={editUrgent}
@@ -889,11 +902,11 @@ export default function CampaignsPage() {
                   <button
                     type="submit"
                     disabled={editingSubmitting}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl shadow-md transition cursor-pointer"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-600 hover:to-amber-500 disabled:opacity-50 text-slate-950 font-black rounded-xl shadow-md shadow-amber-500/20 transition cursor-pointer"
                   >
                     {editingSubmitting ? (
                       <>
-                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                         <span>Saving...</span>
                       </>
                     ) : (

@@ -13,10 +13,6 @@ ensureAllCategoryDirs();
 
 // Allowed Origins for Credentials Support
 const allowedOrigins = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  'https://apnaparivarvriddhaashram.org',
-  'https://www.apnaparivarvriddhaashram.org',
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
@@ -35,8 +31,6 @@ app.use(cors({
     'Content-Type',
     'Authorization',
     'x-admin-secret-key',
-    'X-Admin-Secret-Key',
-    'X-ADMIN-SECRET-KEY',
     'x-upload-category',
     'X-Upload-Category',
     'x-category',

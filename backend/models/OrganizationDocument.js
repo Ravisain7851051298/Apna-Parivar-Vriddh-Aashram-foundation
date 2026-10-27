@@ -27,6 +27,7 @@ const organizationDocumentSchema = new mongoose.Schema({
   fileSize: { type: String, default: '' },
   description: { type: String, default: '', trim: true },
   status: { type: String, enum: ['Verified', 'Pending', 'Archived'], default: 'Verified' },
+  isActive: { type: Boolean, default: true },
   order: { type: Number, default: 0 }
 }, {
   timestamps: true
