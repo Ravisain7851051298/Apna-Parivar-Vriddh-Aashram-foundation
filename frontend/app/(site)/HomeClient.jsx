@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import HomeCarousel from '@/components/site/HomeCarousel';
+import DecorativeLeaves from '@/components/site/DecorativeLeaves';
 import {
   FiUsers,
   FiHeart,
@@ -193,30 +194,9 @@ function HomeClientContent() {
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     : [];
 
-  // Initialize joined events for current user
-  useEffect(() => {
-    if (!currentUser || !Array.isArray(events)) return;
-    const joined = new Set();
-    events.forEach((evt) => {
-      const eId = evt._id || evt.id;
-      const isAttending = evt.attendees?.some((att) =>
-        (att.user && att.user === currentUser.id) ||
-        (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
-        (att.phone && att.phone === currentUser.phone)
-      );
-      if (isAttending) joined.add(eId);
-    });
-    setJoinedEventIds(joined);
-  }, [currentUser, events]);
 
-  // Handle URL joinEventId (after login/register redirect)
-  useEffect(() => {
-    if (joinEventId && currentUser && !joinedEventIds.has(joinEventId)) {
-      handleJoinEvent(joinEventId);
-    }
-  }, [joinEventId, currentUser]);
 
-  const handleJoinEvent = async (eId) => {
+  const handleJoinEvent = useCallback(async (eId) => {
     if (!currentUser) {
       const redirectUrl = `/?joinEventId=${eId}#event-${eId}`;
       router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
@@ -248,7 +228,36 @@ function HomeClientContent() {
     } finally {
       setJoiningEventId(null);
     }
-  };
+  }, [currentUser, router]);
+
+  // Initialize joined events for current user
+  useEffect(() => {
+    if (!currentUser || !Array.isArray(events)) return;
+    const joined = new Set();
+    events.forEach((evt) => {
+      const eId = evt._id || evt.id;
+      const isAttending = evt.attendees?.some((att) =>
+        (att.user && att.user === currentUser.id) ||
+        (att.email && att.email.toLowerCase() === currentUser.email?.toLowerCase()) ||
+        (att.phone && att.phone === currentUser.phone)
+      );
+      if (isAttending) joined.add(eId);
+    });
+    const timer = setTimeout(() => {
+      setJoinedEventIds(joined);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [currentUser, events]);
+
+  // Handle URL joinEventId (after login/register redirect)
+  useEffect(() => {
+    if (joinEventId && currentUser && !joinedEventIds.has(joinEventId)) {
+      const timer = setTimeout(() => {
+        handleJoinEvent(joinEventId);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [joinEventId, currentUser, joinedEventIds, handleJoinEvent]);
 
   // Filtered gallery
   const filteredGallery = galleryFilter === 'all'
@@ -390,7 +399,10 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 2. ABOUT US SECTION ================= */}
-      <section id="about-section" className="py-14 sm:py-20 bg-linear-to-br from-yellow-200 via-purple-100 to-orange-100 border-b border-amber-100">
+      <section
+        id="about-section"
+        className="mt-8 sm:mt-12 py-14 sm:py-20 bg-linear-to-br from-yellow-200 via-purple-100 to-orange-100 border-t-2 border-t-amber-300/60 border-b border-b-amber-100 rounded-tl-[50%_32px] rounded-tr-[50%_32px] shadow-[0_-10px_25px_rgba(245,158,11,0.08)] relative overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
@@ -521,8 +533,8 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 4. CROWDFUNDING & CAMPAIGNS SECTION ================= */}
-      <section id="campaigns-section" className="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section id="campaigns-section" className="py-16 sm:py-20 bg-slate-50 border-b border-slate-200 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
 
           {/* Top Center Section Header */}
           <div className="text-center max-w-3xl mx-auto">
@@ -644,6 +656,17 @@ function HomeClientContent() {
           </div>
 
         </div>
+
+        {/* Animated Botanical Bouquet (Purple, Yellow, Orange Leaves & Floral Spike) on Bottom Corner */}
+        <DecorativeLeaves
+          position="bottom-right"
+          size="lg"
+          showFloralSpike={true}
+          showYellowLeaf={true}
+          showOrangeLeaf={true}
+          animated={true}
+          opacity={0.92}
+        />
       </section>
 
       {/* ================= 5. EVENTS SECTION ================= */}
@@ -781,8 +804,18 @@ function HomeClientContent() {
       </section>
 
       {/* ================= 6. SERVICES SECTION ================= */}
-      <section id="services-section" className="py-16 sm:py-20 bg-[#fffdf5] border-b border-amber-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section id="services-section" className="py-16 sm:py-20 bg-[#fffdf5] border-b border-amber-200/80 relative overflow-hidden">
+        {/* Animated Botanical Bouquet on Top-Left Corner */}
+        <DecorativeLeaves
+          position="top-left"
+          size="sm"
+          showFloralSpike={true}
+          showYellowLeaf={true}
+          showOrangeLeaf={true}
+          animated={true}
+          opacity={0.92}
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
 
           {/* Top Center Section Header */}
           <div className="text-center max-w-3xl mx-auto">
@@ -1096,8 +1129,7 @@ function HomeClientContent() {
                 const isExpired = Boolean(
                   mem.isExpired ||
                   mem.membershipStatus === 'expired' ||
-                  mem.status === 'expired' ||
-                  (mem.membershipExpiresAt && new Date(mem.membershipExpiresAt).getTime() < Date.now())
+                  mem.status === 'expired'
                 );
 
                 return (
@@ -1195,7 +1227,7 @@ function HomeClientContent() {
                   <Link
                     key={sId || idx}
                     href={`/sponsors/${sId}`}
-                    className="group flex flex-col items-center text-center p-3 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer max-w-[240px]"
+                    className="group flex flex-col items-center text-center p-3 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer max-w-60"
                     title={`Click to view ${sName} details`}
                   >
                     {/* Sponsor Image */}
@@ -1238,8 +1270,8 @@ function HomeClientContent() {
 
 
       {/* ================= 10. ORGANIZATION AWARDS & HONORS ================= */}
-      <section id="awards-section" className="py-16 sm:py-20 bg-linear-to-b from-[#fffef7] via-[#fffbf0] to-white border-b border-amber-200/70 scroll-mt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section id="awards-section" className="py-16 sm:py-20 bg-linear-to-b from-[#fffef7] via-[#fffbf0] to-white border-b border-amber-200/70 scroll-mt-24 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
 
           {/* Top Center Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-2.5">
@@ -1365,15 +1397,48 @@ function HomeClientContent() {
           </div>
 
         </div>
+        {/* Animated Botanical Bouquet on Bottom-Right Corner */}
+        <DecorativeLeaves
+          position="bottom-right"
+          size="sm"
+          showFloralSpike={true}
+          showYellowLeaf={true}
+          showOrangeLeaf={true}
+          animated={true}
+          opacity={0.92}
+        />
       </section>
 
       {/* ================= 11. TESTIMONIALS (Reviews & Blessings) ================= */}
-      <section id="feedback-section" className="py-16 sm:py-20 bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section id="feedback-section" className="relative py-20 bg-linear-to-b from-amber-50/40 via-white to-amber-50/30 overflow-hidden">
+        {/* Decorative Dark Yellow & Purple Multi-Shape Rings on Section Corners */}
+        {/* Top-Left: Large Dark Yellow & Purple Concentric Circles + Rotated Squircles */}
+        <div className="absolute -top-40 -left-40 w-120 h-120 rounded-full border-2 border-amber-500/35 ring-20 ring-purple-500/15 pointer-events-none" />
+        <div className="absolute -top-28 -left-28 w-90 h-90 rounded-3xl rotate-12 border-2 border-purple-500/30 pointer-events-none" />
+        <div className="absolute -top-16 -left-16 w-60 h-60 rounded-full border-2 border-yellow-500/40 pointer-events-none" />
+        <div className="absolute top-0 left-0 w-35 h-35 rounded-2xl rotate-45 border-2 border-purple-600/35 pointer-events-none" />
+
+        {/* Top-Right: Pill & Concentric Purple/Yellow Accent */}
+        <div className="absolute -top-32 -right-32 w-105 h-105 rounded-full border-2 border-purple-500/30 ring-16 ring-amber-400/15 pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-75 h-75 rounded-3xl -rotate-12 border-2 border-amber-500/35 pointer-events-none" />
+        <div className="absolute -top-8 -right-8 w-45 h-45 rounded-full border-2 border-purple-600/35 pointer-events-none" />
+
+        {/* Bottom-Left: Pill & Concentric Purple/Yellow Accent */}
+        <div className="absolute -bottom-36 -left-36 w-110 h-110 rounded-full border-2 border-purple-500/30 ring-16 ring-amber-400/15 pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-3xl -rotate-12 border-2 border-amber-500/35 pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-50 h-50 rounded-full border-2 border-purple-600/35 pointer-events-none" />
+
+        {/* Bottom-Right: Large Dark Yellow & Purple Concentric Circles + Rotated Squircles */}
+        <div className="absolute -bottom-40 -right-40 w-120 h-120 rounded-full border-2 border-amber-500/35 ring-20 ring-purple-500/15 pointer-events-none" />
+        <div className="absolute -bottom-28 -right-28 w-90 h-90 rounded-3xl rotate-12 border-2 border-purple-500/30 pointer-events-none" />
+        <div className="absolute -bottom-16 -right-16 w-60 h-60 rounded-full border-2 border-yellow-500/40 pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-35 h-35 rounded-2xl rotate-45 border-2 border-purple-600/35 pointer-events-none" />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
           {/* Top Center Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-bold shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/90 text-amber-950 text-xs font-bold shadow-2xs">
               <FiStar className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
               <span>Voices of Compassion</span>
             </div>
@@ -1401,10 +1466,16 @@ function HomeClientContent() {
           ) : (
             <div className="relative pt-10">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
-                <div className="w-20 h-20 rounded-full border-4 border-amber-400 p-1 bg-white shadow-xl overflow-hidden flex items-center justify-center">
-                  {displayReviews[reviewIdx % displayReviews.length]?.profilePicture ? (
+                <div className="w-20 h-20 rounded-full ring-4 ring-amber-400/80 p-1 bg-white shadow-xl overflow-hidden flex items-center justify-center">
+                  {(displayReviews[reviewIdx % displayReviews.length]?.profilePicture ||
+                    displayReviews[reviewIdx % displayReviews.length]?.photoUrl ||
+                    displayReviews[reviewIdx % displayReviews.length]?.userId?.photoUrl) ? (
                     <img
-                      src={getContentImageUrl(displayReviews[reviewIdx % displayReviews.length].profilePicture)}
+                      src={getContentImageUrl(
+                        displayReviews[reviewIdx % displayReviews.length]?.profilePicture ||
+                        displayReviews[reviewIdx % displayReviews.length]?.photoUrl ||
+                        displayReviews[reviewIdx % displayReviews.length]?.userId?.photoUrl
+                      )}
                       alt={displayReviews[reviewIdx % displayReviews.length]?.name || 'User'}
                       className="w-full h-full object-cover rounded-full"
                       onError={(e) => {
@@ -1420,14 +1491,25 @@ function HomeClientContent() {
                 </div>
               </div>
 
-              {/* Testimonial Box */}
-              <div className="relative bg-amber-50/20 rounded-3xl pt-14 pb-8 px-6 sm:px-12 border border-amber-200/80 shadow-sm text-center">
+              {/* Testimonial Box - Strictly Borderless with ambient shadow and concentric corner rings */}
+              <div className="relative bg-white/95 backdrop-blur-md rounded-3xl pt-16 pb-10 px-6 sm:px-12 shadow-2xl shadow-amber-950/8 text-center overflow-hidden border-none">
+                {/* Decorative Inner Concentric Dark Yellow & Purple Shapes */}
+                <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full border-2 border-amber-500/35 pointer-events-none" />
+                <div className="absolute -top-10 -right-10 w-36 h-36 rounded-3xl rotate-12 border-2 border-purple-500/30 pointer-events-none" />
+                <div className="absolute -top-5 -right-5 w-24 h-24 rounded-full border border-yellow-500/40 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-14 h-14 rounded-2xl rotate-45 border border-purple-600/35 pointer-events-none" />
+
+                <div className="absolute -bottom-14 -left-14 w-44 h-44 rounded-full border-2 border-purple-500/30 pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-3xl -rotate-12 border-2 border-amber-500/35 pointer-events-none" />
+                <div className="absolute -bottom-5 -left-5 w-24 h-24 rounded-full border border-purple-600/35 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-14 h-14 rounded-2xl rotate-12 border border-amber-600/40 pointer-events-none" />
+
                 {displayReviews.length > 1 && (
                   <>
                     <button
                       type="button"
                       onClick={() => setReviewIdx((prev) => (prev - 1 + displayReviews.length) % displayReviews.length)}
-                      className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border border-amber-200"
+                      className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border-none"
                       aria-label="Previous Review"
                     >
                       <FiChevronLeft className="w-5 h-5" />
@@ -1436,7 +1518,7 @@ function HomeClientContent() {
                     <button
                       type="button"
                       onClick={() => setReviewIdx((prev) => (prev + 1) % displayReviews.length)}
-                      className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border border-amber-200"
+                      className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-amber-50 hover:bg-amber-500 hover:text-stone-950 text-stone-700 flex items-center justify-center transition shadow-2xs cursor-pointer border-none"
                       aria-label="Next Review"
                     >
                       <FiChevronRight className="w-5 h-5" />
@@ -1444,7 +1526,7 @@ function HomeClientContent() {
                   </>
                 )}
 
-                <div className="max-w-xl mx-auto space-y-3">
+                <div className="max-w-xl mx-auto space-y-3 relative z-10">
                   <div className="flex items-center justify-center gap-1 text-amber-500">
                     {[...Array(5)].map((_, i) => (
                       <FiStar key={i} className="w-4 h-4 fill-amber-400 text-amber-500" />
@@ -1462,21 +1544,53 @@ function HomeClientContent() {
                     <h4 className="text-sm font-black text-amber-950">
                       {displayReviews[reviewIdx % displayReviews.length]?.name || 'Anonymous Supporter'}
                     </h4>
-                    <span className="inline-block px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold mt-0.5">
+                    <span className="inline-block px-3 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold mt-0.5">
                       {displayReviews[reviewIdx % displayReviews.length]?.role || 'Dedicated Supporter'}
                     </span>
                   </div>
 
-                  {displayReviews[reviewIdx % displayReviews.length]?.adminReply && (
-                    <div className="mt-4 bg-linear-to-br from-amber-50/80 to-yellow-50/40 p-3.5 rounded-2xl border border-amber-200 text-left space-y-1.5">
-                      <div className="flex items-center gap-1.5 text-xs font-black text-amber-950">
-                        <FiShield className="w-3.5 h-3.5 text-amber-700" />
-                        <span>Official Response: {displayReviews[reviewIdx % displayReviews.length]?.repliedBy || 'Management Desk'}</span>
+                  {/* Official Admin Reply with Admin Photo, Name & Completely Borderless Container */}
+                  {(displayReviews[reviewIdx % displayReviews.length]?.adminReply || displayReviews[reviewIdx % displayReviews.length]?.reply) && (
+                    <div className="mt-5 text-left bg-linear-to-r from-amber-50 via-amber-100/50 to-yellow-50/70 p-4 sm:p-5 rounded-2xl space-y-2 border-none shadow-xs">
+                      <div className="flex items-center justify-between gap-3 pb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-white ring-2 ring-amber-400 p-0.5 shadow-sm shrink-0">
+                            <img
+                              src={getContentImageUrl(settings?.presidentPhotoUrl || settings?.logoUrl || '/logo.jpeg')}
+                              alt={displayReviews[reviewIdx % displayReviews.length]?.repliedBy || 'Admin'}
+                              className="w-full h-full object-cover rounded-full"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = '/logo.jpg';
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <h5 className="text-xs sm:text-sm font-black text-amber-950">
+                                {displayReviews[reviewIdx % displayReviews.length]?.repliedBy || settings?.presidentName || 'Dr. Ravi Saini'}
+                              </h5>
+                              <span className="px-2 py-0.5 rounded-full bg-amber-200/90 text-amber-950 font-bold text-[9px]">
+                                Official Response
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-amber-800 font-medium">
+                              {displayReviews[reviewIdx % displayReviews.length]?.repliedByRole || 'Trustee & President Desk'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {displayReviews[reviewIdx % displayReviews.length]?.adminRepliedAt && (
+                          <span className="text-[10px] text-stone-400 font-mono hidden sm:inline-block">
+                            {new Date(displayReviews[reviewIdx % displayReviews.length].adminRepliedAt).toLocaleDateString('en-IN')}
+                          </span>
+                        )}
                       </div>
-                      <div className="flex items-start gap-2 pl-1">
-                        <FiCornerDownRight className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                          {displayReviews[reviewIdx % displayReviews.length].adminReply}
+
+                      <div className="flex items-start gap-2 pt-0.5 pl-0.5">
+                        <FiCornerDownRight className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                        <p className="text-xs sm:text-sm text-stone-700 font-medium leading-relaxed italic">
+                          &ldquo;{displayReviews[reviewIdx % displayReviews.length].adminReply || displayReviews[reviewIdx % displayReviews.length].reply}&rdquo;
                         </p>
                       </div>
                     </div>

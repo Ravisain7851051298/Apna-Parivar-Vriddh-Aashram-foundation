@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import api from '@/services/api';
 import {
   FiGrid,
   FiCreditCard,
@@ -48,6 +49,49 @@ export default function DashboardPage() {
   const [hoveredBarIdx, setHoveredBarIdx] = useState(null);
   const [activeRecentTab, setActiveRecentTab] = useState('donations'); // 'donations' | 'members'
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Active Real-Time Data Fetch States for Admin Dashboard
+  const [membersList, setMembersList] = useState([]);
+  const [volunteersList, setVolunteersList] = useState([]);
+  const [coordinatorsList, setCoordinatorsList] = useState([]);
+  const [donationsList, setDonationsList] = useState([]);
+  const [loadingMetrics, setLoadingMetrics] = useState(true);
+
+  const loadDashboardData = useCallback(async () => {
+    try {
+      const [memRes, volRes, coordRes, donRes] = await Promise.allSettled([
+        api.get('/applications/members').catch(() => api.get('/members')),
+        api.get('/applications/volunteers').catch(() => api.get('/volunteers')),
+        api.get('/coordinators'),
+        api.get('/donations')
+      ]);
+
+      if (memRes.status === 'fulfilled') {
+        const m = memRes.value?.data?.applications || memRes.value?.data?.members || memRes.value?.data?.data || [];
+        if (Array.isArray(m) && m.length > 0) setMembersList(m);
+      }
+      if (volRes.status === 'fulfilled') {
+        const v = volRes.value?.data?.applications || volRes.value?.data?.volunteers || volRes.value?.data?.data || [];
+        if (Array.isArray(v) && v.length > 0) setVolunteersList(v);
+      }
+      if (coordRes.status === 'fulfilled') {
+        const c = coordRes.value?.data?.coordinators || coordRes.value?.data?.data || [];
+        if (Array.isArray(c) && c.length > 0) setCoordinatorsList(c);
+      }
+      if (donRes.status === 'fulfilled') {
+        const d = donRes.value?.data?.donations || donRes.value?.data?.data || [];
+        if (Array.isArray(d) && d.length > 0) setDonationsList(d);
+      }
+    } catch (e) {
+      console.warn('Dashboard data fetch notice:', e?.message);
+    } finally {
+      setLoadingMetrics(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   // Authentication Gates
   if (!currentUser) {
@@ -106,17 +150,27 @@ export default function DashboardPage() {
     );
   }
 
-  // Core Stats
-  const totalDonations = donations.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-  const pendingMembers = members.filter(m => m.status === 'pending');
-  const activeMembers = members.filter(m => m.status === 'active');
-  const pendingDonations = donations.filter(d => d.status === 'pending');
-  const totalVerifiedMembers = activeMembers.length;
-  const totalReceiptsCount = donations.filter(d => Boolean(d.receiptNumber)).length;
+  // Core Stats with Real-Time API Fallback
+  const effectiveMembers = membersList.length > 0 ? membersList : members;
+  const effectiveDonations = donationsList.length > 0 ? donationsList : donations;
+  const effectiveVolunteers = volunteersList.length > 0
+    ? volunteersList
+    : effectiveMembers.filter(m => m.role === 'Volunteer' || m.isVolunteer);
+  const effectiveCoordinators = coordinatorsList.length > 0
+    ? coordinatorsList
+    : effectiveMembers.filter(m => m.role === 'Coordinator' || m.isCoordinator);
 
-  const handleRefresh = () => {
+  const totalDonations = effectiveDonations.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+  const pendingMembers = effectiveMembers.filter(m => m.status === 'pending');
+  const activeMembers = effectiveMembers.filter(m => m.status === 'active' || m.status === 'approved');
+  const pendingDonations = effectiveDonations.filter(d => d.status === 'pending');
+  const totalVerifiedMembers = activeMembers.length;
+  const totalReceiptsCount = effectiveDonations.filter(d => Boolean(d.receiptNumber)).length;
+
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 800);
+    await loadDashboardData();
+    setTimeout(() => setIsRefreshing(false), 500);
   };
 
   // Safe date parser
@@ -131,7 +185,7 @@ export default function DashboardPage() {
   // 100% REAL DATA from database - no simulated or mock metrics
   // -------------------------------------------------------------
   const trendData = useMemo(() => {
-    const validDonations = donations.filter(d => d.status !== 'rejected');
+    const validDonations = effectiveDonations.filter(d => d.status !== 'rejected');
     const now = new Date();
 
     if (timeRange === '7d') {
@@ -307,7 +361,7 @@ export default function DashboardPage() {
       }
     }
     return points;
-  }, [timeRange, donations]);
+  }, [timeRange, effectiveDonations]);
 
   // SVG Area Chart Coordinate Mapping
   const chartMaxVal = useMemo(() => {
@@ -355,7 +409,7 @@ export default function DashboardPage() {
   // Real aggregates grouped by campaignTitle from donations
   // -------------------------------------------------------------
   const donutCauses = useMemo(() => {
-    const validDonations = donations.filter(d => d.status !== 'rejected');
+    const validDonations = effectiveDonations.filter(d => d.status !== 'rejected');
     const colorPalette = ['#d97706', '#f59e0b', '#eab308', '#ca8a04', '#b45309', '#3b82f6', '#8b5cf6'];
 
     const map = {};
@@ -403,10 +457,10 @@ export default function DashboardPage() {
     }
 
     return items;
-  }, [donations]);
+  }, [effectiveDonations]);
 
   // -------------------------------------------------------------
-  // Dynamic Chart 3: Real Member vs Volunteer Velocity
+  // Dynamic Chart 3: Real Members vs Volunteers vs Coordinators Enrolment Velocity
   // -------------------------------------------------------------
   const enrolmentVelocity = useMemo(() => {
     const now = new Date();
@@ -417,26 +471,31 @@ export default function DashboardPage() {
       const mMonth = d.getMonth();
       const monthLabel = d.toLocaleDateString('en-IN', { month: 'short' });
 
-      const monthMembers = members.filter(m => {
-        const dt = parseSafeDate(m.createdAt || m.verifiedAt);
-        const isMem = m.role === 'Member' || m.isMember;
+      const monthMembers = effectiveMembers.filter(m => {
+        const dt = parseSafeDate(m.createdAt || m.verifiedAt || m.date);
+        const isMem = m.role === 'Member' || m.isMember || (!m.role && !m.isVolunteer && !m.isCoordinator);
         return isMem && dt && dt.getFullYear() === mYear && dt.getMonth() === mMonth;
       }).length;
 
-      const monthVolunteers = members.filter(m => {
-        const dt = parseSafeDate(m.createdAt || m.verifiedAt);
-        const isVol = m.role === 'Volunteer' || m.isVolunteer;
-        return isVol && dt && dt.getFullYear() === mYear && dt.getMonth() === mMonth;
+      const monthVolunteers = effectiveVolunteers.filter(v => {
+        const dt = parseSafeDate(v.createdAt || v.verifiedAt || v.date);
+        return dt && dt.getFullYear() === mYear && dt.getMonth() === mMonth;
+      }).length;
+
+      const monthCoordinators = effectiveCoordinators.filter(c => {
+        const dt = parseSafeDate(c.createdAt || c.verifiedAt || c.date);
+        return dt && dt.getFullYear() === mYear && dt.getMonth() === mMonth;
       }).length;
 
       result.push({
         month: monthLabel,
         members: monthMembers,
-        volunteers: monthVolunteers
+        volunteers: monthVolunteers,
+        coordinators: monthCoordinators
       });
     }
     return result;
-  }, [members]);
+  }, [effectiveMembers, effectiveVolunteers, effectiveCoordinators]);
 
   return (
     <div className="space-y-4">
@@ -996,15 +1055,15 @@ export default function DashboardPage() {
               <div>
                 <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
                   <FiBarChart2 className="text-amber-600" />
-                  <span>Members &amp; Volunteers Enrolment Velocity</span>
+                  <span>Members, Volunteers &amp; Coordinators Enrolment Velocity</span>
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-0.5">
-                  Monthly intake comparison between fee-paying members and field volunteers.
+                  Monthly intake comparison across fee-paying members, grassroots volunteers, and district coordinators.
                 </p>
               </div>
 
-              {/* Legend */}
-              <div className="flex items-center gap-3 text-xs font-bold">
+              {/* Legend with Members, Volunteers, and Coordinators */}
+              <div className="flex items-center gap-3 text-xs font-bold flex-wrap">
                 <span className="flex items-center gap-1.5 text-[11px] text-slate-700">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                   <span>Members</span>
@@ -1013,17 +1072,23 @@ export default function DashboardPage() {
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
                   <span>Volunteers</span>
                 </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-slate-700">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+                  <span>Coordinators</span>
+                </span>
               </div>
             </div>
 
             {/* Bar Chart Bars */}
             <div className="pt-6 pb-2">
-              <div className="grid grid-cols-6 gap-3 items-end h-44 border-b border-slate-100 px-2 pb-2">
+              <div className="grid grid-cols-6 gap-2 sm:gap-3 items-end h-44 border-b border-slate-100 px-2 pb-2">
                 {enrolmentVelocity.map((item, idx) => {
-                  const maxVal = Math.max(...enrolmentVelocity.map(v => Math.max(v.members, v.volunteers)), 1);
-                  const memberH = Math.round((item.members / maxVal) * 100);
-                  const volH = Math.round((item.volunteers / maxVal) * 100);
+                  const maxVal = Math.max(...enrolmentVelocity.map(v => Math.max(v.members, v.volunteers, v.coordinators)), 1);
+                  const memberH = item.members > 0 ? Math.max(Math.round((item.members / maxVal) * 100), 14) : 4;
+                  const volH = item.volunteers > 0 ? Math.max(Math.round((item.volunteers / maxVal) * 100), 14) : 4;
+                  const coordH = item.coordinators > 0 ? Math.max(Math.round((item.coordinators / maxVal) * 100), 14) : 4;
                   const isHovered = hoveredBarIdx === idx;
+                  const totalMonth = item.members + item.volunteers + item.coordinators;
 
                   return (
                     <div
@@ -1034,15 +1099,15 @@ export default function DashboardPage() {
                     >
                       {/* Tooltip on Hover */}
                       <div className={`text-[10px] font-bold text-slate-800 transition ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-                        +{item.members + item.volunteers}
+                        +{totalMonth}
                       </div>
 
-                      {/* Side by side bars */}
-                      <div className="flex items-end gap-1.5 w-full justify-center">
+                      {/* Side by side 3 bars: Members, Volunteers, Coordinators */}
+                      <div className="flex items-end gap-1 w-full justify-center">
                         {/* Members Bar */}
                         <div
                           style={{ height: `${memberH}%` }}
-                          className={`w-3.5 sm:w-4 rounded-t-lg bg-amber-500 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-amber-500/30' : 'opacity-90'
+                          className={`w-2.5 sm:w-3.5 rounded-t-lg bg-amber-500 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-amber-500/30' : 'opacity-90'
                             }`}
                           title={`Members: ${item.members}`}
                         ></div>
@@ -1050,9 +1115,17 @@ export default function DashboardPage() {
                         {/* Volunteers Bar */}
                         <div
                           style={{ height: `${volH}%` }}
-                          className={`w-3.5 sm:w-4 rounded-t-lg bg-yellow-400 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-yellow-400/30' : 'opacity-90'
+                          className={`w-2.5 sm:w-3.5 rounded-t-lg bg-yellow-400 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-yellow-400/30' : 'opacity-90'
                             }`}
                           title={`Volunteers: ${item.volunteers}`}
+                        ></div>
+
+                        {/* Coordinators Bar */}
+                        <div
+                          style={{ height: `${coordH}%` }}
+                          className={`w-2.5 sm:w-3.5 rounded-t-lg bg-purple-600 transition-all duration-300 ${isHovered ? 'brightness-110 shadow-md shadow-purple-600/30' : 'opacity-90'
+                            }`}
+                          title={`Coordinators: ${item.coordinators}`}
                         ></div>
                       </div>
 
@@ -1064,9 +1137,10 @@ export default function DashboardPage() {
                 })}
               </div>
 
-              <div className="pt-3 flex items-center justify-between text-xs text-slate-500">
+              <div className="pt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
                 <span>Verified ID Cards Minted: <strong className="text-slate-900 font-mono">{activeMembers.length}</strong></span>
-                <span>Active Volunteer Wing: <strong className="text-amber-700">{members.filter(m => m.isVolunteer || m.role === 'Volunteer').length} Cadres</strong></span>
+                <span>Active Volunteer Wing: <strong className="text-amber-700">{effectiveVolunteers.length} Cadres</strong></span>
+                <span>District Coordinators: <strong className="text-purple-700 font-bold">{effectiveCoordinators.length} Officers</strong></span>
               </div>
             </div>
           </div>
@@ -1200,7 +1274,7 @@ export default function DashboardPage() {
                 }`}
             >
               <FiCreditCard className="w-3.5 h-3.5" />
-              <span>Recent 80G Donations ({donations.length})</span>
+              <span>Recent 80G Donations ({effectiveDonations.length})</span>
             </button>
 
             <button
@@ -1211,7 +1285,7 @@ export default function DashboardPage() {
                 }`}
             >
               <FiUsers className="w-3.5 h-3.5" />
-              <span>Member Enrolments ({members.length})</span>
+              <span>Member Enrolments ({effectiveMembers.length})</span>
             </button>
           </div>
 
@@ -1241,14 +1315,14 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
-                {donations.length === 0 ? (
+                {effectiveDonations.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-12 text-center text-slate-400">
                       No donations recorded yet. When a donor contributes online or via UPI, transactions appear here immediately.
                     </td>
                   </tr>
                 ) : (
-                  donations.slice(0, 6).map((d) => (
+                  effectiveDonations.slice(0, 6).map((d) => (
                     <tr key={d._id || d.receiptNumber} className="group hover:bg-slate-50/80 transition">
                       <td className="py-3 px-4 font-mono font-bold text-amber-800 whitespace-nowrap">
                         {d.receiptNumber || 'BYK-80G-PENDING'}
@@ -1300,14 +1374,14 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-800 font-medium">
-                {members.length === 0 ? (
+                {effectiveMembers.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-12 text-center text-slate-400">
                       No members registered yet.
                     </td>
                   </tr>
                 ) : (
-                  members.slice(0, 6).map((member) => {
+                  effectiveMembers.slice(0, 6).map((member) => {
                     const id = member.memberId || member._id;
                     const isActive = member.status === 'active';
                     return (

@@ -21,6 +21,7 @@ import {
 import { useNGO } from '@/context/NGOContext';
 import { getContentImageUrl } from '@/lib/authApi';
 import api from '@/services/api';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 export default function ComplaintsPage() {
   const { complaints, setComplaints, addComplaint, updateComplaintStatus, currentUser } = useNGO();
@@ -205,8 +206,10 @@ export default function ComplaintsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 text-black">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#fffdf5] py-12 text-black relative overflow-hidden">
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="apply" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">

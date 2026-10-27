@@ -41,7 +41,7 @@ export default function HomeCarousel({ slides = [] }) {
 
   return (
     <div
-      className="relative w-full h-115 sm:h-130 md:h-145 lg:h-200 overflow-hidden bg-slate-950 group pt-2 lg:pt-6"
+      className="relative w-full h-115 sm:h-130 md:h-145 lg:h-200 overflow-hidden group pt-2 lg:pt-6"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -70,8 +70,8 @@ export default function HomeCarousel({ slides = [] }) {
             />
 
             {/* Gradient Dark Overlay with Brand Tones */}
-            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-900/60 to-transparent" />
-            <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-transparent to-black/30" />
+            <div className="absolute inset-0 bg-linear-to-r from-purple-950/70 via-yellow-100/190 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-yellow-950/20 via-transparent to-transparent" />
 
             {/* Slide Content Overlay with comfortable top offset */}
             <div className="absolute inset-0 flex items-center z-10 pt-4 lg:pt-8">

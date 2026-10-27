@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FiLock, FiCheckCircle, FiAlertCircle, FiArrowLeft } from 'react-icons/fi';
 import api from '@/services/api';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -52,7 +53,8 @@ function ResetPasswordForm() {
 
   return (
     <div className="min-h-screen bg-[#fffdf5] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="auth" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="text-center">
@@ -65,7 +67,9 @@ function ResetPasswordForm() {
           </p>
         </div>
 
-        <div className="mt-8 bg-white border border-amber-200/90 py-8 px-6 shadow-xl shadow-amber-500/5 rounded-3xl sm:px-10">
+        <div className="mt-8 bg-white/95 backdrop-blur-md border border-amber-200/90 py-8 px-6 shadow-xl shadow-amber-500/5 rounded-3xl sm:px-10 relative overflow-hidden">
+          {/* Decorative Corner Rings inside card */}
+          <DecorativeRings variant="card" />
           {message ? (
             <div className="text-center space-y-4">
               <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto border border-amber-300">

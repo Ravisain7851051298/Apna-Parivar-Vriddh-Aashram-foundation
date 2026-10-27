@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPlans } from '@/store/planSlice';
 import { submitMembershipApplication, clearAppStatus } from '@/store/applicationSlice';
 import { useNGO } from '@/context/NGOContext';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 export default function SiteApplyMemberPage() {
   const dispatch = useDispatch();
@@ -243,8 +244,10 @@ export default function SiteApplyMemberPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900 relative overflow-hidden">
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="apply" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
 
         {/* Top Header Card */}
         <div className="text-center max-w-3xl mx-auto space-y-3">

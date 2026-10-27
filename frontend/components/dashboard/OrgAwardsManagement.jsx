@@ -340,7 +340,7 @@ export default function OrgAwardsManagement() {
               onClick={handleOpenCreate}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-linear-to-r from-yellow-400 to-amber-300 hover:from-yellow-300 hover:to-amber-200 text-stone-950 text-xs font-black transition shadow-lg hover:shadow-xl hover:scale-102 cursor-pointer"
             >
-              <FiPlus className="w-4 h-4 stroke-[3]" />
+              <FiPlus className="w-4 h-4 stroke-3" />
               <span>Add New Org Award</span>
             </button>
           </div>
@@ -439,7 +439,7 @@ export default function OrgAwardsManagement() {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               aria-label="Filter awards by category"
-              className="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 outline-none focus:border-amber-500 cursor-pointer max-w-[200px]"
+              className="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 outline-none focus:border-amber-500 cursor-pointer max-w-50"
             >
               <option value="All">All Categories</option>
               {CATEGORY_OPTIONS.map((cat) => (
@@ -1019,7 +1019,7 @@ export default function OrgAwardsManagement() {
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
                 </label>
               </div>
 

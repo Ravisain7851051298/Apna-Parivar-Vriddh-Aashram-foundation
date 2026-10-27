@@ -40,7 +40,7 @@ export default function HomeAbout() {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-white border-b border-slate-200" aria-label="About Section">
+    <section className="mt-8 sm:mt-12 py-12 sm:py-16 bg-white border-t-2 border-amber-300/60 border-b border-slate-200 [border-top-left-radius:50%_32px] [border-top-right-radius:50%_32px] shadow-[0_-10px_25px_rgba(245,158,11,0.08)] relative overflow-hidden" aria-label="About Section">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}

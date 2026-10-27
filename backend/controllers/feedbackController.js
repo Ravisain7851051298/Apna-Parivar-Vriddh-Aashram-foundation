@@ -48,6 +48,8 @@ const createFeedback = async (req, res) => {
       });
     }
 
+    const resolvedPic = (profilePicture || req.user?.photoUrl || req.user?.image || req.user?.profilePicture || '').trim();
+
     const feedbackData = {
       name: (req.user?.name || name || 'Anonymous Supporter').trim(),
       email: (req.user?.email || email || '').trim().toLowerCase(),
@@ -55,7 +57,7 @@ const createFeedback = async (req, res) => {
       userRole: (userRole || req.user?.role || 'Supporter').trim(),
       rating: Number(rating) || 5,
       comment: comment.trim(),
-      profilePicture: profilePicture || '',
+      profilePicture: resolvedPic,
       status: 'Approved' // Publicly visible immediately
     };
 
@@ -82,19 +84,12 @@ const createFeedback = async (req, res) => {
 };
 
 /**
- * Admin Reply to Feedback
+ * Admin Reply to Feedback (Add, update or clear reply)
  */
 const replyFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const { reply, repliedBy, repliedByRole } = req.body;
-
-    if (!reply || !reply.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Reply message cannot be empty'
-      });
-    }
+    const { reply, repliedBy, repliedByRole, clearReply } = req.body;
 
     const feedback = await Feedback.findById(id);
     if (!feedback) {
@@ -104,17 +99,30 @@ const replyFeedback = async (req, res) => {
       });
     }
 
-    feedback.adminReply = reply.trim();
-    feedback.adminRepliedAt = new Date();
-    feedback.repliedBy = (repliedBy || req.user?.name || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION Management').trim();
-    feedback.repliedByRole = (repliedByRole || req.user?.role || 'Administrator').trim();
-    feedback.status = 'Approved';
+    if (clearReply || (reply !== undefined && reply.trim() === '')) {
+      feedback.adminReply = '';
+      feedback.adminRepliedAt = null;
+      feedback.repliedBy = '';
+      feedback.repliedByRole = '';
+    } else {
+      if (!reply || !reply.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Reply message cannot be empty'
+        });
+      }
+      feedback.adminReply = reply.trim();
+      feedback.adminRepliedAt = new Date();
+      feedback.repliedBy = (repliedBy || req.user?.name || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION Management').trim();
+      feedback.repliedByRole = (repliedByRole || req.user?.role || 'Administrator').trim();
+      feedback.status = 'Approved';
+    }
 
     await feedback.save();
 
     return res.json({
       success: true,
-      message: 'Admin reply posted successfully!',
+      message: clearReply ? 'Reply removed successfully' : 'Admin reply posted successfully!',
       data: feedback,
       feedback
     });
@@ -122,6 +130,61 @@ const replyFeedback = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to post admin reply',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Update full feedback (Edit details, status, photo or reply)
+ */
+const updateFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, userRole, rating, comment, status, profilePicture, adminReply, repliedBy, repliedByRole } = req.body;
+
+    const feedback = await Feedback.findById(id);
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: 'Feedback not found'
+      });
+    }
+
+    if (name !== undefined) feedback.name = name.trim();
+    if (email !== undefined) feedback.email = email.trim().toLowerCase();
+    if (phone !== undefined) feedback.phone = phone.trim();
+    if (userRole !== undefined) feedback.userRole = userRole.trim();
+    if (rating !== undefined) feedback.rating = Number(rating) || feedback.rating;
+    if (comment !== undefined) feedback.comment = comment.trim();
+    if (profilePicture !== undefined) feedback.profilePicture = profilePicture.trim();
+    if (status !== undefined) {
+      feedback.status = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    }
+    if (adminReply !== undefined) {
+      const trimmedReply = adminReply.trim();
+      feedback.adminReply = trimmedReply;
+      if (trimmedReply) {
+        feedback.adminRepliedAt = feedback.adminRepliedAt || new Date();
+        feedback.repliedBy = (repliedBy || feedback.repliedBy || req.user?.name || 'APNA PARIVAR VRIDDH AASHRAM FOUNDATION Management').trim();
+        feedback.repliedByRole = (repliedByRole || feedback.repliedByRole || req.user?.role || 'Administrator').trim();
+      } else {
+        feedback.adminRepliedAt = null;
+      }
+    }
+
+    await feedback.save();
+
+    return res.json({
+      success: true,
+      message: 'Feedback updated successfully',
+      data: feedback,
+      feedback
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update feedback',
       error: error.message
     });
   }
@@ -206,6 +269,7 @@ module.exports = {
   getFeedbacks,
   createFeedback,
   replyFeedback,
+  updateFeedback,
   updateFeedbackStatus,
   deleteFeedback
 };

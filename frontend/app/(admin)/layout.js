@@ -245,14 +245,14 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-[#fffdfa] text-stone-900 flex flex-col md:flex-row antialiased">
       {/* ----------------- FIXED DESKTOP SIDEBAR (COLLAPSIBLE WITH NESTED ITEMS) ----------------- */}
       <aside
-        className={`hidden md:flex flex-col justify-between fixed inset-y-0 left-0 z-30 bg-[#fefce8] border-r border-amber-200/90 transition-all duration-300 ease-in-out shadow-xs select-none relative ${collapsed ? 'w-20' : 'w-64'
+        className={`hidden md:flex flex-col fixed inset-y-0 left-0 z-30 h-screen bg-[#fefce8] border-r border-amber-200/90 transition-all duration-300 ease-in-out shadow-xs select-none ${collapsed ? 'w-20' : 'w-64'
           }`}
       >
         {/* Collapse Toggle Button - Centered on X-axis Divider & Y-axis Sidebar Border */}
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="absolute top-[64px] -right-3.5 -translate-y-1/2 z-40 w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 border-2 border-white shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+          className="absolute top-16 -right-3.5 -translate-y-1/2 z-40 w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-stone-950 border-2 border-white shadow-md hover:shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
           title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           aria-label={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
@@ -263,10 +263,10 @@ export default function AdminLayout({ children }) {
           )}
         </button>
 
-        <div className="flex flex-col h-full overflow-hidden">
-          {/* Brand Header */}
+        <div className="flex flex-col h-full overflow-hidden w-full">
+          {/* Brand Header - Strictly Fixed & Pinned at the top corner */}
           <div
-            className={`px-4 py-3 border-b border-amber-200/90 flex items-center transition-all bg-linear-to-r from-amber-100/80 via-[#fefce8] to-amber-50/60 ${collapsed ? 'justify-center flex-col gap-2' : 'justify-between'
+            className={`shrink-0 z-20 px-4 py-3 border-b border-amber-200/90 flex items-center transition-all bg-[#fefce8] ${collapsed ? 'justify-center flex-col gap-2' : 'justify-between'
               }`}
           >
             {!collapsed ? (
@@ -284,7 +284,15 @@ export default function AdminLayout({ children }) {
                       }}
                     />
                   ) : (
-                    'परिवार'
+                    <img
+                      src="/public/logo.jpg"
+                      alt="Logo"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
                   )}
                 </div>
                 <div className="overflow-hidden">
@@ -620,7 +628,7 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* ----------------- MAIN ADMIN WORKSPACE WITH HEADER ----------------- */}
-      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out`}>
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${collapsed ? 'md:ml-20' : 'md:ml-64'}`}>
         {/* TOP HEADER FOR ADMIN DASHBOARD */}
         <header className="sticky top-0 z-20 bg-[#fefce8]/95 backdrop-blur-md border-b border-amber-200/90 px-4 py-3 flex items-center justify-between gap-4 shadow-2xs">
           {/* Left section: Collapse/Expand toggles & Page Breadcrumb */}
@@ -683,28 +691,36 @@ export default function AdminLayout({ children }) {
               <span>User Portal</span>
             </Link>
 
-            <div className="flex items-center gap-2 pl-2 sm:border-l border-amber-200">
-              <div className="w-8 h-8 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 text-stone-950 font-black flex items-center justify-center text-xs shadow-xs overflow-hidden ring-2 ring-amber-300">
-                {currentUser?.photoUrl ? (
-                  <img
-                    src={getContentImageUrl(currentUser.photoUrl)}
-                    alt={currentUser.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A'
-                )}
-              </div>
-              <div className="hidden lg:block text-left text-xs">
-                <div className="font-black text-stone-950 leading-tight truncate max-w-32.5">
-                  {currentUser?.name || 'Trustee Admin'}
+            {/* User Profile Display Widget in Admin Panel Navbar */}
+            <div className="flex items-center gap-2.5 pl-1 sm:border-l border-amber-200">
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 p-1 rounded-full border border-amber-300 bg-amber-50/80 hover:bg-amber-100 transition shadow-2xs group cursor-pointer"
+                title="View Admin Profile"
+              >
+                <div className="w-7 h-7 rounded-full bg-linear-to-tr from-amber-500 to-yellow-400 text-stone-950 font-black flex items-center justify-center text-xs shadow-xs overflow-hidden ring-2 ring-amber-400 shrink-0">
+                  {user?.photoUrl ? (
+                    <img
+                      src={getContentImageUrl(user.photoUrl)}
+                      alt={user.name || 'User'}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    user?.name ? user.name.charAt(0).toUpperCase() : 'A'
+                  )}
                 </div>
-                <div className="text-[10px] text-stone-500 font-medium">National Trustee</div>
-              </div>
+
+                <div className="flex flex-col text-left text-xs leading-tight pr-1">
+                  <div className="font-black text-stone-950 truncate max-w-30 sm:max-w-37.5">
+                    {user?.name || 'Trustee Admin'}
+                  </div>
+                </div>
+              </Link>
+
               <button
                 type="button"
                 onClick={handleLogout}
-                className="p-2 rounded-lg text-rose-700 bg-rose-50 border border-rose-200 shadow-2xs hover:bg-rose-100 transition cursor-pointer"
+                className="p-2 rounded-xl text-rose-700 bg-rose-50 border border-rose-200 shadow-2xs hover:bg-rose-100 transition cursor-pointer"
                 title="Sign Out Session"
               >
                 <FiLogOut className="w-4 h-4" />

@@ -12,13 +12,12 @@ import {
   FiAlertTriangle,
   FiEye,
   FiEyeOff,
-  FiMapPin,
-  FiShield,
-  FiArrowRight,
   FiDroplet,
   FiUserPlus
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
+import { getContentImageUrl } from '@/lib/authApi';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 function RegisterForm() {
   const router = useRouter();
@@ -114,20 +113,31 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6 bg-[#fffdf5] text-stone-900">
-      <div className="max-w-xl w-full bg-white rounded-3xl p-6 sm:p-8 border border-amber-200/90 shadow-2xl shadow-amber-500/10 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#fffdf5] text-stone-900 relative overflow-hidden">
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="auth" />
 
-        {/* Decorative Top Accent Glow */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="max-w-xl w-full bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-amber-200/90 shadow-2xl shadow-amber-500/10 relative overflow-hidden z-10">
+        {/* Decorative Corner Rings inside card */}
+        <DecorativeRings variant="card" />
 
         {/* Brand Banner */}
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-linear-to-tr from-amber-500 via-yellow-400 to-amber-600 text-stone-950 font-black text-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/20 border-2 border-amber-300">
-            सेवा
+          <div className="w-16 h-16 rounded-full border-2 border-amber-500 ring-4 ring-amber-300/40 p-1 flex items-center justify-center mx-auto mb-3 shadow-md bg-white overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getContentImageUrl(settings?.logoUrl) || '/logo.jpg'}
+              alt={settings?.ngoName || 'अपना परिवार वृद्ध आश्रम'}
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/logo.jpg';
+              }}
+            />
           </div>
           <h1 className="text-2xl font-black text-amber-950">Create User Account</h1>
           <p className="text-xs text-stone-600 mt-1 font-semibold">
-            {settings?.ngoName || 'अपना परिवार वृद्ध आश्रम फाउंडेशन'} — Official Gateway
+            {settings?.ngoName} — Official Gateway
           </p>
           <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/80 border border-amber-300 text-[10px] text-amber-950 font-bold">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse" />

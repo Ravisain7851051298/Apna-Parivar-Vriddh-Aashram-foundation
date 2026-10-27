@@ -12,16 +12,14 @@ import {
   FiAlertTriangle,
   FiLogIn,
   FiShield,
-  FiUsers,
-  FiUserCheck,
   FiHome,
-  FiHeart,
   FiArrowRight,
   FiLogOut
 } from 'react-icons/fi';
 import { useNGO } from '@/context/NGOContext';
 import { useSelector } from 'react-redux';
 import { getContentImageUrl } from '@/lib/authApi';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 function LoginForm() {
   const router = useRouter();
@@ -85,11 +83,13 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6 bg-[#fffdf5] text-stone-900">
-      <div className="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 border border-amber-200/90 shadow-2xl shadow-amber-500/10 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#fffdf5] text-stone-900 relative overflow-hidden">
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="auth" />
 
-        {/* Decorative Top Accent Glow */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl pointer-events-none bg-amber-400/20" />
+      <div className="max-w-md w-full bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-amber-200/90 shadow-2xl shadow-amber-500/10 relative overflow-hidden z-10">
+        {/* Decorative Corner Rings inside card */}
+        <DecorativeRings variant="card" />
 
         {/* Brand Banner */}
         <div className="text-center mb-6">
@@ -118,10 +118,10 @@ function LoginForm() {
               {roleParam === 'coordinator'
                 ? 'Coordinator Access Desk'
                 : roleParam === 'admin'
-                ? 'Trustee & Administrative Control'
-                : roleParam === 'volunteer'
-                ? 'Volunteer Service Wing'
-                : 'Unified NGO Portal Sign In'}
+                  ? 'Trustee & Administrative Control'
+                  : roleParam === 'volunteer'
+                    ? 'Volunteer Service Wing'
+                    : 'Unified NGO Portal Sign In'}
             </span>
           </div>
         </div>

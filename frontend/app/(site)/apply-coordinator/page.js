@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { submitCoordinatorApplication } from '@/store/applicationSlice';
 import { useNGO } from '@/context/NGOContext';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 export default function SiteApplyCoordinatorPage() {
   const dispatch = useDispatch();
@@ -165,8 +166,11 @@ export default function SiteApplyCoordinatorPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#fffdf5] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto my-8 bg-white p-8 sm:p-12 rounded-3xl border border-amber-300 shadow-xl shadow-amber-500/10 text-center">
+      <div className="min-h-screen bg-[#fffdf5] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+        <DecorativeRings variant="apply" />
+        <div className="max-w-2xl mx-auto my-8 bg-white/95 backdrop-blur-md p-8 sm:p-12 rounded-3xl border border-amber-300 shadow-xl shadow-amber-500/10 text-center relative z-10 overflow-hidden">
+          <DecorativeRings variant="card" />
           <div className="w-16 h-16 bg-amber-50 text-amber-700 border-2 border-amber-300 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xs">
             <FiCheckCircle className="w-8 h-8" />
           </div>
@@ -216,8 +220,10 @@ export default function SiteApplyCoordinatorPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900 relative overflow-hidden">
+      {/* Ambient Dark Yellow & Purple Multi-Shape Concentric Rings */}
+      <DecorativeRings variant="apply" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 relative z-10">
 
         {/* Top Header Card */}
         <div className="bg-linear-to-r from-amber-500 via-yellow-400 to-amber-500 p-6 sm:p-8 rounded-3xl text-stone-950 border border-amber-400 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">

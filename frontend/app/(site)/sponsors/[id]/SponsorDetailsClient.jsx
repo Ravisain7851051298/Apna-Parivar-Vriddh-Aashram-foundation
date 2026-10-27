@@ -171,7 +171,7 @@ export default function SponsorDetailsClient({ sponsorId }) {
               Sponsors &amp; CSR Partners
             </Link>
             <span>/</span>
-            <span className="text-amber-900 font-bold truncate max-w-[200px] sm:max-w-xs">
+            <span className="text-amber-900 font-bold truncate max-w-50 sm:max-w-xs">
               {orgName}
             </span>
           </nav>

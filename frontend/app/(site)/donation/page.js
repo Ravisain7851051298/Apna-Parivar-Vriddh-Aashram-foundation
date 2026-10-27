@@ -26,6 +26,7 @@ import {
 import { FaQrcode } from 'react-icons/fa6';
 import confetti from 'canvas-confetti';
 import { useNGO } from '@/context/NGOContext';
+import DecorativeRings from '@/components/site/DecorativeRings';
 
 function DonationContent() {
   const { settings, campaigns, recordDonation, currentUser } = useNGO();
@@ -221,8 +222,10 @@ function DonationContent() {
   const bankBranch = settings?.bankDetails?.branch || 'Adhartal Branch, Jabalpur, MP';
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 sm:py-14">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="min-h-screen bg-[#fffdf5] py-10 sm:py-14 text-stone-900 relative overflow-hidden">
+      {/* Giant Ambient Dark Yellow & Purple Big Rings */}
+      <DecorativeRings variant="donation" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
 
         {/* Top Header Card */}
         <div className="text-center max-w-2xl mx-auto space-y-2.5">
@@ -240,7 +243,8 @@ function DonationContent() {
 
         {/* ---------------- 1. SUBMITTED CONFIRMATION SCREEN (WHEN SUCCESSFUL) ---------------- */}
         {submittedDonation ? (
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-emerald-500 shadow-xl max-w-2xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-300">
+          <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-10 border-2 border-emerald-500 shadow-xl max-w-2xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-300 relative overflow-hidden">
+            <DecorativeRings variant="card" />
             <div className="w-20 h-20 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border-2 border-emerald-200 shadow-sm">
               <FiCheckCircle className="w-12 h-12" />
             </div>
@@ -367,7 +371,8 @@ function DonationContent() {
             )}
 
             {/* Step 1 Card: Cause & Amount Selection */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5 relative overflow-hidden">
+              <DecorativeRings variant="card" />
               <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                 <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-black text-sm shrink-0 border border-amber-300">
                   1
@@ -444,7 +449,8 @@ function DonationContent() {
             </div>
 
             {/* Step 2 Card: Radio Button for Display QR Code vs Bank Details */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5 relative overflow-hidden">
+              <DecorativeRings variant="card" />
               <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                 <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center font-black text-sm shrink-0 border border-amber-300">
                   2

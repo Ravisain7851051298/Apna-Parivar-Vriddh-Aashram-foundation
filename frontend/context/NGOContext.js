@@ -418,17 +418,32 @@ export function NGOProvider({ children }) {
   );
 
   const replyFeedback = useCallback(
-    async (id, replyText) => {
+    async (id, replyInput) => {
       try {
-        await api.put(`/feedback/${id}/reply`, { reply: replyText });
+        const payload = typeof replyInput === 'string' ? { reply: replyInput } : (replyInput || {});
+        const res = await api.put(`/feedback/${id}/reply`, payload);
+        const updated = res.data?.data || res.data?.feedback;
         dispatch(
           setFeedbacks(
-            feedbacks.map((f) => (f._id === id || f.id === id ? { ...f, reply: replyText } : f))
+            feedbacks.map((f) => {
+              if (f._id === id || f.id === id) {
+                return {
+                  ...f,
+                  ...(updated || {}),
+                  adminReply: payload.clearReply ? '' : (payload.reply !== undefined ? payload.reply : f.adminReply),
+                  reply: payload.clearReply ? '' : (payload.reply !== undefined ? payload.reply : f.adminReply),
+                  repliedBy: payload.repliedBy || updated?.repliedBy || f.repliedBy,
+                  repliedByRole: payload.repliedByRole || updated?.repliedByRole || f.repliedByRole,
+                  adminRepliedAt: payload.clearReply ? null : (updated?.adminRepliedAt || new Date().toISOString())
+                };
+              }
+              return f;
+            })
           )
         );
-        return { success: true };
-      } catch {
-        return { success: false };
+        return { success: true, data: updated };
+      } catch (err) {
+        return { success: false, error: err };
       }
     },
     [dispatch, feedbacks]
