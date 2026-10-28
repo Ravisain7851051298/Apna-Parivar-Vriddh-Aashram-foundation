@@ -14,6 +14,7 @@ ensureAllCategoryDirs();
 // Allowed Origins for Credentials Support
 const allowedOrigins = [
   process.env.CLIENT_URL,
+  'https://www.apnaparivarvriddhaashramfoundation.in',
 ].filter(Boolean);
 
 // CORS Middleware with credentials enabled (Required for HTTP-Only Cookie auth)
