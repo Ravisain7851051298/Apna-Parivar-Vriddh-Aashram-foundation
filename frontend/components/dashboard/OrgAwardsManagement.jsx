@@ -58,6 +58,7 @@ export default function OrgAwardsManagement() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All"); // All | Active | Inactive
   const [viewMode, setViewMode] = useState("grid"); // grid | table
+  const [sortBy, setSortBy] = useState("order"); // order | newest | title
 
   // Modal States
   const [modalOpen, setModalOpen] = useState(false);
@@ -127,27 +128,37 @@ export default function OrgAwardsManagement() {
 
   // Filtered Awards
   const filteredAwards = useMemo(() => {
-    return awards.filter((item) => {
-      const q = searchQuery.toLowerCase().trim();
-      const title = (item.title || "").toLowerCase();
-      const by = (item.awardedBy || "").toLowerCase();
-      const cat = (item.category || "").toLowerCase();
-      const desc = (item.description || "").toLowerCase();
-      const year = (item.year || "").toLowerCase();
+    return awards
+      .filter((item) => {
+        const q = searchQuery.toLowerCase().trim();
+        const title = (item.title || "").toLowerCase();
+        const by = (item.awardedBy || "").toLowerCase();
+        const cat = (item.category || "").toLowerCase();
+        const desc = (item.description || "").toLowerCase();
+        const year = (item.year || "").toLowerCase();
 
-      const matchesSearch = !q || title.includes(q) || by.includes(q) || cat.includes(q) || desc.includes(q) || year.includes(q);
-      if (!matchesSearch) return false;
+        const matchesSearch = !q || title.includes(q) || by.includes(q) || cat.includes(q) || desc.includes(q) || year.includes(q);
+        if (!matchesSearch) return false;
 
-      if (selectedCategory !== "All" && item.category !== selectedCategory) {
-        return false;
-      }
+        if (selectedCategory !== "All" && item.category !== selectedCategory) {
+          return false;
+        }
 
-      if (statusFilter === "Active" && item.isActive === false) return false;
-      if (statusFilter === "Inactive" && item.isActive !== false) return false;
+        if (statusFilter === "Active" && item.isActive === false) return false;
+        if (statusFilter === "Inactive" && item.isActive !== false) return false;
 
-      return true;
-    });
-  }, [awards, searchQuery, selectedCategory, statusFilter]);
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === "newest") {
+          return (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0);
+        }
+        if (sortBy === "title") {
+          return (a.title || "").localeCompare(b.title || "");
+        }
+        return (a.order ?? 0) - (b.order ?? 0);
+      });
+  }, [awards, searchQuery, selectedCategory, statusFilter, sortBy]);
 
   // Stats calculation
   const stats = useMemo(() => {
@@ -286,15 +297,24 @@ export default function OrgAwardsManagement() {
   // Delete Award
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
+    const targetId = deleteTarget._id || deleteTarget.id;
+    if (!targetId) {
+      toast.error("Could not find award ID to delete");
+      setDeleteTarget(null);
+      return;
+    }
+
     try {
       setDeleting(true);
-      const res = await api.delete(`/awards/${deleteTarget._id}`);
+      const res = await api.delete(`/awards/${targetId}`);
       toast.success(res.data?.message || "Award deleted successfully");
+      // Optimistically remove from state immediately
+      setAwards((prev) => prev.filter((a) => (a._id || a.id) !== targetId));
       setDeleteTarget(null);
       await fetchOrgAwards();
       refreshAwards?.();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete award");
+      toast.error(err.response?.data?.message || err.message || "Failed to delete award");
     } finally {
       setDeleting(false);
     }
@@ -449,6 +469,17 @@ export default function OrgAwardsManagement() {
               ))}
             </select>
 
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort awards"
+              className="px-3.5 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 outline-none focus:border-amber-500 cursor-pointer"
+            >
+              <option value="order">Sort: Display Order</option>
+              <option value="newest">Sort: Newest First</option>
+              <option value="title">Sort: Title (A-Z)</option>
+            </select>
+
             <button
               type="button"
               onClick={fetchOrgAwards}
@@ -482,6 +513,38 @@ export default function OrgAwardsManagement() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Horizontal Quick Category Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold border-t border-slate-100 pt-3">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory("All")}
+            className={`px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-black ${
+              selectedCategory === "All"
+                ? "bg-amber-700 text-white shadow-md shadow-amber-700/20"
+                : "bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-800"
+            }`}
+          >
+            All Categories ({awards.length})
+          </button>
+          {CATEGORY_OPTIONS.map((cat) => {
+            const count = awards.filter((a) => a.category === cat).length;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-xl transition cursor-pointer whitespace-nowrap text-xs font-bold ${
+                  selectedCategory === cat
+                    ? "bg-amber-700 text-white shadow-md shadow-amber-700/20"
+                    : "bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-800"
+                }`}
+              >
+                {cat} {count > 0 && <span className="opacity-80">({count})</span>}
+              </button>
+            );
+          })}
         </div>
       </div>
 

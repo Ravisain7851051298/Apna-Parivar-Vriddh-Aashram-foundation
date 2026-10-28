@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
+import api from '@/services/api';
 import {
   FiAward,
   FiUploadCloud,
@@ -59,17 +61,29 @@ export default function AdminOrganizationCertificatesPage() {
     order: 0
   });
 
-  // Fetch all documents
+  // Fetch all documents safely via api service
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/organization-certificates?status=all', { credentials: 'include' });
-      const data = await res.json();
-      if (data.success && data.documents) {
-        setDocuments(data.documents);
+      const res = await api.get('/organization-certificates?status=all');
+      if (res.data?.success && res.data?.documents) {
+        setDocuments(res.data.documents);
+      } else if (res.data?.data) {
+        setDocuments(res.data.data);
       }
     } catch (err) {
       console.warn('Error fetching organization documents:', err);
+      try {
+        const fallbackRes = await fetch('/api/organization-certificates?status=all', { credentials: 'include' });
+        if (fallbackRes.ok) {
+          const fbData = await fallbackRes.json();
+          if (fbData.success && (fbData.documents || fbData.data)) {
+            setDocuments(fbData.documents || fbData.data);
+          }
+        }
+      } catch (fbErr) {
+        console.warn('Fallback fetch notice:', fbErr);
+      }
     } finally {
       setLoading(false);
     }
@@ -156,39 +170,27 @@ export default function AdminOrganizationCertificatesPage() {
     );
 
     try {
-      const res = await fetch(`/api/organization-certificates/${id}/toggle-visibility`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: newActive })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActionSuccess(
-          data.message || `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`
-        );
+      const res = await api.patch(`/organization-certificates/${id}/toggle-visibility`, { isActive: newActive });
+      if (res.data?.success) {
+        const msg = res.data?.message || `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`;
+        setActionSuccess(msg);
+        toast.success(msg);
       } else {
-        // Fallback to standard PUT update
-        const fallbackRes = await fetch(`/api/organization-certificates/${id}`, {
-          method: 'PUT',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ isActive: newActive })
-        });
-        const fbData = await fallbackRes.json();
-        if (fbData.success) {
-          setActionSuccess(
-            `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`
-          );
+        // Fallback to PUT
+        const fallbackRes = await api.put(`/organization-certificates/${id}`, { isActive: newActive });
+        if (fallbackRes.data?.success) {
+          const msg = `Certificate "${doc.title}" is now ${newActive ? 'Displayed on public website' : 'Hidden from public website'}`;
+          setActionSuccess(msg);
+          toast.success(msg);
         } else {
           fetchDocuments();
-          alert('Failed to update certificate visibility');
+          toast.error('Failed to update certificate visibility');
         }
       }
       setTimeout(() => setActionSuccess(''), 4000);
     } catch (err) {
       fetchDocuments();
-      alert('Error updating certificate visibility');
+      toast.error(err.response?.data?.message || 'Error updating certificate visibility');
     }
   };
 
@@ -203,7 +205,7 @@ export default function AdminOrganizationCertificatesPage() {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
 
       if (uploadFile) {
-        const res = await uploadFile(file);
+        const res = await uploadFile(file, 'documents');
         if (res.success && res.url) {
           setFormData((prev) => ({
             ...prev,
@@ -211,32 +213,31 @@ export default function AdminOrganizationCertificatesPage() {
             fileType: isPdf ? 'pdf' : 'image',
             fileSize: sizeMb
           }));
-          alert('File uploaded successfully!');
-        } else {
-          alert(res.message || 'File upload failed');
-        }
-      } else {
-        // Direct FormData fallback
-        const fd = new FormData();
-        fd.append('file', file);
-        const res = await fetch('/api/uploads/general', {
-          method: 'POST',
-          body: fd,
-          credentials: 'include'
-        });
-        const d = await res.json();
-        if (d.success && d.url) {
-          setFormData((prev) => ({
-            ...prev,
-            fileUrl: d.url,
-            fileType: isPdf ? 'pdf' : 'image',
-            fileSize: sizeMb
-          }));
-          alert('File uploaded successfully!');
+          toast.success('Certificate file uploaded successfully!');
+          return;
         }
       }
+
+      // Direct api upload fallback
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('category', 'documents');
+      const res = await api.post('/upload', fd, {
+        headers: { 'x-upload-category': 'documents' }
+      });
+      if (res.data?.success && res.data?.url) {
+        setFormData((prev) => ({
+          ...prev,
+          fileUrl: res.data.url,
+          fileType: isPdf ? 'pdf' : 'image',
+          fileSize: sizeMb
+        }));
+        toast.success('Certificate file uploaded successfully!');
+      } else {
+        toast.error(res.data?.message || 'File upload failed');
+      }
     } catch (err) {
-      alert('Error during upload');
+      toast.error(err.response?.data?.message || 'Error uploading file');
     } finally {
       setIsUploading(false);
     }
@@ -245,62 +246,64 @@ export default function AdminOrganizationCertificatesPage() {
   // Handle Form Submit (Create or Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.fileUrl) {
-      alert('Please provide document title and upload the certificate file.');
+    if (!formData.title || !formData.title.trim()) {
+      toast.error('Please enter certificate document title.');
+      return;
+    }
+    if (!formData.fileUrl || !formData.fileUrl.trim()) {
+      toast.error('Please upload the certificate file (PDF or Image).');
       return;
     }
 
     try {
       if (editingDoc) {
-        const res = await fetch(`/api/organization-certificates/${editingDoc._id || editingDoc.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(formData)
-        });
-        const data = await res.json();
-        if (data.success) {
+        const docId = editingDoc._id || editingDoc.id;
+        const res = await api.put(`/organization-certificates/${docId}`, formData);
+        if (res.data?.success) {
+          toast.success('Organization certificate updated successfully!');
           setActionSuccess('Organization certificate updated successfully!');
-          fetchDocuments();
+          await fetchDocuments();
           setModalOpen(false);
+        } else {
+          toast.error(res.data?.message || 'Failed to update certificate document');
         }
       } else {
-        const res = await fetch('/api/organization-certificates', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(formData)
-        });
-        const data = await res.json();
-        if (data.success) {
+        const res = await api.post('/organization-certificates', formData);
+        if (res.data?.success) {
+          toast.success('New verified organization certificate added successfully!');
           setActionSuccess('New verified organization certificate added!');
-          fetchDocuments();
+          await fetchDocuments();
           setModalOpen(false);
+        } else {
+          toast.error(res.data?.message || 'Failed to add certificate document');
         }
       }
       setTimeout(() => setActionSuccess(''), 4000);
     } catch (err) {
-      alert('Failed to save certificate document');
+      console.error('Save certificate error:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to save certificate document');
     }
   };
 
   // Handle Delete
   const handleDelete = async (id) => {
-    if (confirm('Are you sure you want to delete this organization certificate?')) {
-      try {
-        const res = await fetch(`/api/organization-certificates/${id}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-        const data = await res.json();
-        if (data.success) {
-          setActionSuccess('Organization certificate deleted successfully.');
-          fetchDocuments();
-          setTimeout(() => setActionSuccess(''), 4000);
-        }
-      } catch (err) {
-        alert('Delete failed');
+    if (!window.confirm('Are you sure you want to delete this organization certificate?')) {
+      return;
+    }
+
+    try {
+      const res = await api.delete(`/organization-certificates/${id}`);
+      if (res.data?.success) {
+        toast.success(res.data?.message || 'Organization certificate deleted successfully.');
+        setActionSuccess('Organization certificate deleted successfully.');
+        setDocuments((prev) => prev.filter((d) => (d._id || d.id) !== id));
+        fetchDocuments();
+        setTimeout(() => setActionSuccess(''), 4000);
+      } else {
+        toast.error(res.data?.message || 'Failed to delete certificate');
       }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || 'Delete failed');
     }
   };
 

@@ -38,8 +38,9 @@ export default function DashboardPage() {
     setMemberStatus
   } = useNGO();
 
-  const isAdmin = currentUser?.role === 'Admin';
-  const isTeam = currentUser?.role === 'TeamMember';
+  const roleLower = (currentUser?.role || '').toLowerCase();
+  const isAdmin = roleLower === 'admin' || roleLower === 'superadmin' || roleLower === 'manager';
+  const isTeam = roleLower === 'teammember' || roleLower === 'team' || roleLower === 'staff';
 
   // Interactive Chart States
   const [timeRange, setTimeRange] = useState('6m'); // '7d' | '30d' | '6m' | '1y'

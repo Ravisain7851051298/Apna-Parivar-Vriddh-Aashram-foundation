@@ -194,6 +194,32 @@ function HomeClientContent() {
       .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     : [];
 
+  // Dynamic statutory organization certificates approved by admin (only isActive !== false)
+  const [statutoryDocs, setStatutoryDocs] = useState([]);
+  const [loadingStatutory, setLoadingStatutory] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    const fetchStatutory = async () => {
+      try {
+        setLoadingStatutory(true);
+        const res = await api.get('/organization-certificates?status=Verified');
+        if (active && res.data?.success) {
+          const list = res.data.documents || res.data.data || [];
+          // ONLY display certificates that admin allows (isActive !== false)
+          const allowed = list.filter((d) => d.isActive !== false);
+          setStatutoryDocs(allowed);
+        }
+      } catch (err) {
+        console.warn('Statutory docs fetch notice:', err);
+      } finally {
+        if (active) setLoadingStatutory(false);
+      }
+    };
+    fetchStatutory();
+    return () => { active = false; };
+  }, []);
+
 
 
   const handleJoinEvent = useCallback(async (eId) => {
@@ -1642,88 +1668,104 @@ function HomeClientContent() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Annual Activity Report (2024–25)',
-                subtitle: 'Comprehensive chronicle of senior resident care, healthcare milestones, and infrastructure expansions.',
-                badge: 'Annual Report',
-                link: '/certificates',
-                tag: 'Full Narrative'
-              },
-              {
-                title: 'Audited Financial Statements (CA Certified)',
-                subtitle: 'Meticulously audited balance sheets, income & expenditure statements, and Form 10BD filings.',
-                badge: 'Financial Audit',
-                link: '/certificates',
-                tag: 'Audited'
-              },
-              {
-                title: 'Section 80G Tax Exemption Order',
-                subtitle: 'Government of India Income Tax exemption order granting 50% tax deduction on all donor contributions.',
-                badge: 'CIT 80G Approval',
-                link: '/certificates',
-                tag: 'Tax Exemption'
-              },
-              {
-                title: 'Trust Registration Section 12A',
-                subtitle: 'Perpetual registration order as an official non-profit charitable trust dedicated to destitute elder welfare.',
-                badge: 'Section 12A',
-                link: '/certificates',
-                tag: 'Legal Trust'
-              },
-              {
-                title: 'Ministry of Corporate Affairs CSR-1 Approval',
-                subtitle: 'Official registration with the Ministry of Corporate Affairs for statutory Corporate Social Responsibility grants.',
-                badge: 'CSR-1 Registered',
-                link: '/certificates',
-                tag: 'CSR Eligible'
-              },
-              {
-                title: 'NITI Aayog Darpan Transparency Certification',
-                subtitle: 'Government portal verification and unique NGO Darpan ID ensuring public accountability and compliance.',
-                badge: 'NITI Aayog',
-                link: '/certificates',
-                tag: 'Govt Portal'
-              }
-            ].map((rep, rIdx) => (
-              <div
-                key={rIdx}
-                className="bg-white rounded-3xl p-6 border border-amber-200/90 hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
-                      {rep.badge}
-                    </span>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      {rep.tag}
-                    </span>
-                  </div>
-
-                  <h3 className="font-black text-base text-slate-900 group-hover:text-amber-800 leading-snug">
-                    {rep.title}
-                  </h3>
-
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    {rep.subtitle}
-                  </p>
+          {/* Dynamic Admin-Allowed Statutory Certificates */}
+          {loadingStatutory ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-3xl p-6 border border-amber-200/60 animate-pulse space-y-4">
+                  <div className="h-4 bg-slate-200 rounded w-1/3" />
+                  <div className="h-5 bg-slate-200 rounded w-3/4" />
+                  <div className="h-12 bg-slate-100 rounded-xl" />
+                  <div className="h-4 bg-slate-200 rounded w-1/2" />
                 </div>
-
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                  <Link
-                    href={rep.link}
-                    className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 hover:text-amber-950 group-hover:underline"
+              ))}
+            </div>
+          ) : statutoryDocs.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {statutoryDocs.map((doc) => {
+                const isPdf = doc.fileType === 'pdf' || /\.pdf(\?|$)/i.test(doc.fileUrl || '');
+                return (
+                  <div
+                    key={doc._id || doc.id}
+                    className="bg-white rounded-3xl p-6 border border-amber-200/90 hover:border-amber-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
                   >
-                    <FiDownload className="w-3.5 h-3.5" />
-                    <span>Download / View</span>
-                  </Link>
+                    {/* Background Soft Glow */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/30 rounded-bl-full pointer-events-none" />
 
-                  <span className="text-[10px] text-stone-400 font-mono">PDF Verified</span>
-                </div>
+                    <div className="space-y-3 relative z-10">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-950 border border-amber-300">
+                          {doc.category || 'Statutory Compliance'}
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                          <FiCheckCircle className="w-3 h-3 text-emerald-600" />
+                          <span>{doc.validity || 'Verified Order'}</span>
+                        </span>
+                      </div>
+
+                      <h3 className="font-black text-base text-slate-900 group-hover:text-amber-800 leading-snug transition-colors">
+                        {doc.title}
+                      </h3>
+
+                      {doc.documentNumber && (
+                        <div className="inline-block px-2 py-0.5 rounded-lg bg-slate-100 text-[11px] font-mono font-bold text-slate-700">
+                          Ref: {doc.documentNumber}
+                        </div>
+                      )}
+
+                      <p className="text-xs text-slate-600 leading-relaxed font-medium line-clamp-3">
+                        {doc.description || doc.titleHi || 'Official statutory disclosure and legal registration document for Apna Parivar Vriddh Aashram Foundation.'}
+                      </p>
+
+                      {doc.issuingAuthority && (
+                        <p className="text-[11px] text-slate-500 font-medium pt-1">
+                          Authority: <strong className="text-slate-700">{doc.issuingAuthority}</strong>
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between relative z-10">
+                      <a
+                        href={doc.fileUrl || '/certificates'}
+                        target="_blank"
+                        rel="noreferrer"
+                        download={isPdf}
+                        className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 hover:text-amber-950 group-hover:underline"
+                      >
+                        <FiDownload className="w-3.5 h-3.5 text-amber-700" />
+                        <span>Download Document</span>
+                      </a>
+
+                      <Link
+                        href="/certificates"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-amber-800 transition"
+                      >
+                        <span>View Details</span>
+                        <FiArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-white rounded-3xl p-8 border border-amber-200 text-center space-y-2 max-w-lg mx-auto">
+              <FiShield className="w-8 h-8 text-amber-600 mx-auto" />
+              <h3 className="font-black text-slate-800 text-sm">Official Certificates Maintained</h3>
+              <p className="text-xs text-slate-500 font-medium">
+                Verified registration certificates and tax exemption credentials can be inspected on our statutory certificates directory.
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/certificates"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 hover:underline"
+                >
+                  <span>Visit Certificates Directory</span>
+                  <FiArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
 
           <div className="text-center pt-2">
             <Link

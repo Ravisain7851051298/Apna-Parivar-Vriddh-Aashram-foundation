@@ -120,6 +120,12 @@ const DEFAULT_ORG_AWARDS = [
 // Seed default awards if collection is empty or update org awards
 const seedDefaultAwardsIfEmpty = async () => {
   try {
+    const count = await Award.countDocuments();
+    if (count === 0) {
+      await Award.insertMany([...DEFAULT_AWARDS, ...DEFAULT_ORG_AWARDS]);
+      return;
+    }
+
     // 1. Separate user badge templates from org awards
     const userBadgeTitles = [
       'Star Volunteer Award',
@@ -131,23 +137,17 @@ const seedDefaultAwardsIfEmpty = async () => {
       'Community Champion',
       'Dedicated Member Seva Honor'
     ];
+
     await Award.updateMany(
       { title: { $in: userBadgeTitles } },
       { $set: { isOrgAward: false, awardedBy: '' } }
     );
 
-    const count = await Award.countDocuments();
-    if (count === 0) {
-      await Award.insertMany([...DEFAULT_AWARDS, ...DEFAULT_ORG_AWARDS]);
-      return;
-    }
-
-    // 2. Ensure each default org award exists and has proper content & image
+    // 2. Only enrich already existing default org awards (never recreate awards deleted by admin)
     for (const defAward of DEFAULT_ORG_AWARDS) {
       const existing = await Award.findOne({ title: defAward.title });
-      if (!existing) {
-        await Award.create(defAward);
-      } else if (!existing.fullContent || !existing.awardImage || existing.isOrgAward !== true) {
+
+      if (existing && (!existing.fullContent || !existing.awardImage || existing.isOrgAward !== true)) {
         await Award.updateOne(
           { _id: existing._id },
           {
@@ -340,7 +340,15 @@ const deleteAward = async (req, res) => {
     if (!award) {
       return res.status(404).json({ success: false, message: 'Award not found' });
     }
-    return res.json({ success: true, message: 'Award deleted successfully' });
+    if (award.awardImage || award.image) {
+      try {
+        const { deleteFileByUrl } = require('../utils/fileCleaner');
+        await deleteFileByUrl(award.awardImage || award.image);
+      } catch (cleanErr) {
+        console.warn('Award image cleanup notice:', cleanErr.message);
+      }
+    }
+    return res.json({ success: true, message: 'Award deleted successfully', id });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -381,7 +389,7 @@ const grantAwardToUser = async (req, res) => {
   try {
     const { userId, userEmail, email, userName, name, awardId, title, reason, citation, tier, category, badgeColor, badgeIcon, badgeImage } = req.body;
     const recipientEmail = email || userEmail || (typeof userId === 'string' && userId.includes('@') ? userId : null);
-    
+
     let user = null;
     if (userId && mongoose.isValidObjectId(userId)) {
       user = await User.findById(userId);

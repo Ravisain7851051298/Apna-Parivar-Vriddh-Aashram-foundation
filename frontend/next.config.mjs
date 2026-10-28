@@ -49,7 +49,7 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    const rawTarget = process.env.NEXT_PUBLIC_API_URL;
+    const rawTarget = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
     const cleanTarget = rawTarget.trim().replace(/\/api\/?$/, '');
     return [
       {

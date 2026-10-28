@@ -17,7 +17,7 @@ const certificateSchema = new mongoose.Schema({
   roleOrDesignation: { type: String, default: 'Youth Contributor' },
   eventOrWork: { type: String, default: '' },
   issueDate: { type: Date, default: Date.now },
-  issuedBy: { type: String, default: 'राष्ट्रीय अध्यक्ष / सचिव, युवा क्रांति दल' },
+  issuedBy: { type: String, default: 'राष्ट्रीय अध्यक्ष' },
   qrCodeUrl: { type: String, default: '' },
   fileUrl: { type: String, default: '' },
   pdfUrl: { type: String, default: '' },

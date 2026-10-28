@@ -34,10 +34,14 @@ export default function PublicOrganizationCertificatesPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/organization-certificates?status=Verified');
+      if (!res.ok) {
+        throw new Error(`HTTP error ${res.status}`);
+      }
       const data = await res.json();
-      if (data.success && data.documents) {
+      if (data.success && (data.documents || data.data)) {
+        const list = data.documents || data.data || [];
         // Only display certificates that admin allows (isActive !== false)
-        const allowedDocs = data.documents.filter((doc) => doc.isActive !== false);
+        const allowedDocs = list.filter((doc) => doc.isActive !== false);
         setDocuments(allowedDocs);
       }
     } catch (err) {

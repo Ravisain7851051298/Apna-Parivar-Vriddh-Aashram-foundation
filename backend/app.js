@@ -99,7 +99,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     timestamp: new Date(),
-    ngo: 'युवा क्रांति दल'
+    ngo: 'Apna Parivar Vriddh Aashram Foundation'
   });
 });
 
